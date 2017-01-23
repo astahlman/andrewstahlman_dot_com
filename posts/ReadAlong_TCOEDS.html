@@ -1,0 +1,1008 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-01-22 Sun 21:17 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Andrew Stahlman" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgb2b3ba9">1. Read Along: Time, Clocks, and the Ordering of Events in a Distributed System</a>
+<ul>
+<li><a href="#org57159ce">1.1. Partial Ordering</a></li>
+<li><a href="#org6e242d9">1.2. Logical Clocks</a></li>
+<li><a href="#org80b278f">1.3. Implementation</a></li>
+<li><a href="#org768abf4">1.4. Appendix</a>
+<ul>
+<li><a href="#org2f3d0f3">1.4.1. Proof that converse of Clock Condition does not hold</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgb2b3ba9" class="outline-2">
+<h2 id="orgb2b3ba9"><span class="section-number-2">1</span> Read Along: Time, Clocks, and the Ordering of Events in a Distributed System</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+In my first few months at Amazon, I needed (or at least thought I
+needed) to synchronize writes to a Dynamo table. My deskmate and I
+started diagramming an implementation for a naive distributed
+locking-mechanism. A recent grad school graduate, overhearing our
+conversation <sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup> interrupted and said, "Oh, there's like, a whole
+paper about this stuff by a famous guy from Microsoft."
+</p>
+
+<p>
+It took me a few years to get to it, but I finally read the famous
+guy's paper, "Time, Clocks, and the Ordering of Events in a
+Distributed System." Here's what I learned.
+</p>
+
+<p>
+First, a couple of definitions.
+</p>
+
+<dl class="org-dl">
+<dt>System</dt><dd>a collection of processes</dd>
+<dt>Process</dt><dd>a sequence of events</dd>
+<dt>Distributed System</dt><dd>a collection of processes which exchange
+messages. The time it takes to transmit messages is
+non-negligible compared to the time between events.</dd>
+</dl>
+
+<p>
+Crucially, Lamport's definition of a distributed system is based on
+the transmission delay associated with sending a message, but it
+doesn't address the reliability of the transmission medium.
+</p>
+
+<p>
+Also, note that nothing about this definition restricts it to a
+collection of computers. A distributed system could just as easily be
+comprised of the individual components of a single computer or two
+army generals standing on distant hilltops.
+</p>
+
+<p>
+The first half of the paper describes a system that imposes a total
+ordering on all events. This system can produce unintuitive orderings
+which don't correspond with the passage of time, so in the second half
+of the paper Lamport extends this system to impose a total ordering of
+events that incorporates events in physical space-time.
+</p>
+</div>
+
+<div id="outline-container-org57159ce" class="outline-3">
+<h3 id="org57159ce"><span class="section-number-3">1.1</span> Partial Ordering</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Remember how the processes in a distributed system don't have to be
+computers? Let's make our processes people. Our messages aren't
+encrypted, so we'll dispense with Bob and Alice and call our processes
+Bonesaw and Andromeda. Bonesaw and Andromeda are hip millenials who
+communicate only via Snapchat.
+</p>
+
+<p>
+Time to introduce our first relation: "happened-before," denoted
+\(\rightarrow\)
+</p>
+
+<p>
+The happened-before relation must satisfy three properties:
+</p>
+
+<ol class="org-ol">
+<li>If events \(a\) and \(b\) belong to the same process, and \(a\) comes
+before \(b\), then \(a \rightarrow b\).</li>
+<li>If \(a\) corresponds to the sending of a message by one process, and
+\(b\) corresponds to the receipt of that message by another process,
+then \(a \rightarrow b\).</li>
+<li>The relation is transitive. That is, if \(a \rightarrow b\) and \(b
+   \rightarrow c\) then \(a \rightarrow c\).</li>
+</ol>
+
+<p>
+We call \(a\) and \(b\) "concurrent" if \(a \nrightarrow b\) and \(b
+\nrightarrow a\) - in other words, neither event happened first because
+their relative ordering is indeterminate.
+</p>
+
+<p>
+Another way to define the happened-before relation is to say that \(a
+\rightarrow b\) when it is possible that \(a\) could have caused \(b\). Two
+events are concurrent if neither event could have possibly caused the
+other.
+</p>
+
+<p>
+Notice that physical time appears nowhere in these definitions.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6e242d9" class="outline-3">
+<h3 id="org6e242d9"><span class="section-number-3">1.2</span> Logical Clocks</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Now we're ready to bring in clocks. Unlike wall-clocks, which run
+continuously, our logical clocks are discrete and event-driven. That
+is, they only "tick" in response to events. Each process has its own
+clock which assigns, to each of its events, an integer representing
+the "time" at which the event occurred.
+</p>
+
+<p>
+More formally, each process \(P_i\) has an associated clock \(C_i\),
+defined as a function which assigns a number \(C_i \langle a \rangle\)
+to event \(a\) in process \(P_i\). We define \(C\) as the entire system of
+clocks which assigns to any event \(b\) the number \(C \langle b
+\rangle\), such that \(C \langle b \rangle = C_j \langle b \rangle\) if
+\(b\) is an event in process \(P_j\).
+</p>
+
+<p>
+For our clocks to be useful, they should ensure that if \(a\) happens
+before \(b\), then \(a\) happens at an earlier time than \(b\). This is
+called the Clock Condition.
+</p>
+
+<p>
+Formally, it states that:
+</p>
+
+\begin{equation}
+   \text{For any events } a, b, \text{if } a \rightarrow b \text{ then } C \langle a \rangle < C \langle b \rangle.
+\end{equation}
+
+<p>
+Lamport claims that "it is easy to see" that the converse does not
+hold. It wasn't easy for me, so I attempted an informal proof, which you can
+check <a href="#org2f3d0f3">here</a> if you care to.
+</p>
+
+<p>
+Applying the definition of the happened-before relation, we can
+restate the Clock Condition in the form of the following two
+conditions.
+</p>
+
+<dl class="org-dl">
+<dt>C1</dt><dd>If \(a\) and \(b\) are events in process \(P_i\), and \(a\) comes
+before \(b\), then \(C_i \langle a \rangle < C_i \langle b \rangle\).</dd>
+<dt>C2</dt><dd>If \(a\) is the sending of a message by process \(P_i\) and \(b\) is
+the receipt of the message by process \(P_j\), then \(C_i \langle a
+     \rangle < C_j \langle b \rangle\).</dd>
+</dl>
+
+<p>
+It's easy to define an algorithm that satisfies both conditions. We
+need only two implementation rules.
+</p>
+
+<dl class="org-dl">
+<dt>IR1</dt><dd>Each process increments its clock after each event.
+(Satisfies C1)</dd>
+<dt>IR2</dt><dd>Every process timestamps outbound messages with its current
+clock value. The receiving process sets its clock forward if
+necessary to ensure that its clock value is greater than the
+timestamp in the message. (Satisfies C2)</dd>
+</dl>
+
+<p>
+The only downside of this approach is that still imposes only a
+partial ordering. For concurrent events the ordering is stil
+non-deterministic. The remedy is simple: just arbitrarily define a
+total ordering on the processes.
+</p>
+
+<p>
+Under this scheme, if Bonesaw and Andromeda send concurrent messages,
+a total ordering in which Andromeda \(<\) Bonesaw would dictate that we
+always order Andromeda's message before Bonesaw's (Sorry, Bonesaw).
+</p>
+
+<p>
+And that's it. We now have a system of logical clocks which imposes a
+total ordering on events. Why is this useful? Because we can use it as
+the basis for a mutual exclusion mechanism. That is, we can implement
+a (still extremely naive) distributed lock using our logical clocks.
+</p>
+
+<p>
+In fact, let's go ahead and do that.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org80b278f" class="outline-3">
+<h3 id="org80b278f"><span class="section-number-3">1.3</span> Implementation</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+A LogicalClock keeps track of the current time in a Process. The clock
+can tick in two ways:
+</p>
+
+<dl class="org-dl">
+<dt>increment</dt><dd>in which the time increases by 1 (i.e., a tick)</dd>
+<dt>ensure<sub>at</sub><sub>least</sub></dt><dd>fast-forward if necessary to ensure the clock is
+set to at least the given time</dd>
+</dl>
+
+<p>
+The former is used upon sending a message (IR1). The latter is used
+upon receiving a message (IR2).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">class</span> <span style="color: #e7c547;">LogicalClock</span><span style="color: #c397d8;">(</span><span style="color: #70c0b1;">object</span><span style="color: #c397d8;">)</span>:
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">__init__</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">self</span>.time = 0
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">increment</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">self</span>.time += 1
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">ensure_at_least</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, t<span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">self</span>.time = <span style="color: #70c0b1;">max</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>.time, t<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+A Mutex can have at most one owner at a given time. It tracks its
+current owner and the number of times it has been claimed and
+released, respectively.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">class</span> <span style="color: #e7c547;">Mutex</span><span style="color: #c397d8;">(</span><span style="color: #70c0b1;">object</span><span style="color: #c397d8;">)</span>:
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">__init__</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">self</span>._owner = <span style="color: #70c0b1;">None</span>
+        <span style="color: #c397d8;">self</span>.num_claims = 0
+        <span style="color: #c397d8;">self</span>.num_releases = 0
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">owner</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">return</span> <span style="color: #c397d8;">self</span>._owner
+</pre>
+</div>
+
+<p>
+We fail loudly if a Process attempts to claim the lock while it is
+owned by another Process. We also perform a sanity check that each
+claim has had a corresponding release.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">claim</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, new_owner<span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">assert</span> <span style="color: #c397d8;">self</span>._owner <span style="color: #c397d8;">is</span> <span style="color: #70c0b1;">None</span>, <span style="color: #b9ca4a;">"Aaaaaaaaaaaagh. {} tried to claim the lock, but {} owns it."</span>.<span style="color: #70c0b1;">format</span><span style="color: #c397d8;">(</span>new_owner, <span style="color: #c397d8;">self</span>._owner<span style="color: #c397d8;">)</span>
+    logging.debug<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"{} claims the lock."</span>.<span style="color: #70c0b1;">format</span><span style="color: #7aa6da;">(</span>new_owner<span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">self</span>._owner = new_owner
+    <span style="color: #c397d8;">self</span>.num_claims += 1
+    <span style="color: #c397d8;">assert</span> <span style="color: #c397d8;">self</span>.num_claims == <span style="color: #c397d8;">self</span>.num_releases + 1
+</pre>
+</div>
+
+<p>
+We also fail loudly if any Process other than the lock's owner
+attempts to release it. Upon release, we again assert that every claim
+has a corresponding release.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">release</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, owner<span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">assert</span> <span style="color: #c397d8;">self</span>._owner <span style="color: #c397d8;">is</span> owner, <span style="color: #b9ca4a;">"{} tried to release a lock that {} owns."</span>.<span style="color: #70c0b1;">format</span><span style="color: #c397d8;">(</span>owner, <span style="color: #c397d8;">self</span>._owner<span style="color: #c397d8;">)</span>
+    logging.debug<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"{} releases the lock."</span>.<span style="color: #70c0b1;">format</span><span style="color: #7aa6da;">(</span>owner<span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">self</span>._owner = <span style="color: #70c0b1;">None</span>
+    <span style="color: #c397d8;">self</span>.num_releases += 1
+    <span style="color: #c397d8;">assert</span> <span style="color: #c397d8;">self</span>.num_claims == <span style="color: #c397d8;">self</span>.num_releases
+</pre>
+</div>
+
+<p>
+A Message has three components: a sender, a recipient, and a
+timestamp. The timestamp is the local time at which the message was
+sent from the perspective of the sending Process.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">class</span> <span style="color: #e7c547;">Message</span><span style="color: #c397d8;">(</span><span style="color: #70c0b1;">object</span><span style="color: #c397d8;">)</span>:
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">__init__</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, sender, recipient, sent_at<span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">self</span>.sender = sender
+        <span style="color: #c397d8;">self</span>.recipient = recipient
+        <span style="color: #c397d8;">self</span>.sent_at = sent_at
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">__repr__</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">return</span> <span style="color: #b9ca4a;">"{}@{} -&gt; {}: {}"</span>.<span style="color: #70c0b1;">format</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>.sender.name, <span style="color: #c397d8;">self</span>.sent_at, <span style="color: #c397d8;">self</span>.recipient.name, <span style="color: #c397d8;">self</span>.content<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+There are three classes of Messages: a Request for the mutex, a
+Release of the mutex, and an acknowledgement of a Request by another
+Process.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e7c547;">@classmethod</span>
+<span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">a_mutex_request</span><span style="color: #c397d8;">(</span>cls, sender, recipient, sent_at<span style="color: #c397d8;">)</span>:
+    <span style="color: #e78c45;">m</span> = Message<span style="color: #c397d8;">(</span>sender, recipient, sent_at<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">m.content</span> = <span style="color: #b9ca4a;">"REQUEST"</span>
+    <span style="color: #c397d8;">return</span> m
+
+<span style="color: #e7c547;">@classmethod</span>
+<span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">a_mutex_release</span><span style="color: #c397d8;">(</span>cls, sender, recipient, sent_at<span style="color: #c397d8;">)</span>:
+    <span style="color: #e78c45;">m</span> = Message<span style="color: #c397d8;">(</span>sender, recipient, sent_at<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">m.content</span> = <span style="color: #b9ca4a;">"RELEASE"</span>
+    <span style="color: #c397d8;">return</span> m
+
+<span style="color: #e7c547;">@classmethod</span>
+<span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">an_ack</span><span style="color: #c397d8;">(</span>cls, sender, recipient, sent_at<span style="color: #c397d8;">)</span>:
+    <span style="color: #e78c45;">m</span> = Message<span style="color: #c397d8;">(</span>sender, recipient, sent_at<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">m.content</span> = <span style="color: #b9ca4a;">"ACK"</span>
+    <span style="color: #c397d8;">return</span> m
+</pre>
+</div>
+
+<p>
+The MsgBroker mediates communication between Processes. A Process
+sends messages by posting the message to the MsgBroker, which enqueues
+the message for delivery.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">class</span> <span style="color: #e7c547;">MsgBroker</span><span style="color: #c397d8;">(</span><span style="color: #70c0b1;">object</span><span style="color: #c397d8;">)</span>:
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">__init__</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">self</span>.queue = <span style="color: #c397d8;">{}</span>
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">send_message</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, sender, recipient, msg<span style="color: #c397d8;">)</span>:
+        <span style="color: #e78c45;">queue_key</span> = <span style="color: #c397d8;">(</span>sender, recipient<span style="color: #c397d8;">)</span>
+        <span style="color: #e78c45;">outbox</span> = <span style="color: #c397d8;">self</span>.queue.get<span style="color: #c397d8;">(</span>queue_key, <span style="color: #7aa6da;">[]</span><span style="color: #c397d8;">)</span>
+        <span style="color: #c397d8;">self</span>.queue<span style="color: #c397d8;">[</span>queue_key<span style="color: #c397d8;">]</span> = outbox
+        outbox.append<span style="color: #c397d8;">(</span>msg<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+We add a random delay to the delivery of messages to simulate network
+latency. As Lamport points out, we are making the unrealistic
+assumption that all messages from a particular process are not only
+guaranteed to arrive, but are guaranteed to arrive in the same order
+in which they were sent. In the real world we would use a protocol
+that allows the receiver to detect when messages are lost or delivered
+out of order.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">deliver</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">for</span> <span style="color: #c397d8;">(</span>sender, recipient<span style="color: #c397d8;">)</span>, outbox <span style="color: #c397d8;">in</span> <span style="color: #c397d8;">self</span>.queue.items<span style="color: #c397d8;">()</span>:
+        <span style="color: #c397d8;">while</span> outbox <span style="color: #c397d8;">and</span> randint<span style="color: #c397d8;">(</span>1, 20<span style="color: #c397d8;">)</span> == 1:
+            <span style="color: #e78c45;">msg</span> = outbox.pop<span style="color: #c397d8;">(</span>0<span style="color: #c397d8;">)</span>
+            logging.debug<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"[MSG]: {}"</span>.<span style="color: #70c0b1;">format</span><span style="color: #7aa6da;">(</span>msg<span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+            recipient.receive_message<span style="color: #c397d8;">(</span>sender, msg<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+Each process is uniquely identified by a name. Processes coordinate
+access to a shared resource via the<sub>lock</sub> and communicate via a
+msg<sub>broker</sub>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">class</span> <span style="color: #e7c547;">Process</span><span style="color: #c397d8;">(</span><span style="color: #70c0b1;">object</span><span style="color: #c397d8;">)</span>:
+
+    <span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">__init__</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, name, the_lock, msg_broker<span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">self</span>.name = name
+        <span style="color: #c397d8;">self</span>.the_lock = the_lock
+        <span style="color: #c397d8;">self</span>.msg_broker = msg_broker
+</pre>
+</div>
+
+<p>
+Every process maintains its own logical clock. Every claim on the lock
+is stored in the request queue. Upon receiving a message from another
+process, we record the current time and associate it with the sender
+of the message in the <code>latest_ack_from</code> dict. We will refer to this dict
+to determine whether another process has acknowledged our request to
+claim the lock.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">self</span>.clock = LogicalClock<span style="color: #c397d8;">()</span>
+<span style="color: #c397d8;">self</span>.request_queue = <span style="color: #c397d8;">[]</span>
+<span style="color: #c397d8;">self</span>.latest_ack_from = <span style="color: #c397d8;">{}</span>
+</pre>
+</div>
+
+<p>
+To request the lock we send a timestamped message to each of our peers.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">request_lock</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, peers<span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">for</span> p <span style="color: #c397d8;">in</span> peers:
+        <span style="color: #e78c45;">msg</span> = Message.a_mutex_request<span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, p, <span style="color: #c397d8;">self</span>.time<span style="color: #7aa6da;">()</span><span style="color: #c397d8;">)</span>
+        <span style="color: #c397d8;">self</span>.send_message<span style="color: #c397d8;">(</span>p, msg<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+We also add the timestamped request to our own request queue. Then we
+increment the clock. This clock tick corresponds to IR1, which
+requires that the clock be incremented between successive events.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">self</span>.request_queue.append<span style="color: #c397d8;">(</span>Message.a_mutex_request<span style="color: #7aa6da;">(</span><span style="color: #c397d8;">self</span>, <span style="color: #c397d8;">self</span>, <span style="color: #c397d8;">self</span>.time<span style="color: #70c0b1;">()</span><span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+<span style="color: #c397d8;">self</span>.clock.increment<span style="color: #c397d8;">()</span>
+</pre>
+</div>
+
+<p>
+A process issues a request for the lock about once every 10 cycles of
+our simulation provided that it has no requests pending. We can run
+the simulation under different degrees of lock contention by adjusting
+the probability that the process "wants" the lock.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">wants_lock</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">return</span> <span style="color: #c397d8;">not</span> <span style="color: #c397d8;">self</span>.has_request_pending<span style="color: #c397d8;">()</span> <span style="color: #c397d8;">and</span> randint<span style="color: #c397d8;">(</span>1, 10<span style="color: #c397d8;">)</span> == 1
+
+<span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">has_request_pending</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+    <span style="color: #969896; font-style: italic;"># </span><span style="color: #969896; font-style: italic;">To see the effect of network congestion, uncomment the line below</span>
+    <span style="color: #969896; font-style: italic;">#</span><span style="color: #969896; font-style: italic;">return False</span>
+    <span style="color: #c397d8;">return</span> <span style="color: #70c0b1;">any</span><span style="color: #c397d8;">(</span>x <span style="color: #c397d8;">for</span> x <span style="color: #c397d8;">in</span> <span style="color: #c397d8;">self</span>.request_queue <span style="color: #c397d8;">if</span> x.sender <span style="color: #c397d8;">is</span> <span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+If a process owns the lock, its request is guaranteed to be at the
+front of the queue. Thus, to release the lock we pop the head of the
+queue and notify the other processes. Sending these messages
+corresponds to an event, so we increment the clock in accordance with
+IR1.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">release_lock</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, peers<span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">assert</span> <span style="color: #c397d8;">self</span>.the_lock.owner<span style="color: #c397d8;">()</span> <span style="color: #c397d8;">is</span> <span style="color: #c397d8;">self</span>, <span style="color: #b9ca4a;">"Tried to release a lock we don't own!"</span>
+    <span style="color: #e78c45;">req</span> = <span style="color: #c397d8;">self</span>.request_queue.pop<span style="color: #c397d8;">(</span>0<span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">assert</span> req.sender <span style="color: #c397d8;">is</span> <span style="color: #c397d8;">self</span>, <span style="color: #b9ca4a;">"We somehow claimed the lock without being at the front of the queue!"</span>
+    <span style="color: #c397d8;">self</span>.the_lock.release<span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">for</span> p <span style="color: #c397d8;">in</span> peers:
+        <span style="color: #c397d8;">self</span>.send_message<span style="color: #c397d8;">(</span>p, Message.a_mutex_release<span style="color: #7aa6da;">(</span><span style="color: #c397d8;">self</span>, p, <span style="color: #c397d8;">self</span>.time<span style="color: #70c0b1;">()</span><span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">self</span>.clock.increment<span style="color: #c397d8;">()</span>
+</pre>
+</div>
+
+<p>
+We can adjust how long a process holds the lock here. Increasing the
+expected lock hold time while holding constant the probability that a
+process wants the lock will increase lock contention.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">ready_to_release</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">return</span> randint<span style="color: #c397d8;">(</span>1, 2<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+According to IR2, when a process receives a message it sets its clock
+to a value greater than or equal to its present value and greater than
+timestamp on the incoming message.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">receive_message</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, sender, msg<span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">self</span>.clock.ensure_at_least<span style="color: #c397d8;">(</span>msg.sent_at + 1<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+The first type of message we must handle is a request for the lock.
+After we place the request on the request<sub>queue</sub>, we send a timestamped
+acknowledgement to the process that claimed the lock.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">if</span> msg.content == <span style="color: #b9ca4a;">"REQUEST"</span>:
+    <span style="color: #c397d8;">self</span>.request_queue.append<span style="color: #c397d8;">(</span>msg<span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">self</span>.send_message<span style="color: #c397d8;">(</span>sender, Message.an_ack<span style="color: #7aa6da;">(</span><span style="color: #c397d8;">self</span>, sender, <span style="color: #c397d8;">self</span>.time<span style="color: #70c0b1;">()</span><span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+The second type of message is a release of the lock. The (now former)
+owner of the lock is guaranteed to be at the head of the queue, so we
+just pop the head of the queue.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">elif</span> msg.content == <span style="color: #b9ca4a;">"RELEASE"</span>:
+    logging.debug<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"{} processing release by {}. Before removing:"</span>.<span style="color: #70c0b1;">format</span><span style="color: #7aa6da;">(</span><span style="color: #c397d8;">self</span>, sender<span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+    logging.debug<span style="color: #c397d8;">(</span><span style="color: #70c0b1;">str</span><span style="color: #7aa6da;">(</span><span style="color: #c397d8;">self</span>.request_queue<span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">self</span>.request_queue.pop<span style="color: #c397d8;">(</span>0<span style="color: #c397d8;">)</span>
+    logging.debug<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"After: {}:"</span>.<span style="color: #70c0b1;">format</span><span style="color: #7aa6da;">(</span><span style="color: #c397d8;">self</span>.request_queue<span style="color: #7aa6da;">)</span><span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+The third and final type of message is an acknowledgement of our claim
+from another process. In this case we simply record the time of the
+acknowledgement and the process that sent it.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">elif</span> msg.content == <span style="color: #b9ca4a;">"ACK"</span>:
+    <span style="color: #c397d8;">self</span>.latest_ack_from<span style="color: #c397d8;">[</span>sender.name<span style="color: #c397d8;">]</span> = msg.sent_at
+</pre>
+</div>
+
+<p>
+We could potentially claim the lock in response to two types of
+events: an acknowledgement of our claim (if no other process owns the
+lock) or a notification of a release. When we receive either of these
+messages, we check whether we have the right to claim the lock. If we
+do, we take it.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">if</span> msg.content <span style="color: #c397d8;">in</span> <span style="color: #c397d8;">[</span><span style="color: #b9ca4a;">"ACK"</span>, <span style="color: #b9ca4a;">"RELEASE"</span><span style="color: #c397d8;">]</span> <span style="color: #c397d8;">and</span> <span style="color: #c397d8;">self</span>.can_claim_lock<span style="color: #c397d8;">()</span>:
+        <span style="color: #c397d8;">self</span>.the_lock.claim<span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+We can claim the lock if and only if the following two conditions
+hold:
+</p>
+
+<ol class="org-ol">
+<li>Our request for the lock is ordered before every other request.</li>
+<li>We have received an acknowledgement of our claim from every other
+process which is timestamped after our request.</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">can_claim_lock</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+    <span style="color: #e78c45;">first_req</span> = <span style="color: #c397d8;">self</span>.get_request_queue<span style="color: #c397d8;">()[</span>0<span style="color: #c397d8;">]</span>
+    <span style="color: #c397d8;">if</span> first_req.sender <span style="color: #c397d8;">is</span> <span style="color: #c397d8;">self</span>:
+        <span style="color: #e78c45;">HARDCODED_NUM_PEERS</span> = 8 <span style="color: #969896; font-style: italic;"># </span><span style="color: #d54e53; font-weight: bold;">FIX</span><span style="color: #969896; font-style: italic;">ME: Stop hardcoding</span>
+        <span style="color: #e78c45;">acks</span> = <span style="color: #c397d8;">[</span>sender <span style="color: #c397d8;">for</span> <span style="color: #7aa6da;">(</span>sender, t<span style="color: #7aa6da;">)</span> <span style="color: #c397d8;">in</span> <span style="color: #c397d8;">self</span>.latest_ack_from.iteritems<span style="color: #7aa6da;">()</span>
+                    <span style="color: #c397d8;">if</span> t &gt; first_req.sent_at<span style="color: #c397d8;">]</span>
+        <span style="color: #c397d8;">return</span> <span style="color: #70c0b1;">len</span><span style="color: #c397d8;">(</span>acks<span style="color: #c397d8;">)</span> == HARDCODED_NUM_PEERS
+</pre>
+</div>
+
+<p>
+Ordering events by their timestamp would produce a partial ordering,
+but we need a total ordering. Thus, we break ties using an
+alphabetical ordering based on the process' name. Note that this
+requires that process names be unique.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #e7c547;">@classmethod</span>
+<span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">total_ordering</span><span style="color: #c397d8;">(</span>cls, msg<span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">return</span> <span style="color: #c397d8;">(</span>msg.sent_at, msg.sender.name<span style="color: #c397d8;">)</span>
+
+<span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">get_request_queue</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span><span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">self</span>.request_queue.sort<span style="color: #c397d8;">(</span>key=Process.total_ordering<span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">return</span> <span style="color: #c397d8;">self</span>.request_queue
+</pre>
+</div>
+
+<p>
+Processes delegate the delivery of messages to the Message Broker.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">def</span> <span style="color: #7aa6da;">send_message</span><span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, recipient, msg<span style="color: #c397d8;">)</span>:
+    <span style="color: #c397d8;">self</span>.msg_broker.send_message<span style="color: #c397d8;">(</span><span style="color: #c397d8;">self</span>, recipient, msg<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">if</span> <span style="color: #70c0b1;">__name__</span> == <span style="color: #b9ca4a;">"__main__"</span>:
+    logging.basicConfig<span style="color: #c397d8;">(</span>level=logging.INFO<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">the_lock</span> = Mutex<span style="color: #c397d8;">()</span>
+    <span style="color: #e78c45;">msg_broker</span> = MsgBroker<span style="color: #c397d8;">()</span>
+
+    <span style="color: #e78c45;">a</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Andromeda"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">b</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Bonesaw"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">c</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Charybda"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">d</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Doofus"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">e</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Egbertina"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">f</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Fido"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">g</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Gary"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">h</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Hufflepuff"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+    <span style="color: #e78c45;">i</span> = Process<span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"Iola"</span>, the_lock, msg_broker<span style="color: #c397d8;">)</span>
+
+    <span style="color: #e78c45;">processes</span> = <span style="color: #c397d8;">[</span>a, b, c, d, e, f, g, h, i<span style="color: #c397d8;">]</span>
+    <span style="color: #e78c45;">SIMULATION_DURATION</span> = 1000000
+
+    <span style="color: #c397d8;">for</span> t <span style="color: #c397d8;">in</span> <span style="color: #70c0b1;">range</span><span style="color: #c397d8;">(</span>1, SIMULATION_DURATION<span style="color: #c397d8;">)</span>:
+        <span style="color: #c397d8;">for</span> p <span style="color: #c397d8;">in</span> processes:
+            <span style="color: #e78c45;">peers</span> = <span style="color: #c397d8;">[</span>x <span style="color: #c397d8;">for</span> x <span style="color: #c397d8;">in</span> processes <span style="color: #c397d8;">if</span> <span style="color: #c397d8;">not</span> x <span style="color: #c397d8;">is</span> p<span style="color: #c397d8;">]</span>
+            <span style="color: #c397d8;">if</span> p.wants_lock<span style="color: #c397d8;">()</span>:
+                p.request_lock<span style="color: #c397d8;">(</span>peers<span style="color: #c397d8;">)</span>
+            <span style="color: #c397d8;">if</span> p == the_lock.owner<span style="color: #c397d8;">()</span> <span style="color: #c397d8;">and</span> p.ready_to_release<span style="color: #c397d8;">()</span>:
+                p.release_lock<span style="color: #c397d8;">(</span>peers<span style="color: #c397d8;">)</span>
+
+        msg_broker.deliver<span style="color: #c397d8;">()</span>
+
+    <span style="color: #c397d8;">print</span> <span style="color: #b9ca4a;">"The lock was claimed {} times and released {} times"</span>.<span style="color: #70c0b1;">format</span><span style="color: #c397d8;">(</span>the_lock.num_claims, the_lock.num_releases<span style="color: #c397d8;">)</span>
+    <span style="color: #c397d8;">print</span> <span style="color: #b9ca4a;">"MsgBroker: {}"</span>.<span style="color: #70c0b1;">format</span><span style="color: #c397d8;">(</span>msg_broker<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org768abf4" class="outline-3">
+<h3 id="org768abf4"><span class="section-number-3">1.4</span> Appendix</h3>
+<div class="outline-text-3" id="text-1-4">
+</div><div id="outline-container-org2f3d0f3" class="outline-4">
+<h4 id="org2f3d0f3"><span class="section-number-4">1.4.1</span> Proof that converse of Clock Condition does not hold</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<pre class="example">
+|     |
+|     |
+a2    |
+|     b1
+a1    |
+|     |
+A     B
+</pre>
+
+<p>
+To see why, consider the above scenario and assume that both the Clock
+Condition and its converse are true.
+</p>
+
+<p>
+That is for any events \(a\) and \(b\)
+</p>
+
+<p>
+\[
+\text{if } a \rightarrow b \text{ then } C \langle a \rangle < C \langle b \rangle.
+\text{if } C \langle a \rangle < C \langle b \rangle \text{ then } a \rightarrow b
+\]
+</p>
+
+<p>
+\(a_1\) and \(a_2\) occur in the same process, so by the first rule of the
+happened-before relation
+</p>
+
+<p>
+(1) \(a_1 \rightarrow a_2\)
+</p>
+
+<p>
+No messages are exchanged between processes \(A\) and \(B\), so by the
+second and third rules of the happened-before relation
+</p>
+
+<p>
+(2) \(a_1 \nrightarrow b_1\)
+</p>
+
+<p>
+(3) \(a_2 \nrightarrow b_1\)
+</p>
+
+<p>
+If \(C \langle a_1 \rangle < C \langle b_1 \rangle\), then the converse
+of the Clock Condition implies that \(a_1 \rightarrow b_1\), which contradicts
+(2). Thus,
+</p>
+
+<p>
+(4) \(C \langle a_1 \rangle \ge C \langle b_1 \rangle\)
+</p>
+
+<p>
+If \(C \langle a_1 \rangle > C \langle b_1 \rangle\), then \(b_1
+\rightarrow a_1\), which also contradicts (2). Thus, by (4)
+</p>
+
+<p>
+(5) \(C \langle a_1 \rangle = C \langle b_1 \rangle\)
+</p>
+
+<p>
+By a similar argument, we have that
+</p>
+
+<p>
+(6) \(C \langle a_2 \rangle = C \langle b_1 \rangle\)
+</p>
+
+<p>
+Combining (5) and (6), we have that \(C \langle a_1 \rangle = C \langle
+a_2 \rangle = C \langle b_1 \rangle\). But we have in (1) that \(a_1
+\rightarrow a_2\), so to satisfy the Clock Condition requires that \(C
+\langle a_1 \rangle < C \langle a_2 \rangle\). This leads to a
+contradiction, so the converse of the Clock Condition does not hold.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <div class="footpara"><p class="footpara">
+Lest the Amazon corporate overlords who instituted high-density,
+open-plan seating read this as a success story, I should point out
+that said coworker was audibly singing AC/DC's "Highway to Hell" and
+playing the air drums with No. 2 pencils just before joining our
+conversation. Odd guy, true story.
+</p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Andrew Stahlman</p>
+<p class="date">Created: 2017-01-22 Sun 21:17</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
