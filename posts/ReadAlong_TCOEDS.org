@@ -1,4 +1,4 @@
-* Read Along: Time, Clocks, and the Ordering of Events in a Distributed System
+#+TITLE: Read Along: Time, Clocks, and the Ordering of Events in a Distributed System
 
 In my first few months at Amazon, I needed (or at least thought I
 needed) to synchronize writes to a Dynamo table. My deskmate and I
@@ -34,7 +34,7 @@ which don't correspond with the passage of time, so in the second half
 of the paper Lamport extends this system to impose a total ordering of
 events that incorporates events in physical space-time.
 
-** Partial Ordering
+* Partial Ordering
 
 Remember how the processes in a distributed system don't have to be
 computers? Let's make our processes people. Our messages aren't
@@ -66,7 +66,7 @@ other.
 
 Notice that physical time appears nowhere in these definitions.
 
-** Logical Clocks
+* Logical Clocks
 
 Now we're ready to bring in clocks. Unlike wall-clocks, which run
 continuously, our logical clocks are discrete and event-driven. That
@@ -132,7 +132,7 @@ a (still extremely naive) distributed lock using our logical clocks.
 
 In fact, let's go ahead and do that.
 
-** Implementation
+* Implementation
 :PROPERTIES:
 :header-args: :tangle assets/lamport.py
 :END:
@@ -148,6 +148,9 @@ In fact, let's go ahead and do that.
 from random import randint
 import logging
 #+END_SRC
+
+
+** LogicalClock
 
 A LogicalClock keeps track of the current time in a Process. The clock
 can tick in two ways:
@@ -171,6 +174,8 @@ class LogicalClock(object):
     def ensure_at_least(self, t):
         self.time = max(self.time, t)
 #+end_src
+
+** Mutex
 
 A Mutex can have at most one owner at a given time. It tracks its
 current owner and the number of times it has been claimed and
@@ -214,6 +219,8 @@ has a corresponding release.
         assert self.num_claims == self.num_releases
 #+end_src
 
+** Message
+
 A Message has three components: a sender, a recipient, and a
 timestamp. The timestamp is the local time at which the message was
 sent from the perspective of the sending Process.
@@ -231,7 +238,7 @@ class Message(object):
 #+end_src
 
 There are three classes of Messages: a Request for the mutex, a
-Release of the mutex, and an acknowledgement of a Request by another
+Release of the mutex, and an Acknowledgement of a Request by another
 Process.
 
 #+begin_src python
@@ -253,6 +260,8 @@ Process.
         m.content = "ACK"
         return m
 #+end_src
+
+** Message Broker
 
 The MsgBroker mediates communication between Processes. A Process
 sends messages by posting the message to the MsgBroker, which enqueues
@@ -296,6 +305,8 @@ out of order.
             pending_msgs += (len(outbox) if outbox else 0)
         return 'Messages pending delivery: {}'.format(pending_msgs)
 #+end_src
+
+** Process
 
 Each process is uniquely identified by a name. Processes coordinate
 access to a shared resource via the_lock and communicate via a
@@ -482,6 +493,8 @@ Processes delegate the delivery of messages to the Message Broker.
         return self.clock.time
 #+end_src
 
+** Driver
+
 Our driver program is simple. We instantiate 10 processes, a lock, and
 a message broker. In each time cycle, every process has the chance to
 (randomly) request the lock. If the lock is owned, the owner randomly
@@ -494,6 +507,7 @@ that none of our assertions failed and our distributed algorithm
 worked.
 
 #+begin_src python
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     the_lock = Mutex()
@@ -527,7 +541,7 @@ if __name__ == "__main__":
     print "MsgBroker: {}".format(msg_broker)
 #+END_SRC
 
-** Footnotes
+* Footnotes
 
 [fn:1] Lest the Amazon corporate overlords who instituted high-density,
 open-plan seating read this as a success story, I should point out
@@ -535,9 +549,9 @@ that said coworker was audibly singing AC/DC's "Highway to Hell" and
 playing the air drums with No. 2 pencils just before joining our
 conversation. Odd guy, true story.
 
-** Appendix
+* Appendix
 
-*** Proof that converse of Clock Condition does not hold
+** Proof that converse of Clock Condition does not hold
 #+BEGIN_EXAMPLE
 |     |
 |     |
@@ -551,43 +565,70 @@ A     B
 To see why, consider the above scenario and assume that both the Clock
 Condition and its converse are true.
 
-That is for any events $a$ and $b$
+That is for any events $a$ and $b$, we have the Clock Condition:
 
-$$
-\text{if } a \rightarrow b \text{ then } C \langle a \rangle < C \langle b \rangle.
-\text{if } C \langle a \rangle < C \langle b \rangle \text{ then } a \rightarrow b
-$$
+\begin{equation}
+    \label{eq:clock-condition}
+    \text{if } a \rightarrow b \text{ then } C \langle a \rangle < C \langle b \rangle \\
+\end{equation}
+
+And its converse:
+
+\begin{equation}
+    \label{eq:clock-condition-converse}
+    \text{if } C \langle a \rangle < C \langle b \rangle \text{ then } a \rightarrow b
+\end{equation}
 
 $a_1$ and $a_2$ occur in the same process, so by the first rule of the
 happened-before relation
 
-(1) $a_1 \rightarrow a_2$
+\begin{equation}
+    \label{eq:a1}
+    a_1 \rightarrow a_2
+\end{equation}
 
 No messages are exchanged between processes $A$ and $B$, so by the
 second and third rules of the happened-before relation
 
-(2) $a_1 \nrightarrow b_1$
+\begin{equation}
+    \label{eq:a2}
+    a_1 \nrightarrow b_1
+\end{equation}
 
-(3) $a_2 \nrightarrow b_1$
+\begin{equation}
+    \label{eq:a3}
+    a_2 \nrightarrow b_1
+\end{equation}
 
-If $C \langle a_1 \rangle < C \langle b_1 \rangle$, then the converse
-of the Clock Condition implies that $a_1 \rightarrow b_1$, which contradicts
-(2). Thus,
+If $C \langle a_1 \rangle < C \langle b_1 \rangle$, then
+\ref{eq:clock-condition-converse} implies that $a_1 \rightarrow b_1$,
+which contradicts \ref{eq:a2}. Thus,
 
-(4) $C \langle a_1 \rangle \ge C \langle b_1 \rangle$
+\begin{equation}
+    \label{eq:a4}
+    C \langle a_1 \rangle \ge C \langle b_1 \rangle
+\end{equation}
 
-If $C \langle a_1 \rangle > C \langle b_1 \rangle$, then $b_1
-\rightarrow a_1$, which also contradicts (2). Thus, by (4)
+If $C \langle a_1 \rangle > C \langle b_1 \rangle$, then
+\ref{eq:clock-condition-converse} implies that $b_1 \rightarrow a_1$,
+which also contradicts \ref{eq:a2}. Thus, by \ref{eq:a4}
 
-(5) $C \langle a_1 \rangle = C \langle b_1 \rangle$
+\begin{equation}
+    \label{eq:a5}
+    C \langle a_1 \rangle = C \langle b_1 \rangle
+\end{equation}
 
 By a similar argument, we have that
 
-(6) $C \langle a_2 \rangle = C \langle b_1 \rangle$
+\begin{equation}
+    \label{eq:a6}
+    C \langle a_2 \rangle = C \langle b_1 \rangle
+\end{equation}
 
-Combining (5) and (6), we have that $C \langle a_1 \rangle = C \langle
-a_2 \rangle = C \langle b_1 \rangle$. But we have in (1) that $a_1
-\rightarrow a_2$, so to satisfy the Clock Condition requires that $C
-\langle a_1 \rangle < C \langle a_2 \rangle$. This leads to a
-contradiction, so the converse of the Clock Condition does not hold.
+Combining \ref{eq:a5} and \ref{eq:a6}, we have that $C \langle a_1
+\rangle = C \langle a_2 \rangle = C \langle b_1 \rangle$. But we have
+in \ref{eq:a1} that $a_1 \rightarrow a_2$, so to satisfy
+\ref{eq:clock-condition} requires that $C \langle a_1 \rangle < C
+\langle a_2 \rangle$. This leads to a contradiction, so
+\ref{eq:clock-condition-converse} does not hold.
 
