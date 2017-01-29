@@ -134,8 +134,10 @@ In fact, let's go ahead and do that.
 
 * Implementation
 :PROPERTIES:
-:header-args: :tangle code/tcoeds.py
+:header-args: :tangle ../code/tcoeds/main.py
 :END:
+
+This code is available on [[https://github.com/astahlman/andrewstahlman_dot_com/blob/master/src/code/tcoeds/main.py][GitHub]].
 
 #+BEGIN_SRC emacs-lisp :tangle no :exports none
 (setq org-src-preserve-indentation t)
