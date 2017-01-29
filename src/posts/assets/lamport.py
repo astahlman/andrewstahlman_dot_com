@@ -90,10 +90,11 @@ class MsgBroker(object):
 
 class Process(object):
 
-    def __init__(self, name, the_lock, msg_broker):
+    def __init__(self, name, the_lock, msg_broker, num_peers):
         self.name = name
         self.the_lock = the_lock
         self.msg_broker = msg_broker
+        self.num_peers = num_peers
 
         self.clock = LogicalClock()
         self.request_queue = []
@@ -114,8 +115,6 @@ class Process(object):
         return not self.has_request_pending() and randint(1, 10) == 1
 
     def has_request_pending(self):
-        # To see the effect of network congestion, uncomment the line below
-        #return False
         return any(x for x in self.request_queue if x.sender is self)
 
     def release_lock(self, peers):
@@ -152,10 +151,9 @@ class Process(object):
     def can_claim_lock(self):
         first_req = self.get_request_queue()[0]
         if first_req.sender is self:
-            HARDCODED_NUM_PEERS = 9 # FIXME: Stop hardcoding
             acks = [sender for (sender, t) in self.latest_ack_from.iteritems()
                         if t > first_req.sent_at]
-            return len(acks) == HARDCODED_NUM_PEERS
+            return len(acks) == self.num_peers
 
     @classmethod
     def total_ordering(cls, msg):
@@ -176,16 +174,18 @@ if __name__ == "__main__":
     the_lock = Mutex()
     msg_broker = MsgBroker()
 
-    a = Process("Andromeda", the_lock, msg_broker)
-    b = Process("Bonesaw", the_lock, msg_broker)
-    c = Process("Charybda", the_lock, msg_broker)
-    d = Process("Doofus", the_lock, msg_broker)
-    e = Process("Egbertina", the_lock, msg_broker)
-    f = Process("Fido", the_lock, msg_broker)
-    g = Process("Gary", the_lock, msg_broker)
-    h = Process("Hufflepuff", the_lock, msg_broker)
-    i = Process("Iola", the_lock, msg_broker)
-    j = Process("Jethro", the_lock, msg_broker)
+    num_processes = 10
+
+    a = Process("Andromeda", the_lock, msg_broker, num_processes - 1)
+    b = Process("Bonesaw", the_lock, msg_broker, num_processes - 1)
+    c = Process("Charybda", the_lock, msg_broker, num_processes - 1)
+    d = Process("Doofus", the_lock, msg_broker, num_processes - 1)
+    e = Process("Egbertina", the_lock, msg_broker, num_processes - 1)
+    f = Process("Fido", the_lock, msg_broker, num_processes - 1)
+    g = Process("Gary", the_lock, msg_broker, num_processes - 1)
+    h = Process("Hufflepuff", the_lock, msg_broker, num_processes - 1)
+    i = Process("Iola", the_lock, msg_broker, num_processes - 1)
+    j = Process("Jethro", the_lock, msg_broker, num_processes - 1)
 
     processes = [a, b, c, d, e, f, g, h, i, j]
     SIMULATION_DURATION = 1000000
