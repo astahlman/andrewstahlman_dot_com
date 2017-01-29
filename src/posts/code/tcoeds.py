@@ -1,3 +1,4 @@
+#!/usr/bin/python2.7
 from random import randint
 import logging
 
@@ -169,8 +170,19 @@ class Process(object):
     def time(self):
         return self.clock.time
 
+import argparse
+
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+
+    parser = argparse.ArgumentParser('Simulate Processes coordinating mutual exclusion.')
+    parser.add_argument(
+        '-v', '--verbose',
+        help='print every message exchanged between processes',
+        action='store_true')
+    args = parser.parse_args()
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(level=log_level)
+
     the_lock = Mutex()
     msg_broker = MsgBroker()
 
@@ -188,9 +200,12 @@ if __name__ == "__main__":
     j = Process("Jethro", the_lock, msg_broker, num_processes - 1)
 
     processes = [a, b, c, d, e, f, g, h, i, j]
-    SIMULATION_DURATION = 1000000
+    assert len(processes) == num_processes
 
-    for t in range(1, SIMULATION_DURATION):
+    SIMULATION_NUM_CYCLES = 10000
+
+    logging.info("Starting simulation with {} processes.".format(len(processes)))
+    for t in range(1, SIMULATION_NUM_CYCLES):
         for p in processes:
             peers = [x for x in processes if not x is p]
             if p.wants_lock():
@@ -200,5 +215,6 @@ if __name__ == "__main__":
 
         msg_broker.deliver()
 
-    print "The lock was claimed {} times and released {} times".format(the_lock.num_claims, the_lock.num_releases)
-    print "MsgBroker: {}".format(msg_broker)
+    logging.info("The lock was claimed {} times and released {} times"
+                 .format(the_lock.num_claims, the_lock.num_releases))
+    logging.info("MsgBroker: {}".format(msg_broker))

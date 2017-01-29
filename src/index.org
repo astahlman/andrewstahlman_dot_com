@@ -1,1 +1,7 @@
-Welcome. This page is pretty empty, at the moment.
+#+TITLE: Home
+#+AUTHOR: Andrew Stahlman
+
+| Date             | Title                                                                       |
+|------------------+-----------------------------------------------------------------------------|
+| <2017-01-29 Sun> | [[posts/ReadAlong_TCOEDS.html][Read Along: Time, Clocks, and the Ordering of Events in Distributed Systems]] |
+
