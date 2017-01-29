@@ -2,7 +2,7 @@
 
 In my first few months at Amazon, I needed (or at least thought I
 needed) to synchronize writes to a Dynamo table. My deskmate and I
-started diagramming an implementation for a naive distributed
+started diagramming an implementation for a distributed
 locking-mechanism. A recent grad school graduate, overhearing our
 conversation [fn:1] interrupted and said, "Oh, there's like, a whole
 paper about this stuff by a famous guy from Microsoft."
@@ -34,13 +34,15 @@ which don't correspond with the passage of time, so in the second half
 of the paper Lamport extends this system to impose a total ordering of
 events that incorporates events in physical space-time.
 
+This post covers only the first half of Lamport's paper. Maybe one day
+I'll get around to posting part two.
+
 * Partial Ordering
 
 Remember how the processes in a distributed system don't have to be
 computers? Let's make our processes people. Our messages aren't
-encrypted, so we'll dispense with Bob and Alice and call our processes
-Bonesaw and Andromeda. Bonesaw and Andromeda are hip millenials who
-communicate only via Snapchat.
+encrypted, so we'll dispense with Bob and Alice. Let's call our
+processes something more interesting, like Bonesaw and Andromeda.
 
 Time to introduce our first relation: "happened-before," denoted
 $\rightarrow$
@@ -74,7 +76,7 @@ is, they only "tick" in response to events. Each process has its own
 clock which assigns, to each of its events, an integer representing
 the "time" at which the event occurred.
 
-More formally, each process $P_i$ has an associated clock $C_i$,
+More formally, each process $P_i$ has an associated clock $C_i$
 defined as a function which assigns a number $C_i \langle a \rangle$
 to event $a$ in process $P_i$. We define $C$ as the entire system of
 clocks which assigns to any event $b$ the number $C \langle b
@@ -93,8 +95,8 @@ Formally, it states that:
 \end{equation}
 
 Lamport claims that "it is easy to see" that the converse does not
-hold. It wasn't easy for me, so I attempted an informal proof, which you can
-check [[*Proof%20that%20converse%20of%20Clock%20Condition%20does%20not%20hold][here]] if you care to.
+hold. It wasn't easy for me, so I attempted an informal proof, which
+you can check [[*Proof%20that%20converse%20of%20Clock%20Condition%20does%20not%20hold][here]] if you care to.
 
 Applying the definition of the happened-before relation, we can
 restate the Clock Condition in the form of the following two
@@ -118,26 +120,30 @@ need only two implementation rules.
 
 The only downside of this approach is that still imposes only a
 partial ordering. For concurrent events the ordering is stil
-non-deterministic. The remedy is simple: just arbitrarily define a
-total ordering on the processes.
+non-deterministic.
+
+The remedy is simple: just arbitrarily define a total ordering on the
+processes.
 
 Under this scheme, if Bonesaw and Andromeda send concurrent messages,
 a total ordering in which Andromeda $<$ Bonesaw would dictate that we
-always order Andromeda's message before Bonesaw's (Sorry, Bonesaw).
+always order Andromeda's message before Bonesaw's (Poor Bonesaw).
 
 And that's it. We now have a system of logical clocks which imposes a
-total ordering on events. Why is this useful? Because we can use it as
-the basis for a mutual exclusion mechanism. That is, we can implement
-a (still extremely naive) distributed lock using our logical clocks.
+total ordering on events. Why is this useful? Because now our
+collection of independent processes shares a consistent, ordered, view
+of the system's events. We can use this as the basis for many
+distributed algorithms, including a mutual exclusion mechanism.
 
-In fact, let's go ahead and do that.
+That is, I can finally implement that (still naïve) distributed lock.
+Let's go ahead and do that.
 
 * Implementation
 :PROPERTIES:
 :header-args: :tangle ../code/tcoeds/main.py
 :END:
 
-This code is available on [[https://github.com/astahlman/andrewstahlman_dot_com/blob/master/src/code/tcoeds/main.py][GitHub]].
+You can find all of this code on [[https://github.com/astahlman/andrewstahlman_dot_com/blob/master/src/code/tcoeds/main.py][GitHub]].
 
 #+BEGIN_SRC emacs-lisp :tangle no :exports none
 (setq org-src-preserve-indentation t)
@@ -544,7 +550,7 @@ if __name__ == "__main__":
 
     SIMULATION_NUM_CYCLES = 10000
 
-    logging.info("Starting simulation with {} processes.".format(len(processes)))
+    logging.info("Starting simulation with {} processes...".format(len(processes)))
     for t in range(1, SIMULATION_NUM_CYCLES):
         for p in processes:
             peers = [x for x in processes if not x is p]
@@ -555,20 +561,28 @@ if __name__ == "__main__":
 
         msg_broker.deliver()
 
+    logging.info("Done. Simulation finished with no errors.")
     logging.info("The lock was claimed {} times and released {} times"
                  .format(the_lock.num_claims, the_lock.num_releases))
-    logging.info("MsgBroker: {}".format(msg_broker))
+#+END_SRC
+
+
+#+BEGIN_SRC sh :dir ../ :results output :tangle no
+./code/tcoeds/main.py
 #+END_SRC
 
 #+RESULTS:
+: INFO:root:Starting simulation with 10 processes...
+: INFO:root:Done. Simulation finished with no errors.
+: INFO:root:The lock was claimed 382 times and released 382 times
 
 * Footnotes
 
-[fn:1] Lest the Amazon corporate overlords who instituted high-density,
-open-plan seating read this as a success story, I should point out
-that said coworker was audibly singing AC/DC's "Highway to Hell" and
-playing the air drums with No. 2 pencils just before joining our
-conversation. Odd guy, true story.
+[fn:1] Lest the corporate overlords responsible for high-density
+seating tout this as a success story, I should point out that said
+coworker was singing AC/DC's "Highway to Hell" and playing the air
+drums with No. 2 pencils just before joining our conversation. Odd
+guy. True story.
 
 * Appendix
 
@@ -652,4 +666,3 @@ in \ref{eq:a1} that $a_1 \rightarrow a_2$, so to satisfy
 \ref{eq:clock-condition} requires that $C \langle a_1 \rangle < C
 \langle a_2 \rangle$. This leads to a contradiction, so
 \ref{eq:clock-condition-converse} does not hold.
-

@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     SIMULATION_NUM_CYCLES = 10000
 
-    logging.info("Starting simulation with {} processes.".format(len(processes)))
+    logging.info("Starting simulation with {} processes...".format(len(processes)))
     for t in range(1, SIMULATION_NUM_CYCLES):
         for p in processes:
             peers = [x for x in processes if not x is p]
@@ -215,6 +215,6 @@ if __name__ == "__main__":
 
         msg_broker.deliver()
 
+    logging.info("Done. Simulation finished with no errors.")
     logging.info("The lock was claimed {} times and released {} times"
                  .format(the_lock.num_claims, the_lock.num_releases))
-    logging.info("MsgBroker: {}".format(msg_broker))
