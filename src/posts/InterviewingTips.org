@@ -275,7 +275,7 @@ assert numElements >= 1;
 Voila! It communicates exactly the same thing to the reader, except
 now they don't have to just take your word for it.
 
-** Use your heuristics to bound your search space
+** Bound your search space
 
 Most of the problems that get asked in interviews have at least one
 naïve solution. Obviously, you should describe this solution to your
