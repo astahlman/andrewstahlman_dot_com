@@ -1,0 +1,333 @@
+#+TITLE: Practical tips for whiteboard coding interviews
+#+AUTHOR: Andrew Stahlman
+
+I spent a lot of time this summer preparing for whiteboard coding
+interviews. I've half-written several blog posts reflecting on my
+experience, but so far I haven't finished any of them. Rather than
+spend yet another Sunday afternoon rewriting yet another incoherent
+treatise on meta-learning, I'm limiting the scope of this post to
+concrete tips for whiteboard coding interviews.
+
+If I could give only one piece of advice, it would be to buy a
+spiral-bound notebook and Cracking the Coding Interview and work
+through the book. Also, find someone to mock-interview you - you're
+probably not as ready as you think you are.
+
+Ok, that was two pieces of advice. Here are some more.
+
+* Before the interview
+
+** Minimize the likelihood of surprise
+
+Eliminate as many potential sources of surprise as possible before
+your interview.
+
+The obvious source of surprise is the interview questions themselves.
+You'll usually be surprised by the specifics of the question, but if
+you've prepared well then you'll have some intuition from having
+solved similar problems.
+
+If the company offers candidate coaching or allows you to come onsite
+in lieu of a phone screen, take advantage of it. The novelty of your
+physical surroundings is a potential distraction you should eliminate
+before interview day, if practical.
+
+If your interview will be on a laptop, try to find out how it's
+configured. For example, Google gives candidates the option of writing
+code in Google Docs on a Chromebook. Pro tip: there's a free Chrome
+extension called DriveAce that offers syntax highlighting for various
+languages as well as Vi and Emacs keybindings. Once you've practiced
+it a couple of times, it takes less than 10 seconds to go from a
+rage-inducing, Microsoft Word-style prose editor to a nice text editor
+with programmer-friendly keybindings.
+
+During my Google interview, I drew pictures and outlined the problem
+on a whiteboard before switching to the Chromebook to write the
+solution. This worked really well. In fact, I was able to redeem one
+round from disastrous to merely bad by spending the last two minutes
+of the interview hammering out ugly code on the Chromebook. Had I
+instead been at a whiteboard I would have been dancing back and forth,
+scribbling arrows everywhere, and saying things like, "If you could
+just pretend that all of this code is actually part of that method
+over there..."
+
+Even if you aren't interviewing at Google, the principle still holds -
+practice like it's the real thing.
+
+(Google freely divulges this information in their candidate coaching
+sessions, so I think I'm in the clear talking about it here.)
+
+** Develop your vocabulary
+
+During my interview preparation I adopted the habit of writing a
+paragraph or two about each practice problem that I solved. I hoped
+that this exercise would prepare me to to communicate my thought
+process during interviews, but I discovered an unexpected benefit.
+Ever heard of the [[https://en.wikipedia.org/wiki/Linguistic_relativity][Sapir-Whorf hypothesis]]? It basically says that the
+thoughts that you can think are limited by the language at your
+disposal.
+
+Consider two hypothetical candidates explaining the performance
+considerations for a hashtable.
+
+The first candidate explains that "the insert operation for a hashtable
+has amortized, constant time complexity, assuming a relatively uniform
+hash function. If the choice of hash function results in a high load
+factor for any particular bucket, then the performance degenerates to
+linear time."
+
+The second candidate reasons that "putting stuff in is big-O of n,
+because you could have too many collisions and have to iterate through
+all the elements in each bucket. But usually it's faster. The average
+case is just big-O of 1, because, you know, the worst case doesn't
+happen unless all the elements have the same hash."
+
+Sure, the second candidates language is a little less precise, but we
+know what they mean, right? Isn't it just pedantic snobbery to insist
+on speaking like an algorithms textbook when plain-ol',
+regular-person, English will suffice?
+
+Not if you believe Sapir and Whorf. The first candidate's vocabulary
+doesn't just help her communicate her solution better - it enables her
+to *think* better. Having a compact mental representation allows your
+brain to quickly fetch a complex concept into your working memory.
+This ability is vital in an interview environment which requires
+quick, high-level, thinking to select heuristics from a large search
+space.
+
+I've found that the best way to truly internalize a concept is to try
+to express it in English, sometimes accompanied by a diagram. My first
+attempt usually reveals holes in my mental model. Look for wishy-washy
+phrases in your own writing - imprecise prose often indicates a lack
+of understanding.
+
+Once I'm satisfied with the language, it's time to compress and index.
+During this stage I edit what I've written to make it as succinct as
+possible without sacrificing clarity or completeness. By the end of
+this process, I have a rich but compact mental representation of the
+concept that I associate with a few words or phrases.
+
+** Develop idioms for common problem types
+
+Credit for this idea goes to my friend Jakob.
+
+There are a surprising number of popular interview questions that
+presuppose the existence of a 2-dimensional NxM grid, e.g.,
+Battleship, Tic-Tac-Toe, Boggle, Minesweeper, guiding robots out of
+dark caves, flood-filling, navigating a skiier down a tree-spotted
+slope which mysteriously restricts movement to the 4 cardinal
+directions, etc.
+
+Problems like these often call for iterating over the grid from a
+given point. The most obvious way to do this is usually to represent
+the grid as a 2D array of integers and iterate in a doubly-nested for
+loop with integer counter variables. Sometimes you can get away with
+this, but I've found that I often end up getting bogged down in
+writing tedious bounds-checks.
+
+For problems like these, it's helpful to be able to automatically whip
+out an abstraction like this.
+
+#+BEGIN_SRC java
+    class Point {
+        // TODO: constructor
+        int x, y;
+
+        Point up() { return new Point(x, y - 1); }
+        Point down() { return new Point(x, y + 1); }
+        Point left() { return new Point(x - 1, y); }
+        Point right() { return new Point(x + 1, y); }
+    }
+
+    class Grid<T> {
+        // TODO: constructor
+        T[][] points;
+        int numRows = points.length;
+        int numCols = points[0].length;
+
+        boolean isInBounds(Point p) {
+            return (p.x >= 0 && p.x < numCols) && (p.y >= 0 && p.y < numRows);
+        }
+
+        T valAt(Point p) { return points[p.y][p.x]; }
+    }
+#+END_SRC
+
+Graphs are another common abstraction with several different
+representations. The ability to quickly choose between object nodes
+with pointers, an adjacency matrix, or an adjacency list and code it
+without spending any brain cycles gives you an advantage.
+
+* During the interview
+** It's OK to skip around
+
+Don't confine yourself to writing code linearly.
+
+If you find youself getting bogged down in the mechanics of a tricky
+section of code, just leave yourself some room and move on. This
+technique is particularly effective when dealing with recursion. It's
+easier to identify the base case after the recursive step is in place
+(Credit for this idea again goes to Jakob).
+
+Another strategy for getting unstuck is what Sussman and Abelson call
+"programming by wishful thinking." If you find yourself in need of a
+Foo but are unsure of how to acquire it, sometimes it's better to
+simply call findAFoo() and move on. Not only does deferring the
+implementation keep you from losing momentum and confidence, but the
+mechanics of the Foo acquisition process might become obvious once
+you've fleshed out the rest of the solution.
+
+** get() on with it already before you set() your interviewer off
+
+Don't waste time on boilerplate. This applies especially if you're
+writing Java on a whiteboard. One of my pet peeves as an interviewer
+is when a candidate identifies the need for a simple abstraction
+like a 2-D Coordinate, and starts to write code like this.
+
+#+BEGIN_SRC java
+  package com.tronbabylove.interview.acmecorp;
+
+  public class Coordinate {
+
+      private final Integer x;
+      private final Integer y;
+
+      public Coordinate(Integer x, Integer y) {
+          this.x = x;
+          this.y = y;
+      }
+
+      public Integer getX() {
+          return this.x;
+      }
+
+      public Integer getY() {
+          return this.y;
+      }
+
+      public Integer setX(Integer x) {
+          this.x = x;
+      }
+
+      public Integer setY(Integer y) {
+          this.y = y;
+      }
+  }
+#+END_SRC
+
+Why???
+
+This is totally sufficient - it even compiles in Java and C++!
+
+#+BEGIN_SRC java
+class Coord {
+    int x, y;
+};
+#+END_SRC
+
+Spending time writing useless getters and setters tells your
+interviewer that one or both of the following statements are likely
+true:
+
+1. You have no idea how to approach the problem, so you're simply
+   engaging with trivialities as a stalling tactic.
+2. You're unable to break down a problem and direct your effort
+   towards meaningful work
+
+Either way, it doesn't reflect well on your problem-solving ability.
+
+** Use assertions liberally
+
+There's nothing that will kick the old sweat glands into high gear
+like clicking "Run" in your CoderPad with 3 minutes left in a phone
+screen and watching your program spit out an opaque, totally
+incorrect, output.
+
+An AssertionError, on the other hand, is like a blinking neon sign
+pointing to exactly which of your assumptions was incorrect. When
+you're bug-hunting under pressure you really want blinking neon
+signs.
+
+Even if you aren't going to be running your code during the interview,
+assertions around the preconditions and postconditions of your
+important methods are still great tools for thought and communication.
+It's also an easy habit to adopt. In fact, a lot of people are almost
+programming without assertions without even realizing it.
+
+Next time you find yourself writing a comment like this...
+
+#+BEGIN_SRC java
+// At this point, we know there must be at least 1 element
+#+END_SRC
+
+Just express it a little more formally.
+
+#+BEGIN_SRC java
+// numElements >= 1
+#+END_SRC
+
+Now make that comment executable.
+
+#+BEGIN_SRC java
+assert numElements >= 1;
+#+END_SRC
+
+Voila! It communicates exactly the same thing to the reader, except
+now they don't have to just take your word for it.
+
+** Use your heuristics to bound your search space
+
+Most of the problems that get asked in interviews have at least one
+naïve solution. Obviously, you should describe this solution to your
+interviewer first.
+
+It can be overwhelming when it comes time to optimize. If there's no
+obvious next step, there will likely be many promising algorithms and
+data structures bouncing around the walls of your short-term memory.
+When you start to feel overwhelmed by the size of the potential search
+space, it helps to imagine the properties of the best possible
+solution.
+
+For example, if your problem involves searching a collection for every
+element that matches some criteria, the obvious solution is just to
+scan the entire collection in linear time. With a baseline of O(n),
+you can narrow your search space to solutions that are better than
+O(n), which for 99% of the interview questions you'll encounter means
+either logarithmic or constant time and/or space. Algorithms that
+don't depend on their input size are rare, so it's unlikely a constant
+time solution exists. Now you're looking for properties of the
+collection that could serve as the basis for a logarithmic search.
+
+Of course, there's no substitute for systematic reasoning when a
+problem calls for a non-standard algorithm, but falling back on simple
+heuristics can kickstart your search when you don't know where to
+begin.
+
+* Conclusion
+
+I believe that there are two types of people who succeed in whiteboard
+interviews:
+
+1. People with a rock solid foundation in computer science who can
+   consistently reason their way through any unfamiliar problem in 45
+   minutes or less, despite the presence of another judgmental human.
+2. Normal people who have studied a lot.
+
+While I wish I were in the former group, the success I've had has
+always come through exhaustive preparation. The ability to reconstruct
+a tree from an in-order traversal is, at best, a weak predictor of
+success in the real world. Still, I don't begrudge the hours I've
+spent preparing for whiteboard interviews.
+
+If you view the time you spend studying as preparation for a test,
+then there's a good chance you will fail. Your performance will be
+graded against a rubric which varies with whatever set of biased
+humans was unlucky enough to be assigned an interview that day. Woe
+unto you if you're the type of person who derives your self-worth from
+your ability to calculate the shortest path between any two nodes in a
+directed, acyclic graph.
+
+But if instead you view this time as an opportunity to review the
+fundamentals of computer science, then it's value is
+outcome-independent. Investing in yourself is always good decision,
+regardless of whether any particular corporation offers you a job.

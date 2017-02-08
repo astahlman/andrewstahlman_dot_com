@@ -3,5 +3,6 @@
 
 | Date             | Title                                                                       |
 |------------------+-----------------------------------------------------------------------------|
-| <2017-01-29 Sun> | [[posts/ReadAlong_TCOEDS.html][Read Along: Time, Clocks, and the Ordering of Events in Distributed Systems]] |
+| <2017-02-07 Tue> | [[./posts/InterviewingTips.html][Practical tips for whiteboard coding interviews]]                             |
+| <2017-01-29 Sun> | [[./posts/ReadAlong_TCOEDS.html][Read Along: Time, Clocks, and the Ordering of Events in Distributed Systems]] |
 
