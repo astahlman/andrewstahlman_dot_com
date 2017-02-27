@@ -1,0 +1,205 @@
+#+TITLE: Is It Worth The Time?
+#+AUTHOR: Andrew Stahlman
+
+I've been thinking about tooling and automation lately, and it
+reminded me of [[https://xkcd.com/1205/][xkcd #1205]] (Is It Worth The Time?) and [[https://xkcd.com/1319/][xkcd #1319]]
+(Automation). This idea clearly resonates with developers; we've all
+felt the disillusionment that follows an entire afternoon spent on
+what began as a simple Bash script.
+
+The implicit premise behind [[https://xkcd.com/1205/][Is It Worth The Time?]] is that one should
+invest in automation only when it results in net positive time
+savings. I'd like to challenge that. I'm here to try to convince you
+that you should regularly invest more time in automation than you
+expect to save.
+
+Imagine that you're given two hours to automate some task that you
+perform once a day. You estimate that you can save 30 seconds per day
+by spending 90 minutes optimizing your workflow for one of the
+following activities:
+
+1. Brushing your teeth, or
+2. A common refactoring operation.
+
+You consult [[https://xkcd.com/1205/][Is It Worth The Time?]] and confirm that both of these
+optimizations would indeed be worth it; amortized over 5 years, 30
+seconds a day adds up to roughly 2 hours. At a cost of 90 minutes
+either optimization will result in 30 minutes of net time savings. But
+you've only got time to implement one, so which do you choose?
+
+If you base your decision solely on total time saved, you may as well
+flip a coin. You'll save exactly 30 seconds per day whether you choose
+to optimize your dental care routine or your refactoring toolchain.
+
+One flaw in this line of reasoning stems from the fact that we are
+dealing in absolute quantities. There's a big difference between a 30
+second improvement in the 800m race versus the marathon. Similarly,
+the quantity of time saved is more meaningful expressed in relation to
+the baseline.
+
+Let's assume you devote 14 minutes per week (7 days/wk * 2
+session/day * 1 minute/session) to dental hygiene and 30 minutes per
+week to refactoring. A 30 second per day reduction in teeth-brushing
+time represents a src_R{100 * 7 / 14} {{{results(=50=)}}} % increase
+in efficiency, whereas 30 seconds saved during refactoring only
+represents a src_R{100 * (30 * 7) / (30 * 60)}
+{{{results(=11.6666666666667=)}}} % increase in efficiency.
+
+So you should use the 2 hours to optimize your tooth-brushing routine
+because the potential efficiency gains are greater, right? To see why
+this is a poor choice, consider how you will spend the 30 minutes that
+you save.
+
+You could use that 30 minutes to curl up on the couch with Sherlock
+Holmes and a mug of pu'erh tea, and that would be an excellent choice.
+Alternatively, you could use that time to do more refactoring. This
+would be a sub-optimal choice, but it's still a net gain over your
+baseline.
+
+But unless you're a real weirdo, you wouldn't reinvest the
+time-savings from brushing your teeth into /more/ tooth-brushing. Your
+teeth can only get so clean, so you would quickly reach the point of
+diminishing returns. If you continued brushing, the marginal utility
+would become negative as you started doing harm to your gums. In
+economic terms, you could say that the marginal utility curve for
+tooth brushing is concave. (At least I think you could say that, but
+I'm a software engineer who attended only the first and last lecture
+of Econ 101.)
+
+In contrast, if your code base is anything like mine then additional
+time spent on refactoring will yield some benefit. Yeah, sure - the
+marginal utility approaches 0 in the limit, but I don't see many
+engineers twiddling their thumbs and admiring their immaculate code
+base. Thus unlike in the tooth-brushing scenario you could increase
+your output if you reinvested your time savings in more refactoring.
+
+We brush our teeth for 1 minute at a time because 1 minute is plenty.
+But we don't spend only 30 minutes per week on refactoring because an
+additional half-hour would be wasted - 30 minutes is simply the
+duration that's feasible given our current efficiency and resource
+constraints.
+
+The danger in a naïve application of the [[https://xkcd.com/1205/][Is It Worth The Time?]]
+formula comes from treating all processes like tooth-brushing.
+Decreasing the cost of an activity with a positive marginal utility
+should lead us to perform that activity more often. Therefore, it's a
+mistake to estimate the time an optimization will save based on your
+/current/ frequency.
+
+Consider the advent of TDD. Developers have put countless person-hours
+into optimizing the workflow of running tests in response to code
+changes. Has it been worth it?
+
+If you had done the cost-benefit analysis based on standard software
+development practices 10-15 years ago, you would conclude that it
+wasn't.
+
+Imagine we run the tests once a day, and it takes 5 minutes. Maybe we
+could bring that down to 5 seconds with an investment in our test
+infrastructure, but is it worth it?
+
+Let's be optimistic about our project's chances of survival and
+amortize the cost of automation over 3 years. That means we can spend
+up to src_R{((300 - 5) * 5 * 52 * 3) / (60 * 60)}
+{{{results(=63.9166666666667=)}}} hours optimizing test runtime
+before it's no longer worth the effort. Our lead developer estimates
+it will take 14 story points. The project's TPM disappears into a
+smoke-filled tent to perform the ritual that converts story points to
+hours. Chanting ensues. He emerges with an Excel spreadsheet that
+proves that the optimization is not worth it: 14 story points equates
+to 180 developer-hours, which is nearly 3 times our expected savings
+of 64 hours.
+
+The shortcomings of this analysis are only obvious because we've
+experienced the benefits of the red-green-refactor cycle and CI tools
+that run on every commit. Faster tests wouldn't be worth it in the old
+workflow, but their existence enabled new workflows that we hadn't yet
+imagined.
+
+Thus when deciding whether to invest in automation, the question to
+ask is not, "How often do I do this task?" but "How often would /I
+like/ to do this task?"
+
+The amount of time saved is only one of several dimensions along which
+to judge the utility of automating a given task. It's the one that
+receives the most attention only because it's the easiest to measure:
+this used to take X minutes, now it only takes Y minutes. It even
+reduces to a simple algebraic inequality, which [[https://xkcd.com/1205/][Is It Worth The Time?]]
+depicts graphically.
+
+But not all minutes are created equal. The quality of time saved is
+often more important than the quantity. Avoiding 2 seconds of
+distraction during a period of deep focus can be more valuable than an
+automation that saves 5 minutes of drudgery.
+
+If you've ever pair-programmed with someone else's editor, then you
+know how debilitating it is to have to think through the mechanics of
+moving text around. This is a consequence of the limitations of the
+brain's short-term memory.
+
+Working memory is precious, so the expensive mental model of your
+program is the first thing that gets evicted when your brain needs to
+reclaim space. This happens every time you have to plan a sequence of
+keystrokes that will cut that variable, copy it into the method's
+parameter list, locate the caller, move the assignment into the
+caller, and then return to the original file. The trick to keeping
+your mental model in bio-RAM is to reduce this type of rote operation
+to a few keystrokes. Then you can delegate their execution to muscle
+memory.
+
+It might take hours to build this tooling that directly saves only a
+few seconds a day. But even if your time savings over the next X years
+are significantly less than the time you spend automating, I'd still
+argue that this type of investment is usually worth it.
+
+Though the accumulation of 2 second increments may not amount to much,
+the real cost isn't the 2 seconds of text manipulation - it's the 30
+seconds you spend afterwards repopulating your working memory. If deep
+problem solving is like slalom skiing, then the right tools help you
+preserve momentum by squeezing the gates closer together.
+
+Furthermore, time savings aren't the only benefit. Refactoring tools
+encourage quality by reducing the cost of a good behavior. If it's
+easy to refactor, you'll probably refactor more.
+
+And finally, you have to account for the effects of convexity. Every
+investment in automation decreases the cost of future automation,
+which leads to accelerating gains in productivity.
+
+This is obvious in one sense: the first Vimscript or elisp function
+you write that increases your text-editing speed helps you write the
+second one faster. Similarly, the first Perl script you write to
+extract customer IDs from log files could serve as a good starting
+point when you need a script to scrape order numbers.
+
+But more importantly, the regular practice of automating increases
+your skill. Every script or editor hack you take on is an opportunity
+to build proficiency in your preferred scripting language. Increased
+skill lowers the cost of subsequent automation, which leads you to
+automate more, which increases your skill, which further lowers the
+cost of automation, and so on in a virtuous cycle of compounding
+growth.
+
+I've confined the scope of my arguments in favor of automation to your
+personalized workflow. Automation in a group context brings other
+benefits that I think are obvious and discussed more, so I haven't
+touched them. If you need convincing, go read a book on devops/site
+reliability engineering and a few post-mortems that involve
+miscommunication and humans doing silly things with a terminal.
+
+Of course, a sharp axe isn't intrinsically valuable - eventually you
+need to get out there and actually chop down some trees. I know there
+are personality types that optimize /everything/ compulsively, but I
+think most people (myself included) inhabit the other end of the
+spectrum. We'd rather live with inefficiency than spend 10 minutes on
+a bash script.
+
+To combat [[http://wiki.c2.com/?FalseLaziness][false laziness]], I keep and periodically reprioritize a
+wishlist of tooling improvements. During a flight or on a slow Friday
+afternoon I'll take whatever's at the top of the backlog and spend an
+hour or two hacking. This process ensures that I regularly invest in
+optimizing my most consistently painful workflows.
+
+So go forth and automate. Write that editor plugin or browser
+extension that you've been wishing for - it's probably more important
+than you think.
