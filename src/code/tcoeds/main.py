@@ -83,12 +83,6 @@ class MsgBroker(object):
                 logging.debug("[MSG]: {}".format(msg))
                 recipient.receive_message(sender, msg)
 
-    def __str__(self):
-        pending_msgs = 0
-        for (sender, recipient), outbox in self.queue.items():
-            pending_msgs += (len(outbox) if outbox else 0)
-        return 'Messages pending delivery: {}'.format(pending_msgs)
-
 class Process(object):
 
     def __init__(self, name, the_lock, msg_broker, num_peers):
@@ -100,9 +94,6 @@ class Process(object):
         self.clock = LogicalClock()
         self.request_queue = []
         self.latest_ack_from = {}
-
-    def __str__(self):
-        return "{name}@{time}".format(name=self.name, time=self.time())
 
     def request_lock(self, peers):
         for p in peers:
@@ -217,4 +208,4 @@ if __name__ == "__main__":
 
     logging.info("Done. Simulation finished with no errors.")
     logging.info("The lock was claimed {} times and released {} times"
-                 .format(the_lock.num_claims, the_lock.num_releases))
+                .format(the_lock.num_claims, the_lock.num_releases))

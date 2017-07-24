@@ -1,0 +1,1440 @@
+#+TITLE: Pareto Perl
+#+PROPERTY: header-args:js :eval no
+
+It's 2 am and your pager goes off. The site is down, and you need to
+extract a list of affected orders from the logs. Quick, first answer
+that pops into your head: what tools do you use?
+
+A lot of people I've worked with fall back to a combination of grep
+and awk, which is fine but usually only gets you so far. Some reach
+for Python or Ruby, neither of which is a bad choice. Several, I'm
+sorry to report, use Java, which is a disgusting choice.
+
+The ability to quickly extract information from text files is an
+undervalued skill. Fluency in a scripting language represents a huge
+point of leverage, and Perl makes for a great crowbar.
+
+So why don't more people use Perl? Probably because they're all using
+Python instead.
+
+#+NAME: google-trends-view
+#+BEGIN_EXPORT html
+  <a href="https://trends.google.com/trends/explore?date=all&q=perl,python"><img src="../assets/python-vs-perl.png"/></a>
+#+END_EXPORT
+
+I'm not going to try to convince you to renounce Python in favor of
+Perl. In fact, for most non-trivial scripts I'd argue that Python is
+the more sensible choice.
+
+But there is a niche in which Perl fits perfectly: somewhere between
+grep and a full-blown script. In this exploratory stage you don't need
+pretty - you just want something quick. This is where Perl's inline
+scripting capabilities distinguish it from other scripting languages.
+
+To process a text file in Python you'd need to split a tmux pane, open
+a new file, add a shebang, save it in some scratch directory, =chmod
++x= it, import the regex library, and write some tedious
+with-open-while-read boilerplate just to get each line of the
+input. Then and only then are you ready to write code that actually
+processes text.
+
+In Perl, the entire setup process is condensed to 12 characters, input
+directly in your shell: =perl -lne ''=.
+
+Warning: Perl is a big language. In fact, one of its core tenets is
+that for any task [[http://wiki.c2.com/?ThereIsMoreThanOneWayToDoIt][There's More Than One Way To Do It]]. Flexibility is
+great, but not particularly helpful when all you need is a one-liner
+that accomplishes a specific task.
+
+In this post we'll focus on the tiny subset of Perl that I, a total
+Perl novice, find useful in my day-to-day work. If you're looking for
+a comprehensive introduction to Perl written by an expert, this is not
+the blog post for you.
+
+Enough talk. Let's concoct a real-world scenario and see Perl in
+action. (Note: you can edit and run every code block on this page.)
+
+* Hands-on with Perl
+
+We're oncall for an on-demand cookie delivery startup. Due to a bad
+deployment, we've failed to persist thousands of orders. Luckily we
+logged each request, so we should be able to reconstruct them. Let's
+ssh into one of the servers and see what we're working with.
+
+#+NAME: server-logs
+#+BEGIN_EXAMPLE
+[INFO] Received order for 2 'Snickerdoodle' from customer 'billbob@hotmail.com'
+[INFO] Received order for 5 'Chocolate Chip' from customer 'guineapiggurl@aol.com'
+[INFO] Restarting server on port 8000...
+[INFO] Received order for 1 'Double Chocolate' from customer 'billbob@hotmail.com'
+[INFO] Received order for 1 'Chocolate Macadamia' from customer 'guitarstar43@hotmail.com'
+[INFO] Received order for 3 'Oatmeal Raisin' from customer 'luv2laugh@yahoo.com'
+[INFO] Releasing 5 connections back to the connection pool
+[INFO] Received order for 1 'Snickerdoodle' from customer 'luv2laugh@yahoo.com'
+[INFO] Received order for 2 'Chocolate Chip' from customer 'billbob@hotmail.com'
+[INFO] Database connection lease expired, releasing connection
+[INFO] Received order for 3 'Peanut Butter' from customer 'billbob@hotmail.com'
+[INFO] Received order for 7 'Oatmeal Raisin' from customer 'taco_fiend@gmail.com'
+#+END_EXAMPLE
+
+#+NAME: log-file
+#+BEGIN_SRC shell :var contents=server-logs log_file="logs.txt" :results verbatim :exports none
+cat <<EOF > $log_file
+$contents
+EOF
+echo $log_file
+#+END_SRC
+
+#+RESULTS: log-file
+: logs.txt
+
+
+We'll start by extracting the orders in a form that we can work
+with. (Hint: Click "Run")
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell
+perl -lne "/order for (\d+) '(.*)' from customer '(.*)'/ && print \"\$1\t\$2\t\$3\"" logs.txt
+#+END_SRC
+
+#+RESULTS:
+| 2 | Snickerdoodle       | billbob@hotmail.com      |
+| 5 | Chocolate Chip      | guineapiggurl@aol.com    |
+| 1 | Double Chocolate    | billbob@hotmail.com      |
+| 1 | Chocolate Macadamia | guitarstar43@hotmail.com |
+| 3 | Oatmeal Raisin      | luv2laugh@yahoo.com      |
+| 1 | Snickerdoodle       | luv2laugh@yahoo.com      |
+| 2 | Chocolate Chip      | billbob@hotmail.com      |
+| 3 | Peanut Butter       | billbob@hotmail.com      |
+| 7 | Oatmeal Raisin      | taco_fiend@gmail.com     |
+
+What did we just do? First, let's break down the flags. The
+interpreter has an overwhelming number of switches, but I use this
+exact combination 95% of the time (and when I don't, I have to consult
+Google).
+
+| Flag | Meaning                                                                                                                                                                                                                                                                                                                                              |
+|------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -n   | Declares an implicit while loop around your code that iterates over each record.                                                                                                                                                                                                                                                                     |
+| -l   | Automatically appends the output record separator when calling the print function. When used in conjunction with =-n=, it also automatically "chomps" off the input record separator. In practice, this means you don't have to deal with stripping the newline character from each input record or adding a newline to each string before printing. |
+| -e   | Evaluate the following string as a Perl program.                                                                                                                                                                                                                                                                                                                                                     |
+
+The relative ordering of =-l= and =-n= doesn't matter, but =-e= needs
+to directly precede the text of our program.
+
+So this invocation translates to, "Run the following script against
+every line of the input file, and don't make me think about newlines."
+
+As for the code, we're just applying a regex and conditionally
+printing the first two captured groups, which are stored in =$1= and
+=$2= respectively. Note that I had to escape the variable names to
+prevent the shell from trying to evaluate =$1= and =$2= as environment
+variables before passing the string to the Perl interpreter.
+
+Let's answer a simple question for our head baker: how many of each
+variety of cookie does she need to make?
+
+We need to group by cookie variety and sum up the counts. Most Perl
+scripts I write conform to this general pattern: use a regex to
+extract records from a text file, then aggregate over some arbitrary
+grouping. The recipe in such situations typically calls for a hash
+(think "hashtable") that maps a string id to either a number (if we're
+only interested in accumulating the count) or another hash or array
+(if we need a more complex involving the actual values).
+
+** Recipe 1: Extract and Aggregate with a Hash
+
+In this case, the stream is our server logs, each record consists of a
+cookie variety, quantity, and customer email address, and we're
+aggregating the number of orders per cookie variety.
+
+Let's start simple and iterate. We'll create a hash where each key is
+a cookie variety and the value is the number of cookies of this variety.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell
+perl -nle "/order for (\d+) '(.*)' from customer '(.*)'/ && do { \$x{\$2} += \$1; }; "\
+"END { foreach \$k (keys %x) { print \$k, \"\t\", \$x{\$k} } }" logs.txt
+#+END_SRC
+
+#+RESULTS:
+| Snickerdoodle       |  3 |
+| Chocolate Macadamia |  1 |
+| Chocolate Chip      |  7 |
+| Peanut Butter       |  3 |
+| Double Chocolate    |  1 |
+| Oatmeal Raisin      | 10 |
+
+The regex is the same as before. =&&= does short-circuit boolean
+evaluation just like in Java or C, so the effect is to increment a
+per-customer counter on each match.
+
+Notice that we never declare our hash variable, =x=, nor do we
+explicitly initialize its values to 0. This works because Perl
+automagically initializes and assigns a hash to =x= the first time it
+is used (search =perldoc perlref= for 'autovivification' for further
+reading). Then when we try to perform addition on an undefined scalar,
+Perl helpfully treats that value as 0.
+
+Perl's autovivification and context-sensitive coercion of variables
+initially struck me as bizarre. The perldocs are full of WTF-inducing
+gems like this one, from =perldoc data=.
+
+#+BEGIN_EXAMPLE
+To find out whether a given string is a valid non-zero number, it's
+sometimes enough to test it against both numeric 0 and also lexical "0"
+#+END_EXAMPLE
+
+Sometimes, but hey, maybe not! You never know.
+
+Taken in the abstract, this design choice sounds arbitrary and
+convoluted. But it's a perfect example of the pragmatism that makes
+Perl so _convenient_.
+
+Compare our one-liner in Perl...
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell
+perl -nle "/order for (\d+) '(.*)' from customer '(.*)'/ && do { \$x{\$2} += \$1; }; "\
+"END { foreach \$k (keys %x) { print \$k, \"\t\", \$x{\$k} } }" logs.txt
+#+END_SRC
+
+#+RESULTS:
+| Peanut Butter       |  3 |
+| Oatmeal Raisin      | 10 |
+| Chocolate Chip      |  7 |
+| Chocolate Macadamia |  1 |
+| Snickerdoodle       |  3 |
+| Double Chocolate    |  1 |
+
+...to the equivalent Python:
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC python :tangle /tmp/extract-orders.py :shebang #!/usr/bin/python
+  import re
+  import sys
+
+  order_re = re.compile(".*order for (\d+) '(.+)' from customer '(.+)'")
+  orders = {}
+
+  with open(sys.argv[1], 'r') as f:
+      for line in f:
+          m = order_re.match(line)
+          if m:
+              (quant, cookie, cust) = m.groups()
+              orders[cookie] = orders.get(cookie, 0) + int(quant)
+
+  for cookie, quant in orders.iteritems():
+      print "{}\t{}".format(cookie, quant)
+#+END_SRC
+
+#+RESULTS:
+
+There's nothing wrong with this Python implementation. It's certainly
+easier to follow than our dense, Perl, one-liner. But it's also 13
+lines long and requires a dedicated file. If all you need is a quick
+answer to a one-off question, a couple of lines of throwaway Perl is
+almost always the faster route.
+
+Back to our Perl implementation.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell
+perl -nle "/order for (\d+) '(.*)' from customer '(.*)'/ && do { \$x{\$2} += \$1; }; "\
+"END { foreach \$k (keys %x) { print \$k, \"\t\", \$x{\$k} } }" logs.txt
+#+END_SRC
+
+#+RESULTS:
+| Chocolate Chip      |  7 |
+| Peanut Butter       |  3 |
+| Chocolate Macadamia |  1 |
+| Double Chocolate    |  1 |
+| Snickerdoodle       |  3 |
+| Oatmeal Raisin      | 10 |
+
+The only other interesting part of the code is the =END=
+block. Everything in this block is excluded from the implicit loop
+created by the =-n= flag and is executed exactly once at the end of
+the loop.
+
+Now armed with cookie counts, our chef gets busy baking. But now our
+delivery department comes knocking. They need to prepare to package
+these orders. Problem is, cookies that contain nuts need to be
+packaged separately from nut-free cookies. So for each customer we
+need two numbers: the number of cookies they've ordered that contain
+nuts, and the number of cookies that don't.
+
+This painfully contrived scenario calls for the second recipe in our
+Perl cookbook: aggregating over a hash of hashes.
+
+** Recipe 2: Extract and Aggregate with a Hash of Hashes
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell :results verbatim
+perl -nle "m/order for (\d+) '(.*)' from customer '(.*)'/ "\
+'&& do { $t = ($2 eq "Peanut Butter" or $2 eq "Chocolate Macadamia") ? "nutty" : "nut_free"; $x{$3}{$t} += $1; };
+END { foreach $cust (keys %x) { print join("\t", ($cust, $x{$cust}{"nutty"} || "0", $x{$cust}{"nut_free"} || "0")) } }' logs.txt
+#+END_SRC
+
+#+RESULTS:
+: taco_fiend@gmail.com	0	7
+: guineapiggurl@aol.com	0	5
+: guitarstar43@hotmail.com	1	0
+: luv2laugh@yahoo.com	0	4
+: billbob@hotmail.com	3	5
+
+Let's break it down.
+
+Our regex hasn't changed, but the =do= block bears some
+explanation. For each order, we check if the cookie variety contains
+nuts and assign it to one of two categories: cookies with nuts are
+keyed off the string 'nutty', others are 'non_nutty'. We map each of
+these strings to a counter in each customer's hash, and increment the
+appropriate counter for each order.
+
+The =END= block makes use of Perl's final data type: the array. For
+each customer in our hash, we initialize an array inline and print its
+comma-separated contents. The elements of the array are the customer's
+email address, their count of cookies with nuts, and their count of
+nut-free cookies.
+
+This works, but it's getting unwieldly. If you ever need to hand this
+script off to a coworker, there will likely be a strong negative
+correlation between the number of =$='s per line and the peer feedback
+rating on your annual performance review.
+
+The typical lifecycle of my Perl scripts usually looks like:
+
+1. Craft a quick one-liner, edited and executed directly from the
+   shell. Iterate until I start having to squint.
+2. Use fc to edit the inline script in vi, and throw in some newlines
+   for readability.
+3. Accept that this is no longer a one-liner and save the command to a
+   file in =/tmp=. Open this file in a split tmux pane for quick
+   iteration.
+
+At this point, we've reached the final phase. We've had some great
+times with our one-liner and we'll always cherish the memories we
+create together. But if we need to extend this any further, it's time
+to admit that we've outgrown each other and move on from the shell.
+
+If your first language is Python or Ruby then I wouldn't blame you for
+falling back to what you know best at this stage, given that we're
+forfeiting Perl's killer advantage: it's inline scripting capability.
+
+But just for fun, let's go through the exercise of turning this
+jibberish into a respectable script.
+
+** Leaving the shell
+:PROPERTIES:
+:header-args: :tangle /tmp/extract-orders :shebang #!/usr/bin/perl -l
+:END:
+
+First let's add some whitespace to make this a little more readable.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+while (<>) {
+    if (m/order for (\d+) '(.*)' from customer '(.*)'/) {
+        $t = ($2 eq "Peanut Butter" or $2 eq "Chocolate Macadamia") ? "nutty" : "nut_free";
+        $x{$3}{$t} += $1;
+    };
+}
+
+foreach $cust (keys %x) {
+    print join("\t", ($cust, $x{$cust}{"nutty"} || "0", $x{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+Notice that we've dropped the =-n= flag in favor of an explicit =while
+(<>)= loop. This does exactly the same thing and allows us to drop the
+=END= block. We could do better, though.
+
+That =eq or eq= test is triggering my obsessive compulsive urge to
+refactor. It also affords an opportunity to introduce the idiomatic
+way of representing sets in Perl: a hash where each member of the set
+maps to the value 1.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+%nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+
+while (<>) {
+    if (m/order for (\d+) '(.*)' from customer '(.*)'/) {
+        $t = exists $nutty{$2} ? "nutty" : "nut_free";
+        $x{$3}{$t} += $1;
+    };
+}
+
+foreach $cust (keys %x) {
+    print join("\t", ($cust, $x{$cust}{"nutty"} || "0", $x{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+The logic above is exactly the same, except that we've replaced that
+gross "if-or-or-or..." with a call to the =exists= function, which
+tests for membership in the set of nutty cookies.
+
+Also, now that we're no longer constrained by the width of our
+terminal, we should start using sensible variable names.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+%nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+
+while (<>) {
+    if (($quant, $cookie, $cust) = $_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/g) {
+        $is_nutty = exists $nutty{$cookie} ? "nutty" : "nut_free";
+        $orders{$cust}{$cookie} += $quant;
+    };
+}
+
+foreach $cust (keys %orders) {
+    print join("\t", ($cust, $orders{$cust}{"nutty"} || "0", $orders{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+Wait, 0 orders? That's obviously wrong. Ready for a neat debugging
+trick? We can =use= the =Data::Dumper= module to pretty-print
+data. Let's dump the contents of =%orders= to see where our
+refactoring went wrong.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+use Data::Dumper;
+
+%nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+
+while (<>) {
+    if (($quant, $cookie, $cust) = $_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/g) {
+        $is_nutty = exists $nutty{$cookie} ? "nutty" : "nut_free";
+        $orders{$cust}{$cookie} += $quant;
+    };
+}
+
+print Dumper(\%orders);
+
+foreach $cust (keys %orders) {
+    print join("\t", ($cust, $orders{$cust}{"nutty"} || "0", $orders{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+Now the problem is apparent: we're using the wrong key in the customer
+hash. It should be "nutty" or "nut_free", not the cookie variety.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+use Data::Dumper;
+
+%nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+
+while (<>) {
+    if (($quant, $cookie, $cust) = $_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/g) {
+        $is_nutty = exists $nutty{$cookie} ? "nutty" : "nut_free";
+        $orders{$cust}{$is_nutty} += $quant;
+    };
+}
+
+print Dumper(\%orders);
+
+foreach $cust (keys %orders) {
+    print join("\t", ($cust, $orders{$cust}{"nutty"} || "0", $orders{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+There, fixed. That debug output is just clutter now, though. Let's
+hide that behind a debug flag. Time to introduce a new Perl concept:
+subroutines. You declare a subroutine with the =sub= keyword. The
+arguments are available in the array =@_=. We can access the first
+argument by calling =shift= (as in, "shift left and pop the first
+element"), which operates on =@_= if no argument is specified.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+use Data::Dumper;
+
+$is_debug = 1;
+
+sub debug { $debug && print shift; }
+
+%nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+
+while (<>) {
+    if (($quant, $cookie, $cust) = $_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/g) {
+        $is_nutty = exists $nutty{$cookie} ? "nutty" : "nut_free";
+        $orders{$cust}{$is_nutty} += $quant;
+    };
+}
+
+debug Dumper(\%orders);
+
+foreach $cust (keys %orders) {
+    print join("\t", ($cust, $orders{$cust}{"nutty"} || "0", $orders{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+But wait, =$is_debug= is set - where's our debug output?
+
+Perl tolerates reckless behavior such as multiplying strings and
+tossing references to uninitialized variables around willy-nilly. But
+once you've eaten your pig slop and come crawling back, begging for a
+little discipline in order to save you from yourself, Perl will
+graciously oblige. All you have to do is =use strict= and =use
+warnings=.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+use strict;
+use warnings;
+use Data::Dumper;
+
+$is_debug = 1;
+
+sub debug { $debug && print shift; }
+
+%nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+
+while (<>) {
+    if (($quant, $cookie, $cust) = $_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/g) {
+        $is_nutty = exists $nutty{$cookie} ? "nutty" : "nut_free";
+        $orders{$cust}{$is_nutty} += $quant;
+    };
+};
+
+debug Dumper(\%orders);
+
+foreach $cust (keys %orders) {
+    print join("\t", ($cust, $orders{$cust}{"nutty"} || "0", $orders{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+Yikes! That's a lot of warnings. Fortunately most of them are just
+telling us that we need to declare all of our variables using the =my=
+keyword before we reference them. Let's do that.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+use strict;
+use warnings;
+use Data::Dumper;
+
+my $is_debug = 1;
+
+sub debug { $debug && print shift; }
+
+my %nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+my %orders;
+
+while (<>) {
+    if (my ($quant, $cookie, $cust) = $_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/g) {
+        my $is_nutty = exists $nutty{$cookie} ? "nutty" : "nut_free";
+        $orders{$cust}{$is_nutty} += $quant;
+    };
+}
+
+debug Dumper(\%orders);
+
+foreach my $cust (keys %orders) {
+    print join("\t", ($cust, $orders{$cust}{"nutty"} || "0", $orders{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+Sans clutter, the problem is easier to spot. The interpreter is giving
+us a hint here:
+
+#+BEGIN_EXAMPLE
+Global symbol "$debug" requires explicit package name (did you forget to declare "my $debug"?) at /tmp/extract-orders line 8.
+#+END_EXAMPLE
+
+In our =debug= subroutine we reference a scalar named =$debug=, which
+we never declared. That's because we actually meant
+=$is_debug=. Thanks, interpreter!
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+use strict;
+use warnings;
+use Data::Dumper;
+
+my $is_debug = 1;
+
+sub debug { $is_debug && print shift; }
+
+my %nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+my %orders;
+
+while (<>) {
+    if (my ($quant, $cookie, $cust) = $_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/g) {
+        my $is_nutty = exists $nutty{$cookie} ? "nutty" : "nut_free";
+        $orders{$cust}{$is_nutty} += $quant;
+    };
+}
+
+debug Dumper(\%orders);
+
+foreach my $cust (keys %orders) {
+    print join("\t", ($cust, $orders{$cust}{"nutty"} || "0", $orders{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+Fixed. But it's annoying to have to edit the code every time we want
+to toggle debugging. Let's accept a flag from the command line to
+enable debugging. The arguments to our program are available in
+=@ARGV=, and we can get the length of an array by resolving it in
+scalar context.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl
+use strict;
+use warnings;
+use Data::Dumper;
+
+my $is_debug = scalar @ARGV > 1 && shift @ARGV eq '--debug';
+
+sub debug { $is_debug && print shift; }
+
+my %nutty = ('Peanut Butter' => 1, 'Chocolate Macadamia' => 1,);
+my %orders;
+
+while (<>) {
+    if (my ($quant, $cookie, $cust) = $_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/g) {
+        my $is_nutty = exists $nutty{$cookie} ? "nutty" : "nut_free";
+        $orders{$cust}{$is_nutty} += $quant;
+    };
+}
+
+debug Dumper(\%orders);
+
+foreach my $cust (keys %orders) {
+    print join("\t", ($cust, $orders{$cust}{"nutty"} || "0", $orders{$cust}{"nut_free"} || "0"))
+}
+#+END_SRC
+
+#+RESULTS:
+
+Much better! At this point, you could probably pass this script off to
+a coworker without fear of them throwing something at you.
+
+And with that, we've covered just enough Perl to be dangerous. Let's
+do a quick review of the concepts that we've touched on.
+
+* Perl 101
+
+** Invocation
+
+=-lne= covers 95% of your use cases.
+
+- =-l= :: automatically strip the record separator (newline, by
+          default) off each input record and append it to each output
+          record
+- =-n= :: wrap your code in an implicit loop that iterates over each
+          input record
+- =-e= :: Execute the following string as a Perl program
+
+See =perldoc perlrun= for more information.
+
+** Data Types
+
+Perl has three fundamental data types: scalars, arrays, and
+hashes. See =perldoc perldata= for further reading.
+
+*** Scalar
+Scalars represent values. A scalar is either a string, number, or a
+reference. You don't explicitly declare the type of a scalar. In fact,
+scalars are automatically type-coerced depending on the context in
+which they are used. Scalar variables are prefixed with =$= - think
+"$calar".
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl :results output
+my $pi = 3.14;
+my $pi_string = "3.14";
+my $pie = "rhubarb";
+print $pi + $pi_string, "\n";
+print $pi + $pi, "\n";
+print $pi + $pie, "\n";
+print $pi . $pie . $pi_string, "\n";
+#+END_SRC
+
+#+RESULTS:
+: 6.28
+: 6.28
+: 3.14
+: 3.14rhubarb3.14
+
+*** Arrays
+An array is just an ordered list of scalars. Array variables are
+prefixed with =@=, as in "@rray". Use the sigil =$= when subscripting
+to access individual elements of an array.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl :results output
+my @arr = ("a", "b", "c");
+print "The 2nd element is ", $arr[1];
+#+END_SRC
+
+#+RESULTS:
+: The 2nd element is b
+
+*** Hashes
+Hashes are unordered collections of key-value pairs, where the keys
+are unique strings and the values are scalars. Hash variables start
+with =%=. (Why don't _hashes_ start with a _hash_ symbol, =#=? Seems
+like a missed opportunity there, Larry). As with arrays, you use the
+sigil =$= to access individual elements of a hash.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC perl :results output
+my %hash = ( 'cat' => 'meow', 'dog' => 'woof' );
+print "The $_ says '$hash{$_}'." for keys %hash;
+#+END_SRC
+
+#+RESULTS:
+: The dog says 'woof'.The cat says 'meow'.
+
+** Regexes
+
+Construct a regex with =/ /=. The syntax should look familiar if
+you've worked with regexes before. Captured groups are placed in =$1=,
+=$2=, =$3=, but you can also use destructuring assignment to put the
+captured groups into variables. Perl supports advanced constructs like
+positive and negative look-ahead and look-behind assertions, should
+you need them.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell
+echo "There's a fish in my dish!" | perl -lne '/a (\w+) in my (\w+)/; print "$1, $2"'
+echo "There's a snake in my boot!" | perl -lne '($thing, $place) = $_ =~ /a (\w+) in my (\w+)/; print "$thing, $place"'
+#+END_SRC
+
+#+RESULTS:
+| fish  | dish |
+| snake | boot |
+
+For more information, see =perldoc perlre=.
+
+** BEGIN and END blocks
+
+=BEGIN= and =END= blocks let you do things exactly once before and
+after an implicit while loop created by the =-n= flag.
+
+** Subroutines
+
+Subroutines, or functions, are declared with the =sub=
+keyword. Arguments are passed to the function via the array =@_=.
+Functions can be invoked with or without parenthesis around the
+arguments.
+
+See =perldoc perlsub= for more information.
+
+* Areas for further exploration
+
+Check out [[https://learnxinyminutes.com/docs/perl/][Learn X in Y Minutes, where X = perl]]. This is always my
+first stop when I'm working in an unfamiliar language. Then read up
+on:
+
+- How references work (start with =perldoc perlreftut=)
+- Map, grep, and reduce
+- Perl's various special variables (=perldoc perlvar=)
+- Chop and chomp
+- The flip-flop operator
+
+* Bonus: Perl + q
+
+If I have the luxury of working on my own laptop, I like to use Perl
+in conjunction with a utility called [[https://github.com/harelba/q][q]]. q allows you to run SQL
+queries against data in .csv files.
+
+Perl and q complement each other beautifully. First, use Perl's regex
+capabilities to extract records from a stream. Then use q to slice and
+dice the data.
+
+Let's revisit the problem of counting the number of cookies ordered
+per variety. We use a regex to extract and print the fields we're
+interested in. We also output the column names as the first line, for
+readability.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell
+perl -nle "BEGIN { print 'cnt,cookie,cust'; }
+@f = \$_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/;
+print join(',', @f) if @f" logs.txt
+#+END_SRC
+
+#+RESULTS:
+| cnt | cookie              | cust                     |
+|   2 | Snickerdoodle       | billbob@hotmail.com      |
+|   5 | Chocolate Chip      | guineapiggurl@aol.com    |
+|   1 | Double Chocolate    | billbob@hotmail.com      |
+|   1 | Chocolate Macadamia | guitarstar43@hotmail.com |
+|   3 | Oatmeal Raisin      | luv2laugh@yahoo.com      |
+|   1 | Snickerdoodle       | luv2laugh@yahoo.com      |
+|   2 | Chocolate Chip      | billbob@hotmail.com      |
+|   3 | Peanut Butter       | billbob@hotmail.com      |
+|   7 | Oatmeal Raisin      | taco_fiend@gmail.com     |
+
+Now let's pipe this table into q. A quick overview of the flags:
+
+| Flag | Type   | Effect                                |
+|------+--------+---------------------------------------|
+| -H   | Input  | Treat first line of input as headers  |
+| -O   | Output | Output column names as the first line |
+| -T   | Output | Output is tab-delimited               |
+| -d,  | Input  | Input is comma-delimited              |
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell
+perl -nle "BEGIN { print 'cnt,cookie,cust'; }
+@f = \$_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/;
+print join(',', @f) if @f" logs.txt | q -HOTd, "\
+select cookie, sum(cnt) as total
+from -
+group by 1
+order by 2 desc"
+#+END_SRC
+
+#+RESULTS:
+| cookie              | total |
+| Oatmeal Raisin      |    10 |
+| Chocolate Chip      |     7 |
+| Peanut Butter       |     3 |
+| Snickerdoodle       |     3 |
+| Chocolate Macadamia |     1 |
+| Double Chocolate    |     1 |
+
+Watch how easy it is to modify this to answer our other question: how
+many cookies with and without nuts, respectively, did each customer
+order? We simply need to modify our SQL query.
+
+#+ATTR_HTML: :repl t
+#+BEGIN_SRC shell
+perl -nle "BEGIN { print 'cnt,cookie,cust'; }
+@f = \$_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/;
+print join(',', @f) if @f" logs.txt | q -HOTd, "\
+select cust,
+       sum(case when cookie in ('Chocolate Macadamia', 'Peanut Butter') THEN cnt ELSE 0 END) as nutty,
+       sum(case when cookie not in ('Chocolate Macadamia', 'Peanut Butter') THEN cnt ELSE 0 END) as nut_free
+from -
+group by 1"
+#+END_SRC
+
+#+RESULTS:
+| cust                     | nutty | nut_free |
+| billbob@hotmail.com      |     3 |        5 |
+| guineapiggurl@aol.com    |     0 |        5 |
+| guitarstar43@hotmail.com |     1 |        0 |
+| luv2laugh@yahoo.com      |     0 |        4 |
+| taco_fiend@gmail.com     |     0 |        7 |
+
+* Making this post interactive                                     :noexport:
+** Lambda Backend
+:PROPERTIES:
+:tangle-root: ~/workplace/pareto-perl/
+:END:
+
+#+BEGIN_SRC emacs-lisp :results silent
+  (defun tangle-to (f)
+    (format "%s/%s" (org-entry-get-with-inheritance "tangle-root") f))
+#+END_SRC
+
+#+NAME: lambda
+#+BEGIN_SRC js :tangle (tangle-to "index.js")
+  'use strict';
+
+  const exec = require('child_process').exec;
+  const execSync = require('child_process').execSync;
+  const fs = require('fs');
+
+  var fail = function(msg, callback) {
+     var body = JSON.stringify({'error' : msg});
+     var response = {'statusCode': 400,
+                     'headers': {'Access-Control-Allow-Origin' : '*'},
+                     'body' : body};
+     return callback(null, response);
+  }
+
+  var dump_script = function(script_content) {
+      var script_file = execSync('mktemp /tmp/XXXXXXXX.pl').toString().trim();
+      try {
+          fs.writeFileSync(script_file, script_content);
+          execSync('chmod +x ' + script_file);
+      } catch (e) {
+          console.log("Failed to write: " + e);
+          throw new Error('Failed to write temporary script');
+      }
+      return script_file;
+  }
+
+  exports.handler = (event, context, callback) => {
+      console.log(event);
+
+      var req;
+      var cmd;
+      try {
+          req = JSON.parse(event.body); // TODO: Error handling
+      } catch (e) {
+          return fail(e.message, callback);
+      }
+
+      var cmd = req.cmd;
+      if (!cmd) {
+          return fail('You must specify a command in the body of your request, e.g., {"cmd" : <your_command>}', callback);
+      }
+
+      var invocation_style = event.queryStringParameters ? event.queryStringParameters.style : null;
+      if (['inline', 'script'].indexOf(invocation_style) < 0) {
+          return fail('You must specify invocation style as "?style={inline|script}"', callback);
+      }
+
+      var is_valid_script = cmd.length > 0 && cmd.length < 2048;
+      if (invocation_style == 'script') {
+          if (! is_valid_script) {
+              return fail('Script content must be < 2048 bytes', callback);
+          } else {
+              var script_path = dump_script(cmd);
+              cmd = script_path + " logs.txt";
+          }
+      }
+      console.log('cmd = ' + cmd);
+
+      const child = exec(cmd, {env: {'PERL5LIB': 'perl-libs', 'PATH': 'bin/:' + process.env.PATH}}, (error, stdout, stderr) => {
+          // Resolve with result of process
+          var cmd_result = {
+              'exit_code': error ? error.code : 0,
+              'stdout' : stdout,
+              'stderr' : stderr
+          };
+          var response = {
+              "statusCode": 200,
+              "headers": {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': '*'},
+              "body": JSON.stringify(cmd_result)
+          };
+          callback(null, response);
+      });
+
+      // Log process stdout and stderr
+      child.stdout.on('data', console.log);
+      child.stderr.on('data', console.error);
+  };
+#+END_SRC
+
+#+RESULTS: lambda
+
+*** Deployment
+
+#+BEGIN_SRC shell :prologue : :epilogue : :shebang #!/bin/bash :tangle (tangle-to "deploy-lambda.sh")
+  set -e
+  set -x
+
+  echo "Bundling index.js and resources as pareto-perl-runner.zip."
+  declare -a RESOURCES=("index.js logs.txt perl-libs")
+  rm -rf lambda-root && mkdir -p lambda-root && cp -r $RESOURCES lambda-root
+  mkdir lambda-root/bin && cp deps/q/bin/__init__.py lambda-root/bin/.
+  cp deps/q/bin/qtextasdata.py lambda-root/bin/q && chmod +x lambda-root/bin/q
+  pushd lambda-root && zip -r ../pareto-perl-runner.zip * && popd
+  echo "Uploading code to Lambda..."
+  aws --profile pareto-perl-admin lambda update-function-code \
+    --function-name pareto_perl_runner \
+    --zip-file fileb://pareto-perl-runner.zip
+  echo "Uploaded code to Lambda."
+#+END_SRC
+
+#+RESULTS:
+
+*** Testing
+:PROPERTIES:
+:header-args: :noweb yes :eval no
+:END:
+
+Sanity check: we can curl the endpoint and say Hello, World.
+
+#+BEGIN_SRC shell :results output
+curl -s -X POST \
+  -d '{"cmd": "perl -e '"'print "'\"'"howdy"'\"'"'"'"}' \
+"https://nw4fjuynjg.execute-api.us-west-2.amazonaws.com/beta/invocation?style=inline"
+#+END_SRC
+
+#+RESULTS:
+: {"exit_code":0,"stdout":"howdy","stderr":""}
+
+#+BEGIN_SRC perl :shebang #!/usr/bin/perl :tangle (tangle-to "test/test_backend.pl") :mkdirp yes
+use strict;
+use warnings;
+
+use JSON::Parse qw(parse_json);
+use JSON qw(encode_json);
+use Data::Dumper;
+use WWW::Curl::Easy;
+
+my $DEBUG = 1;
+
+sub debug { print shift if $DEBUG; }
+
+<<curl_def>>
+<<test_cases>>
+#+END_SRC
+
+#+RESULTS:
+
+**** Test Cases
+
+#+NAME: test_cases
+#+BEGIN_SRC perl
+<<test_case_1>>
+<<test_case_2>>
+<<test_case_3>>
+<<test_case_4>>
+#+END_SRC
+
+#+RESULTS: test_cases
+
+***** Hello, World - inline perl
+
+We should be able to print Hello, World by invoking perl inline.
+
+#+NAME: test_case_1
+#+BEGIN_SRC perl
+  sub test_perl_inline_invocation_hello_world {
+      my %params = ("invocation_style" => "inline");
+      my %body = ("cmd" => "perl -e \'print \"Hello, World!\"\'");
+      my $result = curl(\%params, encode_json(\%body));
+      debug Dumper $result;
+      $result->{'response'}{'stdout'} eq 'Hello, World!' or die "Expected perl to print Hello, World.";
+  }
+
+  test_perl_inline_invocation_hello_world();
+#+END_SRC
+
+#+RESULTS: test_case_1
+
+***** Inline execution of perl with bad flag
+
+Invoking the perl interpreter with a bad flag should return a 200
+response with non-zero exit code.
+
+#+NAME: test_case_2
+#+BEGIN_SRC perl
+
+  sub test_perl_inline_invocation_with_bad_flag {
+      my %params = ("invocation_style" => "inline");
+      my %body = ("cmd" => "perl -lze 'print'");
+      my $result = curl(\%params, encode_json(\%body));
+      debug Dumper $result;
+      $result->{'http_status'} == 200 or
+          die "Expected any invocation of perl to return 200, but got " . $result->{'http_status'};
+      $result->{'response'}{'stderr'} =~ /Unrecognized switch/ or
+          die "Expected message about bad switch on stderr'.";
+  }
+
+  test_perl_inline_invocation_with_bad_flag();
+#+END_SRC
+
+#+RESULTS: test_case_2
+
+***** Hello, World - perl script
+
+We should be able print Hello, World by invoking perl with a script
+file.
+
+#+NAME: test_case_3
+#+BEGIN_SRC perl
+  sub test_perl_script_invocation_hello_world {
+      my $script_content = <<'EOF';
+  #!/usr/bin/perl -l
+  my $name = "Cletus";
+  print "Howdy, $name!";
+  EOF
+      my %params = ("invocation_style" => "script");
+      my %body = ("cmd" => $script_content);
+      my $result = curl(\%params, encode_json(\%body));
+      debug Dumper $result;
+      $result->{'http_status'} == 200 or
+          die "Expected script invocation to return 200, but got " . $result->{'http_status'};
+      chomp(my $actual = $result->{'response'}{'stdout'});
+      $actual eq 'Howdy, Cletus!' or
+          die "Expected the Perl script to greet Cletus. Actual response: " . $actual;
+  }
+
+  test_perl_script_invocation_hello_world();
+#+END_SRC
+
+#+RESULTS: test_case_3
+
+***** Hello, World - python script
+
+We should be able print Hello, World by invoking perl with a script
+file.
+
+#+NAME: test_case_4
+#+BEGIN_SRC perl
+  sub test_python_script_invocation_hello_world {
+      my $script_content = <<'EOF';
+  #!/usr/bin/python
+  name = "Cletus";
+  print "Howdy, {}!".format(name);
+  EOF
+      my %params = ("invocation_style" => "script");
+      my %body = ("cmd" => $script_content);
+      my $result = curl(\%params, encode_json(\%body));
+      debug Dumper $result;
+      $result->{'http_status'} == 200 or
+          die "Expected script invocation to return 200, but got " . $result->{'http_status'};
+      chomp(my $actual = $result->{'response'}{'stdout'});
+      $actual eq 'Howdy, Cletus!' or
+          die "Expected the Python script to greet Cletus. Actual response: " . $actual;
+  }
+
+  test_python_script_invocation_hello_world();
+#+END_SRC
+
+#+RESULTS: test_case_4
+
+
+
+**** Infrastructure
+
+***** curl
+
+#+NAME: curl_def
+#+BEGIN_SRC perl
+  sub curl {
+      my $params = shift;
+      my $body = shift;
+      my $invocation_style = $params->{'invocation_style'};
+      my $url = "https://nw4fjuynjg.execute-api.us-west-2.amazonaws.com/beta/invocation?style=$invocation_style";
+
+      my $curl = WWW::Curl::Easy->new;
+      $curl->setopt(CURLOPT_URL, $url);
+      $curl->setopt(CURLOPT_POSTFIELDS, $body);
+
+      my $response_body;
+      open(my $fh, '>', \$response_body);
+      $curl->setopt(CURLOPT_WRITEDATA, $fh);
+
+      my $retcode = $curl->perform();
+      $retcode == 0 or die "Curl error: " . $curl->strerror($retcode) . "; errbuf = " . $curl->errbuf;
+      my $http_status = $curl->getinfo(CURLINFO_HTTP_CODE);
+      $http_status != 200 && $DEBUG && warn "Received Non-2XX HTTP status code: $http_status";
+
+      my %result = ('http_status' => $http_status, 'response' => parse_json($response_body));
+      return \%result;
+  }
+#+END_SRC
+
+#+RESULTS: curl_def
+
+** HTML Export
+
+*** pareto-perl.js
+
+This file just ties together all of our REPL-related Javascript.
+
+#+BEGIN_SRC js :noweb yes :tangle ../js/pareto-perl.js
+    <<post-request-def>>
+    <<init-code-blocks>>
+#+END_SRC
+
+**** Sending requests to Lambda
+
+This function takes the contents of a textarea, an invocation style
+(one of 'inline' or 'script') and posts a request to the Lambda
+backend. The callback updates the exit code, stderr, and stdout
+elements.
+
+#+NAME: post-request-def
+#+BEGIN_SRC js
+  var postRequest = function(invocationStyle, cmd, exitCodeEl, stdOutEl, stdErrEl) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+          if (this.readyState == 4) {
+              var resp = JSON.parse(this.responseText);
+              if (this.status == 200) {
+                  exitCodeEl.innerHTML = '<h3>Exit Code: ' + resp.exit_code + '</h3>';
+                  stdOutEl.innerHTML = '<pre>' + resp.stdout + '</pre>';
+                  stdErrEl.innerHTML = '<pre>' + resp.stderr + '</pre>';
+              } else {
+                  var msg = (resp && resp.error) ? resp.error : "You done broke somethin'.";
+                  alert(msg);
+              }
+          }
+      };
+      xhttp.open('POST', 'https://nw4fjuynjg.execute-api.us-west-2.amazonaws.com/beta/invocation?style=' + invocationStyle, true);
+      xhttp.setRequestHeader('Content-Type', 'application/json');
+      xhttp.setRequestHeader('Accept', 'application/json');
+      var req = {cmd: cmd};
+      xhttp.send(JSON.stringify(req));
+  };
+#+END_SRC
+
+#+RESULTS: post-request-def
+
+**** Responding to button clicks
+
+Any time that a button with class 'run-btn' is clicked, we call the
+postRequest function. Each set of a button, code block, and results
+block form a logical group with an associated ordinal integer which is
+encoded in each DOM element's id field. We extract the ordinal from
+the id of the button that was clicked with a regex and use the ordinal
+to lookup the other DOM elements. We then extract the contents of the
+input element as and invoke the postRequest function with the command
+and the DOM elements that should be updated upon completion.
+
+#+NAME: install-btn-click-handlers
+#+BEGIN_SRC js
+  var runButtons = document.getElementsByClassName('run-btn');
+  Array.prototype.forEach.call(runButtons, function(el) {
+      el.onclick = function() {
+          var regex = /([0-9]+)$/;
+          var blockNum = regex.exec(el.id)[1];
+          var resultsElExitCode = document.getElementById('repl-results-exit-code-' + blockNum);
+          var resultsElStdOut = document.getElementById('repl-results-stdout-' + blockNum);
+          var resultsElStdErr = document.getElementById('repl-results-stderr-' + blockNum);
+          var inputEl = document.getElementById('repl-input-' + blockNum);
+          var cmd = codeMirrors[inputEl.id].getValue().trim();
+          var invocationType = inputEl.classList.contains('shell-block') ? 'inline' : 'script';
+          postRequest(invocationType, cmd, resultsElExitCode, resultsElStdOut, resultsElStdErr);
+      }
+  });
+#+END_SRC
+
+#+RESULTS: install-btn-click-handlers
+**** Initializing CodeMirrors
+
+When the window is loaded, we initialize our textareas as CodeMirrors
+and install event handlers to call Lambda whenever the "Run" button is
+clicked.
+
+Find each textarea with class ={perl,shell,python}-block= and turn it
+into a CodeMirror element with the appropriate language set.
+
+#+NAME: setup-code-mirrors
+#+BEGIN_SRC js
+  var codeMirrors = {};
+  ['shell', 'perl', 'python'].forEach(function(lang) {
+    var textAreas = document.getElementsByClassName(lang + '-block');
+    Array.prototype.forEach.call(textAreas, function(el) {
+        var mirror = CodeMirror.fromTextArea(el, {
+            lineNumbers: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            theme: 'ambiance',
+            mode: lang
+        });
+        codeMirrors[el.id] = mirror;
+    });
+  });
+#+END_SRC
+
+This is the function we will call onWindowLoad.
+#+NAME: init-code-blocks
+#+BEGIN_SRC js :noweb yes
+  var initCodeBlocks = function() {
+    <<setup-code-mirrors>>
+    <<install-btn-click-handlers>>
+  };
+#+END_SRC
+
+*** Adding to the HEAD
+
+We want to be able to append to the base =org-html-head-extra=, not
+overwrite it. We'll take whatever the base value is and add
+=blog/local-html-head-extra=.
+
+#+BEGIN_SRC emacs-lisp
+  (defun blog/filter-options (options-plist backend)
+    (interactive "P")
+    (assert (eq backend 'pareto-perl-html))
+    (let ((base-options (plist-get options-plist :html-head-extra)))
+      (plist-put options-plist
+                 :html-head-extra
+                 (concat base-options "\n" blog/local-html-head-extra))))
+#+END_SRC
+
+#+RESULTS:
+: blog/filter-options
+
+
+**** Custom CSS and JS
+
+Append some custom styling for our REPL blocks and includes for all of our
+CodeMirror and Lambda-related Javascript files at the end of the
+<head> block.
+
+#+BEGIN_SRC emacs-lisp
+  (defvar-local blog/local-html-head-extra
+    (let ((extra-css "
+  .console-output {
+    padding-left: 15px;
+  }
+  .repl-results-container {
+    background-color: black;
+    color: white;
+    padding: 5px;
+    margin-top: 5px;
+    font-family: consolas, sans-serif, monospace;
+  }
+  div.src-block-container {
+    border: 1px solid black;
+    font-family: consolas, sans-serif, monospace;
+  }
+  div.src-block-container:before {
+    display: inline;
+    position: absolute;
+    background-color: white;
+    right: 50px;
+    padding: 3px;
+    border: 1px solid black;
+    z-index: 1000;
+    content: attr(rel);
+  }
+  .run-btn {
+    position: absolute;
+    right: 15px;
+  }
+  "))
+      (with-temp-buffer
+        (insert "<script src=\"../js/codemirror.js\"></script>\n
+                 <script src=\"../js/perl.js\"></script>\n
+                 <script src=\"../js/python.js\"></script>\n
+                 <script src=\"../js/shell.js\"></script>\n
+                 <script src=\"../js/pareto-perl.js\"></script>\n
+                 <script type=\"text/javascript\">window.onload = initCodeBlocks;</script>\n")
+        (insert "<style type=\"text/css\">")
+        (newline-and-indent)
+        (insert extra-css)
+        (newline-and-indent)
+        (insert "/* Begin Section: CodeMirror */")
+        (newline-and-indent)
+        (insert-file-contents "../css/codemirror.css") ;; inline, to avoid multiple requests
+        (goto-char (point-max))
+        (insert "\n/* End Section: CodeMirror */\n")
+        (insert "\n/* Begin Section: Ambiance */\n")
+        (insert-file-contents "../css/ambiance.css") ;; inline, to avoid multiple requests
+        (goto-char (point-max))
+        (insert "\n/* End Section: Ambiance */\n")
+        (insert "</style>")
+        (buffer-substring (point-min) (point-max))))
+    "Add this string to the head of the exported document. This is
+    essentially just a buffer-local version of
+    org-html-head-extra")
+#+END_SRC
+
+#+RESULTS:
+: blog/local-html-head-extra
+
+
+*** src-blocks as REPLs
+
+If the src-block is a REPL, export it as a code mirror block with a
+Run button and a container for the output.
+
+#+BEGIN_SRC emacs-lisp
+   (defun blog/create-code-mirror-block (src-block info)
+     (let* ((code (car (org-export-unravel-code src-block)))
+            (attr (org-export-read-attribute :attr_html src-block))
+            (lang (org-element-property :language src-block))
+            (id-num (org-export-get-ordinal src-block info)))
+       (format "
+    <div class=\"src-block-container\" rel=\"%s\">
+    <p>\n<textarea id=\"repl-input-%d\" class=\"%s-block\" cols=\"%s\" rows=\"%s\">\n%s</textarea>\n
+    <button id=\"repl-run-%d\" class=\"run-btn\" type=\"button\">Run</button>\n
+    </p>\n
+    </div>
+
+    <div class=\"repl-results-container\">\n
+      <div id=\"repl-results-exit-code-%d\" class=\"results-block\">\n
+        <h3>Exit Code: -</h3>\n
+      </div>\n
+      <div class=\"results-block\">\n
+        <h3>Stdout</h3>\n
+        <div id=\"repl-results-stdout-%d\" class=\"console-output\"></div>\n
+      </div>\n
+      <div class=\"results-block\">\n
+        <h3>Stderr</h3>\n
+        <div id=\"repl-results-stderr-%d\" class=\"console-output\"></div>\n
+      </div>\n
+    </div>
+  "
+               lang
+               id-num
+               lang
+               (or (plist-get attr :width) 80)
+               (or (plist-get attr :height) (org-count-lines code))
+               (cond
+                ((string= lang "perl") (format "#!/usr/bin/perl -l\n\n%s" code))
+                ((string= lang "python") (format "#!/usr/bin/python\n\n%s" code))
+                (t code))
+               id-num
+               id-num
+               id-num
+               id-num)))
+
+  (defun blog/export-src-block-as-repl (src-block contents info)
+    "Export repl blocks as a textarea with an 'Run' button."
+    (if (org-export-read-attribute :attr_html src-block :repl)
+        (blog/create-code-mirror-block src-block info)
+      (org-html-src-block src-block contents info)))
+#+END_SRC
+
+#+RESULTS:
+: blog/export-src-block-as-repl
+
+*** Register the exporter
+
+#+BEGIN_SRC emacs-lisp
+  (org-export-define-derived-backend 'pareto-perl-html 'html
+    :translate-alist '((src-block . blog/export-src-block-as-repl))
+    :filters-alist '((:filter-options blog/filter-options)))
+#+END_SRC
+
+#+RESULTS:
+| #s(org-export-backend pareto-perl-html html ((src-block . blog/export-src-block-as-repl)) nil ((:filter-options blog/filter-options)) nil nil) | #s(org-export-backend org nil ((babel-call . org-org-identity) (bold . org-org-identity) (center-block . org-org-identity) (clock . org-org-identity) (code . org-org-identity) (diary-sexp . org-org-identity) (drawer . org-org-identity) (dynamic-block . org-org-identity) (entity . org-org-identity) (example-block . org-org-identity) (export-block . org-org-export-block) (fixed-width . org-org-identity) (footnote-definition . ignore) (footnote-reference . org-org-identity) (headline . org-org-headline) (horizontal-rule . org-org-identity) (inline-babel-call . org-org-identity) (inline-src-block . org-org-identity) (inlinetask . org-org-identity) (italic . org-org-identity) (item . org-org-identity) (keyword . org-org-keyword) (latex-environment . org-org-identity) (latex-fragment . org-org-identity) (line-break . org-org-identity) (link . org-org-link) (node-property . org-org-identity) (template . org-org-template) (paragraph . org-org-identity) (plain-list . org-org-identity) (planning . org-org-identity) (property-drawer . org-org-identity) (quote-block . org-org-identity) (radio-target . org-org-identity) (section . org-org-section) (special-block . org-org-identity) (src-block . org-org-identity) (statistics-cookie . org-org-identity) (strike-through . org-org-identity) (subscript . org-org-identity) (superscript . org-org-identity) (table . org-org-identity) (table-cell . org-org-identity) (table-row . org-org-identity) (target . org-org-identity) (timestamp . org-org-identity) (underline . org-org-identity) (verbatim . org-org-identity) (verse-block . org-org-identity)) nil ((:filter-parse-tree . org-org--add-missing-sections)) nil (79 Export to Org ((79 As Org buffer org-org-export-as-org) (111 As Org file org-org-export-to-org) (118 As Org file and open (lambda (a s v b) (if a (org-org-export-to-org t s v b) (org-open-file (org-org-export-to-org nil s v b)))))))) | #s(org-export-backend odt nil ((bold . org-odt-bold) (center-block . org-odt-center-block) (clock . org-odt-clock) (code . org-odt-code) (drawer . org-odt-drawer) (dynamic-block . org-odt-dynamic-block) (entity . org-odt-entity) (example-block . org-odt-example-block) (export-block . org-odt-export-block) (export-snippet . org-odt-export-snippet) (fixed-width . org-odt-fixed-width) (footnote-definition . org-odt-footnote-definition) (footnote-reference . org-odt-footnote-reference) (headline . org-odt-headline) (horizontal-rule . org-odt-horizontal-rule) (inline-src-block . org-odt-inline-src-block) (inlinetask . org-odt-inlinetask) (italic . org-odt-italic) (item . org-odt-item) (keyword . org-odt-keyword) (latex-environment . org-odt-latex-environment) (latex-fragment . org-odt-latex-fragment) (line-break . org-odt-line-break) (link . org-odt-link) (node-property . org-odt-node-property) (paragraph . org-odt-paragraph) (plain-list . org-odt-plain-list) (plain-text . org-odt-plain-text) (planning . org-odt-planning) (property-drawer . org-odt-property-drawer) (quote-block . org-odt-quote-block) (radio-target . org-odt-radio-target) (section . org-odt-section) (special-block . org-odt-special-block) (src-block . org-odt-src-block) (statistics-cookie . org-odt-statistics-cookie) (strike-through . org-odt-strike-through) (subscript . org-odt-subscript) (superscript . org-odt-superscript) (table . org-odt-table) (table-cell . org-odt-table-cell) (table-row . org-odt-table-row) (target . org-odt-target) (template . org-odt-template) (timestamp . org-odt-timestamp) (underline . org-odt-underline) (verbatim . org-odt-verbatim) (verse-block . org-odt-verse-block)) ((:odt-styles-file ODT_STYLES_FILE nil nil t) (:description DESCRIPTION nil nil newline) (:keywords KEYWORDS nil nil space) (:subtitle SUBTITLE nil nil parse) (:odt-content-template-file nil nil org-odt-content-template-file) (:odt-display-outline-level nil nil org-odt-display-outline-level) (:odt-fontify-srcblocks nil nil org-odt-fontify-srcblocks) (:odt-format-drawer-function nil nil org-odt-format-drawer-function) (:odt-format-headline-function nil nil org-odt-format-headline-function) (:odt-format-inlinetask-function nil nil org-odt-format-inlinetask-function) (:odt-inline-formula-rules nil nil org-odt-inline-formula-rules) (:odt-inline-image-rules nil nil org-odt-inline-image-rules) (:odt-pixels-per-inch nil nil org-odt-pixels-per-inch) (:odt-styles-file nil nil org-odt-styles-file) (:odt-table-styles nil nil org-odt-table-styles) (:odt-use-date-fields nil nil org-odt-use-date-fields) (:with-latex nil tex org-odt-with-latex) (:latex-header LATEX_HEADER nil nil newline)) ((:filter-parse-tree org-odt--translate-latex-fragments org-odt--translate-description-lists org-odt--translate-list-tables)) nil (111 Export to ODT ((111 As ODT file org-odt-export-to-odt) (79 As ODT file and open (lambda (a s v b) (if a (org-odt-export-to-odt t s v) (org-open-file (org-odt-export-to-odt nil s v) (quote system)))))))) | #s(org-export-backend latex nil ((bold . org-latex-bold) (center-block . org-latex-center-block) (clock . org-latex-clock) (code . org-latex-code) (drawer . org-latex-drawer) (dynamic-block . org-latex-dynamic-block) (entity . org-latex-entity) (example-block . org-latex-example-block) (export-block . org-latex-export-block) (export-snippet . org-latex-export-snippet) (fixed-width . org-latex-fixed-width) (footnote-definition . org-latex-footnote-definition) (footnote-reference . org-latex-footnote-reference) (headline . org-latex-headline) (horizontal-rule . org-latex-horizontal-rule) (inline-src-block . org-latex-inline-src-block) (inlinetask . org-latex-inlinetask) (italic . org-latex-italic) (item . org-latex-item) (keyword . org-latex-keyword) (latex-environment . org-latex-latex-environment) (latex-fragment . org-latex-latex-fragment) (line-break . org-latex-line-break) (link . org-latex-link) (node-property . org-latex-node-property) (paragraph . org-latex-paragraph) (plain-list . org-latex-plain-list) (plain-text . org-latex-plain-text) (planning . org-latex-planning) (property-drawer . org-latex-property-drawer) (quote-block . org-latex-quote-block) (radio-target . org-latex-radio-target) (section . org-latex-section) (special-block . org-latex-special-block) (src-block . org-latex-src-block) (statistics-cookie . org-latex-statistics-cookie) (strike-through . org-latex-strike-through) (subscript . org-latex-subscript) (superscript . org-latex-superscript) (table . org-latex-table) (table-cell . org-latex-table-cell) (table-row . org-latex-table-row) (target . org-latex-target) (template . org-latex-template) (timestamp . org-latex-timestamp) (underline . org-latex-underline) (verbatim . org-latex-verbatim) (verse-block . org-latex-verse-block) (latex-math-block . org-latex-math-block) (latex-matrices . org-latex-matrices)) ((:latex-class LATEX_CLASS nil org-latex-default-class t) (:latex-class-options LATEX_CLASS_OPTIONS nil nil t) (:latex-header LATEX_HEADER nil nil newline) (:latex-header-extra LATEX_HEADER_EXTRA nil nil newline) (:description DESCRIPTION nil nil parse) (:keywords KEYWORDS nil nil parse) (:subtitle SUBTITLE nil nil parse) (:latex-active-timestamp-format nil nil org-latex-active-timestamp-format) (:latex-caption-above nil nil org-latex-caption-above) (:latex-classes nil nil org-latex-classes) (:latex-default-figure-position nil nil org-latex-default-figure-position) (:latex-default-table-environment nil nil org-latex-default-table-environment) (:latex-default-table-mode nil nil org-latex-default-table-mode) (:latex-diary-timestamp-format nil nil org-latex-diary-timestamp-format) (:latex-footnote-defined-format nil nil org-latex-footnote-defined-format) (:latex-footnote-separator nil nil org-latex-footnote-separator) (:latex-format-drawer-function nil nil org-latex-format-drawer-function) (:latex-format-headline-function nil nil org-latex-format-headline-function) (:latex-format-inlinetask-function nil nil org-latex-format-inlinetask-function) (:latex-hyperref-template nil nil org-latex-hyperref-template t) (:latex-image-default-height nil nil org-latex-image-default-height) (:latex-image-default-option nil nil org-latex-image-default-option) (:latex-image-default-width nil nil org-latex-image-default-width) (:latex-images-centered nil nil org-latex-images-centered) (:latex-inactive-timestamp-format nil nil org-latex-inactive-timestamp-format) (:latex-inline-image-rules nil nil org-latex-inline-image-rules) (:latex-link-with-unknown-path-format nil nil org-latex-link-with-unknown-path-format) (:latex-listings nil nil org-latex-listings) (:latex-listings-langs nil nil org-latex-listings-langs) (:latex-listings-options nil nil org-latex-listings-options) (:latex-minted-langs nil nil org-latex-minted-langs) (:latex-minted-options nil nil org-latex-minted-options) (:latex-prefer-user-labels nil nil org-latex-prefer-user-labels) (:latex-subtitle-format nil nil org-latex-subtitle-format) (:latex-subtitle-separate nil nil org-latex-subtitle-separate) (:latex-table-scientific-notation nil nil org-latex-table-scientific-notation) (:latex-tables-booktabs nil nil org-latex-tables-booktabs) (:latex-tables-centered nil nil org-latex-tables-centered) (:latex-text-markup-alist nil nil org-latex-text-markup-alist) (:latex-title-command nil nil org-latex-title-command) (:latex-toc-command nil nil org-latex-toc-command) (:latex-compiler LATEX_COMPILER nil org-latex-compiler) (:date DATE nil \today parse)) ((:filter-options . org-latex-math-block-options-filter) (:filter-paragraph . org-latex-clean-invalid-line-breaks) (:filter-parse-tree org-latex-math-block-tree-filter org-latex-matrices-tree-filter) (:filter-verse-block . org-latex-clean-invalid-line-breaks)) nil (108 Export to LaTeX ((76 As LaTeX buffer org-latex-export-as-latex) (108 As LaTeX file org-latex-export-to-latex) (112 As PDF file org-latex-export-to-pdf) (111 As PDF file and open (lambda (a s v b) (if a (org-latex-export-to-pdf t s v b) (org-open-file (org-latex-export-to-pdf nil s v b)))))))) | #s(org-export-backend icalendar ascii ((clock . ignore) (footnote-definition . ignore) (footnote-reference . ignore) (headline . org-icalendar-entry) (inlinetask . ignore) (planning . ignore) (section . ignore) (inner-template lambda (c i) c) (template . org-icalendar-template)) ((:exclude-tags ICALENDAR_EXCLUDE_TAGS nil org-icalendar-exclude-tags split) (:with-timestamps nil < org-icalendar-with-timestamps) (:icalendar-alarm-time nil nil org-icalendar-alarm-time) (:icalendar-categories nil nil org-icalendar-categories) (:icalendar-date-time-format nil nil org-icalendar-date-time-format) (:icalendar-include-bbdb-anniversaries nil nil org-icalendar-include-bbdb-anniversaries) (:icalendar-include-body nil nil org-icalendar-include-body) (:icalendar-include-sexps nil nil org-icalendar-include-sexps) (:icalendar-include-todo nil nil org-icalendar-include-todo) (:icalendar-store-UID nil nil org-icalendar-store-UID) (:icalendar-timezone nil nil org-icalendar-timezone) (:icalendar-use-deadline nil nil org-icalendar-use-deadline) (:icalendar-use-scheduled nil nil org-icalendar-use-scheduled)) ((:filter-headline . org-icalendar-clear-blank-lines)) nil (99 Export to iCalendar ((102 Current file org-icalendar-export-to-ics) (97 All agenda files (lambda (a s v b) (org-icalendar-export-agenda-files a))) (99 Combine all agenda files (lambda (a s v b) (org-icalendar-combine-agenda-files a)))))) | #s(org-export-backend html nil ((bold . org-html-bold) (center-block . org-html-center-block) (clock . org-html-clock) (code . org-html-code) (drawer . org-html-drawer) (dynamic-block . org-html-dynamic-block) (entity . org-html-entity) (example-block . org-html-example-block) (export-block . org-html-export-block) (export-snippet . org-html-export-snippet) (fixed-width . org-html-fixed-width) (footnote-definition . org-html-footnote-definition) (footnote-reference . org-html-footnote-reference) (headline . org-html-headline) (horizontal-rule . org-html-horizontal-rule) (inline-src-block . org-html-inline-src-block) (inlinetask . org-html-inlinetask) (inner-template . org-html-inner-template) (italic . org-html-italic) (item . org-html-item) (keyword . org-html-keyword) (latex-environment . org-html-latex-environment) (latex-fragment . org-html-latex-fragment) (line-break . org-html-line-break) (link . org-html-link) (node-property . org-html-node-property) (paragraph . org-html-paragraph) (plain-list . org-html-plain-list) (plain-text . org-html-plain-text) (planning . org-html-planning) (property-drawer . org-html-property-drawer) (quote-block . org-html-quote-block) (radio-target . org-html-radio-target) (section . org-html-section) (special-block . org-html-special-block) (src-block . org-html-src-block) (statistics-cookie . org-html-statistics-cookie) (strike-through . org-html-strike-through) (subscript . org-html-subscript) (superscript . org-html-superscript) (table . org-html-table) (table-cell . org-html-table-cell) (table-row . org-html-table-row) (target . org-html-target) (template . org-html-template) (timestamp . org-html-timestamp) (underline . org-html-underline) (verbatim . org-html-verbatim) (verse-block . org-html-verse-block)) ((:html-doctype HTML_DOCTYPE nil org-html-doctype) (:html-container HTML_CONTAINER nil org-html-container-element) (:description DESCRIPTION nil nil newline) (:keywords KEYWORDS nil nil space) (:html-html5-fancy nil html5-fancy org-html-html5-fancy) (:html-link-use-abs-url nil html-link-use-abs-url org-html-link-use-abs-url) (:html-link-home HTML_LINK_HOME nil org-html-link-home) (:html-link-up HTML_LINK_UP nil org-html-link-up) (:html-mathjax HTML_MATHJAX nil  space) (:html-postamble nil html-postamble org-html-postamble) (:html-preamble nil html-preamble org-html-preamble) (:html-head HTML_HEAD nil org-html-head newline) (:html-head-extra HTML_HEAD_EXTRA nil org-html-head-extra newline) (:subtitle SUBTITLE nil nil parse) (:html-head-include-default-style nil html-style org-html-head-include-default-style) (:html-head-include-scripts nil html-scripts org-html-head-include-scripts) (:html-allow-name-attribute-in-anchors nil nil org-html-allow-name-attribute-in-anchors) (:html-divs nil nil org-html-divs) (:html-checkbox-type nil nil org-html-checkbox-type) (:html-extension nil nil org-html-extension) (:html-footnote-format nil nil org-html-footnote-format) (:html-footnote-separator nil nil org-html-footnote-separator) (:html-footnotes-section nil nil org-html-footnotes-section) (:html-format-drawer-function nil nil org-html-format-drawer-function) (:html-format-headline-function nil nil org-html-format-headline-function) (:html-format-inlinetask-function nil nil org-html-format-inlinetask-function) (:html-home/up-format nil nil org-html-home/up-format) (:html-indent nil nil org-html-indent) (:html-infojs-options nil nil org-html-infojs-options) (:html-infojs-template nil nil org-html-infojs-template) (:html-inline-image-rules nil nil org-html-inline-image-rules) (:html-link-org-files-as-html nil nil org-html-link-org-files-as-html) (:html-mathjax-options nil nil org-html-mathjax-options) (:html-mathjax-template nil nil org-html-mathjax-template) (:html-metadata-timestamp-format nil nil org-html-metadata-timestamp-format) (:html-postamble-format nil nil org-html-postamble-format) (:html-preamble-format nil nil org-html-preamble-format) (:html-table-align-individual-fields nil nil org-html-table-align-individual-fields) (:html-table-caption-above nil nil org-html-table-caption-above) (:html-table-data-tags nil nil org-html-table-data-tags) (:html-table-header-tags nil nil org-html-table-header-tags) (:html-table-use-header-tags-for-first-column nil nil org-html-table-use-header-tags-for-first-column) (:html-tag-class-prefix nil nil org-html-tag-class-prefix) (:html-text-markup-alist nil nil org-html-text-markup-alist) (:html-todo-kwd-class-prefix nil nil org-html-todo-kwd-class-prefix) (:html-toplevel-hlevel nil nil org-html-toplevel-hlevel) (:html-use-infojs nil nil org-html-use-infojs) (:html-validation-link nil nil org-html-validation-link) (:html-viewport nil nil org-html-viewport) (:html-inline-images nil nil org-html-inline-images) (:html-table-attributes nil nil org-html-table-default-attributes) (:html-table-row-open-tag nil nil org-html-table-row-open-tag) (:html-table-row-close-tag nil nil org-html-table-row-close-tag) (:html-xml-declaration nil nil org-html-xml-declaration) (:infojs-opt INFOJS_OPT nil nil) (:creator CREATOR nil org-html-creator-string) (:with-latex nil tex org-html-with-latex) (:latex-header LATEX_HEADER nil nil newline)) ((:filter-options . org-html-infojs-install-script) (:filter-final-output . org-html-final-function)) nil (104 Export to HTML ((72 As HTML buffer org-html-export-as-html) (104 As HTML file org-html-export-to-html) (111 As HTML file and open (lambda (a s v b) (if a (org-html-export-to-html t s v b) (org-open-file (org-html-export-to-html nil s v b)))))))) | #s(org-export-backend ascii nil ((bold . org-ascii-bold) (center-block . org-ascii-center-block) (clock . org-ascii-clock) (code . org-ascii-code) (drawer . org-ascii-drawer) (dynamic-block . org-ascii-dynamic-block) (entity . org-ascii-entity) (example-block . org-ascii-example-block) (export-block . org-ascii-export-block) (export-snippet . org-ascii-export-snippet) (fixed-width . org-ascii-fixed-width) (footnote-reference . org-ascii-footnote-reference) (headline . org-ascii-headline) (horizontal-rule . org-ascii-horizontal-rule) (inline-src-block . org-ascii-inline-src-block) (inlinetask . org-ascii-inlinetask) (inner-template . org-ascii-inner-template) (italic . org-ascii-italic) (item . org-ascii-item) (keyword . org-ascii-keyword) (latex-environment . org-ascii-latex-environment) (latex-fragment . org-ascii-latex-fragment) (line-break . org-ascii-line-break) (link . org-ascii-link) (node-property . org-ascii-node-property) (paragraph . org-ascii-paragraph) (plain-list . org-ascii-plain-list) (plain-text . org-ascii-plain-text) (planning . org-ascii-planning) (property-drawer . org-ascii-property-drawer) (quote-block . org-ascii-quote-block) (radio-target . org-ascii-radio-target) (section . org-ascii-section) (special-block . org-ascii-special-block) (src-block . org-ascii-src-block) (statistics-cookie . org-ascii-statistics-cookie) (strike-through . org-ascii-strike-through) (subscript . org-ascii-subscript) (superscript . org-ascii-superscript) (table . org-ascii-table) (table-cell . org-ascii-table-cell) (table-row . org-ascii-table-row) (target . org-ascii-target) (template . org-ascii-template) (timestamp . org-ascii-timestamp) (underline . org-ascii-underline) (verbatim . org-ascii-verbatim) (verse-block . org-ascii-verse-block)) ((:subtitle SUBTITLE nil nil parse) (:ascii-bullets nil nil org-ascii-bullets) (:ascii-caption-above nil nil org-ascii-caption-above) (:ascii-charset nil nil org-ascii-charset) (:ascii-global-margin nil nil org-ascii-global-margin) (:ascii-format-drawer-function nil nil org-ascii-format-drawer-function) (:ascii-format-inlinetask-function nil nil org-ascii-format-inlinetask-function) (:ascii-headline-spacing nil nil org-ascii-headline-spacing) (:ascii-indented-line-width nil nil org-ascii-indented-line-width) (:ascii-inlinetask-width nil nil org-ascii-inlinetask-width) (:ascii-inner-margin nil nil org-ascii-inner-margin) (:ascii-links-to-notes nil nil org-ascii-links-to-notes) (:ascii-list-margin nil nil org-ascii-list-margin) (:ascii-paragraph-spacing nil nil org-ascii-paragraph-spacing) (:ascii-quote-margin nil nil org-ascii-quote-margin) (:ascii-table-keep-all-vertical-lines nil nil org-ascii-table-keep-all-vertical-lines) (:ascii-table-use-ascii-art nil nil org-ascii-table-use-ascii-art) (:ascii-table-widen-columns nil nil org-ascii-table-widen-columns) (:ascii-text-width nil nil org-ascii-text-width) (:ascii-underline nil nil org-ascii-underline) (:ascii-verbatim-format nil nil org-ascii-verbatim-format)) ((:filter-headline . org-ascii-filter-headline-blank-lines) (:filter-parse-tree org-ascii-filter-paragraph-spacing org-ascii-filter-comment-spacing) (:filter-section . org-ascii-filter-headline-blank-lines)) nil (116 Export to Plain Text ((65 As ASCII buffer (lambda (a s v b) (org-ascii-export-as-ascii a s v b (quote (:ascii-charset ascii))))) (97 As ASCII file (lambda (a s v b) (org-ascii-export-to-ascii a s v b (quote (:ascii-charset ascii))))) (76 As Latin1 buffer (lambda (a s v b) (org-ascii-export-as-ascii a s v b (quote (:ascii-charset latin1))))) (108 As Latin1 file (lambda (a s v b) (org-ascii-export-to-ascii a s v b (quote (:ascii-charset latin1))))) (85 As UTF-8 buffer (lambda (a s v b) (org-ascii-export-as-ascii a s v b (quote (:ascii-charset utf-8))))) (117 As UTF-8 file (lambda (a s v b) (org-ascii-export-to-ascii a s v b (quote (:ascii-charset utf-8)))))))) |
+
+#+BEGIN_SRC emacs-lisp
+  (defun org-html-publish-pareto-perl-html (plist filename pub-dir)
+    "Publish an org file to HTML using our custom backend
+
+  FILENAME is the filename of the Org file to be published.  PLIST
+  is the property list for the given project.  PUB-DIR is the
+  publishing directory.
+
+  Return output file name."
+    (org-publish-org-to 'pareto-perl-html
+                        filename
+                        (concat "." (or (plist-get plist :html-extension)
+                                        org-html-extension
+                                        "html"))
+                        plist
+                        pub-dir))
+#+END_SRC
+
+#+RESULTS:
+: org-html-publish-pareto-perl-html
+
+Register our custom exporter for this file in the global project mapping.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'blog/custom-html-publishing-functions `(,(buffer-file-name) . org-html-publish-pareto-perl-html))
+#+END_SRC
+
+#+RESULTS:
+: ((/home/astahlman/workplace/website/src/posts/ParetoPerl.org . org-html-publish-pareto-perl-html))
+

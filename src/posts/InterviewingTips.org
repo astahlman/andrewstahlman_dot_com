@@ -1,5 +1,6 @@
 #+TITLE: Practical tips for whiteboard coding interviews
 #+AUTHOR: Andrew Stahlman
+#+PROPERTY: header-args:java :eval no
 
 I spent a lot of time this summer preparing for whiteboard coding
 interviews. I've half-written several blog posts reflecting on my

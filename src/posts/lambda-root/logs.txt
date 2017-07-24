@@ -1,0 +1,13 @@
+[INFO] Received order for 2 'Snickerdoodle' from customer 'billbob@hotmail.com'
+[INFO] Received order for 5 'Chocolate Chip' from customer 'guineapiggurl@aol.com'
+[INFO] Restarting server on port 8000...
+[INFO] Received order for 1 'Double Chocolate' from customer 'billbob@hotmail.com'
+[INFO] Received order for 1 'Chocolate Macadamia' from customer 'guitarstar43@hotmail.com'
+[INFO] Received order for 3 'Oatmeal Raisin' from customer 'luv2laugh@yahoo.com'
+[INFO] Releasing 5 connections back to the connection pool
+[INFO] Received order for 1 'Snickerdoodle' from customer 'luv2laugh@yahoo.com'
+[INFO] Received order for 2 'Chocolate Chip' from customer 'billbob@hotmail.com'
+[INFO] Database connection lease expired, releasing connection
+[INFO] Received order for 3 'Peanut Butter' from customer 'billbob@hotmail.com'
+[INFO] Received order for 7 'Oatmeal Raisin' from customer 'taco_fiend@gmail.com'
+

@@ -1,0 +1,1127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-07-14 Fri 07:32 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pareto Perl</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Andrew Stahlman" />
+
+<!--
+  <link rel="stylesheet" href="../css/codemirror.css">
+  <link rel="stylesheet" href="../css/ambiance.css">
+-->
+<link rel="stylesheet" href="../css/pareto-perl.css">
+<script src="../js/codemirror.js"></script>
+<script src="../js/perl.js"></script>
+<script src="../js/shell.js"></script>
+<script type="text/javascript">
+  var postRequest = function(invocationStyle, cmd, exitCodeEl, stdOutEl, stdErrEl) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        var resp = JSON.parse(this.responseText);
+        if (this.readyState == 4 && this.status == 200) {
+          exitCodeEl.innerHTML = '<h3>Exit Code: ' + resp.exit_code + '</h3>';
+          stdOutEl.innerHTML = '<pre>' + resp.stdout + '</pre>';
+          stdErrEl.innerHTML = '<pre>' + resp.stderr + '</pre>';
+        } else if (this.readyState == 4 && this.status != 200) {
+          var msg = (resp && resp.error) ? resp.error : 'Failed to run your Perl. Sorry about that.';
+          alert(msg);
+        }
+      };
+      xhttp.open('POST', 'https://nw4fjuynjg.execute-api.us-west-2.amazonaws.com/beta/invocation?style=' + invocationStyle, true);
+      xhttp.setRequestHeader('Content-Type', 'application/json');
+      xhttp.setRequestHeader('Accept', 'application/json');
+      var req = {cmd: cmd};
+      console.log('Sending this request: ' + JSON.stringify(req));
+      xhttp.send(JSON.stringify(req));
+  };
+  window.onload = function() {
+      var codeMirrors = {}; // TODO: Object keyed off the textarea id
+      var perlBlocks = document.getElementsByClassName('perl-block');
+      Array.prototype.forEach.call(perlBlocks, function(el) {
+          var mirror = CodeMirror.fromTextArea(el, {
+              lineNumbers: true,
+              styleActiveLine: true,
+              matchBrackets: true,
+              theme: 'ambiance',
+              mode: 'perl'
+          });
+          codeMirrors[el.id] = mirror;
+      });
+      var shellBlocks = document.getElementsByClassName('sh-block');
+      Array.prototype.forEach.call(shellBlocks, function(el) {
+          var mirror = CodeMirror.fromTextArea(el, {
+              lineNumbers: true,
+              styleActiveLine: true,
+              matchBrackets: true,
+              theme: 'ambiance',
+              mode: 'shell'
+          });
+          codeMirrors[el.id] = mirror;
+      });
+      var runButtons = document.getElementsByClassName('run-btn');
+      Array.prototype.forEach.call(runButtons, function(el) {
+          el.onclick = function() {
+              var regex = /([0-9]+)$/;
+              var blockNum = regex.exec(el.id)[1];
+              var resultsElExitCode = document.getElementById('repl-results-exit-code-' + blockNum);
+              var resultsElStdOut = document.getElementById('repl-results-stdout-' + blockNum);
+              var resultsElStdErr = document.getElementById('repl-results-stderr-' + blockNum);
+              var inputEl = document.getElementById('repl-input-' + blockNum);
+              var cmd = codeMirrors[inputEl.id].getValue().trim();
+              var invocationType = inputEl.classList.contains('sh-block') ? 'inline' : 'script';
+              postRequest(invocationType, cmd, resultsElExitCode, resultsElStdOut, resultsElStdErr);
+          }
+      });
+  };
+</script>
+(override-css)
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Pareto Perl</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgac42cc2">1. Hands-on with Perl</a>
+<ul>
+<li><a href="#orgdcccf07">1.1. Recipe 1: Extract and Aggregate with a Hash</a></li>
+<li><a href="#org7a73582">1.2. Recipe 2: Extract and Aggregate with a Hash of Hashes</a></li>
+<li><a href="#org4853be5">1.3. Leaving the shell</a></li>
+</ul>
+</li>
+<li><a href="#org7190be3">2. Perl 101</a>
+<ul>
+<li><a href="#org220018d">2.1. Invocation</a></li>
+<li><a href="#org12be221">2.2. Data Types</a>
+<ul>
+<li><a href="#orgeb2e449">2.2.1. Scalar</a></li>
+<li><a href="#org8c4bd49">2.2.2. Arrays</a></li>
+<li><a href="#org1e03985">2.2.3. Hashes</a></li>
+</ul>
+</li>
+<li><a href="#org8f42ec7">2.3. Regexes</a></li>
+<li><a href="#orgb5e84f7">2.4. BEGIN and END blocks</a></li>
+<li><a href="#orgc73441b">2.5. Subroutines</a></li>
+</ul>
+</li>
+<li><a href="#org231fcdb">3. Areas for further exploration</a></li>
+<li><a href="#org1b8d0d0">4. Bonus: Perl + q</a></li>
+</ul>
+</div>
+</div>
+<p>
+It's 2 am and your pager goes off. The database for your e-commerce
+website is down, and you have 5 minutes to reconstruct the last hour's
+worth of orders given only the logs from your web server. Quick! First
+answer that pops into your head: what tools do you use?
+</p>
+
+<p>
+A lot of people I've worked with fall back to a combination of grep
+and awk, which is fine but usually only gets you so far. Some reach
+for Python or Ruby, neither of which is a bad choice. Several, I'm
+sorry to report, use Java, which is a disgusting choice.
+</p>
+
+<p>
+The ability to quickly extract information from text files is an
+undervalued skill. Fluency in a scripting language represents a huge
+point of leverage, and I'm here to convince you that Perl makes for a
+great crowbar.
+</p>
+
+<p>
+So why don't more people use Perl? Probably because they're all using
+Python instead.
+</p>
+
+<a href="https://trends.google.com/trends/explore?date=all&q=perl,python"><img src="../assets/python-vs-perl.png"/></a>
+
+<p>
+I'm not here to convince you to renounce Python in favor of Perl. In
+fact, for most non-trivial scripts I'd argue that Python is likely the
+more sensible choice.
+</p>
+
+<p>
+But there is a niche in which Perl fits perfectly: somewhere between
+grep and a full-blown script. In this exploratory stage you don't need
+pretty - you just want something quick. This is where Perl's inline
+scripting capabilities distinguish it from other scripting languages.
+</p>
+
+<p>
+To process a text file in Python you'd need to split a tmux pane, open
+a new file, save it in some scratch directory, <code>chmod +x</code> it, add a
+shebang, import the regex library, and write some tedious
+with-open-while-read boilerplate just to get each line of the
+input. Then and only then are you ready to write code that actually
+processes text.
+</p>
+
+<p>
+In Perl, the entire setup process is condensed to 12 characters, input
+directly in your shell: <code>perl -lne ''</code>.
+</p>
+
+<p>
+Warning: Perl is a big language. In fact, one of its core tenets is
+that for any task <a href="http://wiki.c2.com/?ThereIsMoreThanOneWayToDoIt">There's More Than One Way To Do It</a>. Flexibility is
+great, but not particularly helpful when all you need is a one-liner
+that accomplishes a specific task.
+</p>
+
+<p>
+In this post we'll focus on the tiny subset of Perl that I, a total
+Perl novice, find useful in my day-to-day work. If you're looking for
+a comprehensive introduction to Perl written by an expert, this is not
+the blog post for you.
+</p>
+
+<p>
+Enough talk. Let's concoct a real-world scenario and see Perl in
+action. (Note: you can edit and run any code block on this page.)
+</p>
+
+<div id="outline-container-orgac42cc2" class="outline-2">
+<h2 id="orgac42cc2"><span class="section-number-2">1</span> Hands-on with Perl</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+We're oncall for an on-demand cookie delivery startup. Due to a bad
+deployment, we've failed to persist thousands of orders. Luckily we
+logged each request, so we should be able to reconstruct the
+orders. Let's ssh into one of the servers and see what we're working
+with.
+</p>
+
+<pre class="example" id="server-logs">
+[INFO] Received order for 2 'Snickerdoodle' from customer 'billbob@hotmail.com'
+[INFO] Received order for 5 'Chocolate Chip' from customer 'guineapiggurl@aol.com'
+[INFO] Restarting server on port 8000...
+[INFO] Received order for 1 'Double Chocolate' from customer 'billbob@hotmail.com'
+[INFO] Received order for 1 'Chocolate Macadamia' from customer 'guitarstar43@hotmail.com'
+[INFO] Received order for 3 'Oatmeal Raisin' from customer 'luv2laugh@yahoo.com'
+[INFO] Releasing 5 connections back to the connection pool
+[INFO] Received order for 1 'Snickerdoodle' from customer 'luv2laugh@yahoo.com'
+[INFO] Received order for 2 'Chocolate Chip' from customer 'billbob@hotmail.com'
+[INFO] Database connection lease expired, releasing connection
+[INFO] Received order for 3 'Peanut Butter' from customer 'billbob@hotmail.com'
+[INFO] Received order for 7 'Oatmeal Raisin' from customer 'taco_fiend@gmail.com'
+</pre>
+
+<p>
+Let's start by extracting the orders in a form that we can work
+with. (Hint: Click "Run")
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">perl -lne <span style="color: #b9ca4a;">"/order for (\d+) '(.*)' from customer '(.*)'/ &amp;&amp; print \"\$1\t\$2\t\$3\""</span> logs.txt
+</pre>
+</div>
+
+<p>
+What did we just do? First, let's break down the flags. The
+interpreter has an overwhelming number of switches, but I use this
+exact combination 95% of the time (and when I don't, I have to consult
+Google).
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Flag</th>
+<th scope="col" class="org-left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">-n</td>
+<td class="org-left">Declares an implicit while loop around your code that iterates over each record.</td>
+</tr>
+
+<tr>
+<td class="org-left">-l</td>
+<td class="org-left">Automatically appends the output record separator when calling the print function. When used in conjunction with <code>-n</code>, it also automatically "chomps" off the input record separator. In practice, this means you don't have to deal with stripping the newline character from each input record or adding a newline to each string before printing.</td>
+</tr>
+
+<tr>
+<td class="org-left">-e</td>
+<td class="org-left">Evaluate the following string as a Perl program.</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+The relative ordering of <code>-l</code> and <code>-n</code> doesn't matter, but <code>-e</code> needs
+to directly precede the text of our program.
+</p>
+
+<p>
+So this invocation translates to, "Run the following script against
+every line of the input file, and don't make me think about newlines."
+</p>
+
+<p>
+As for the code, we're just applying a regex and conditionally
+printing the first two captured groups, which are stored in <code>$1</code> and
+<code>$2</code> respectively. Note that I had to escape the variable names to
+prevent the shell from trying to evaluate <code>$1</code> and <code>$2</code> as environment
+variables before passing the string to the Perl interpreter.
+</p>
+
+<p>
+Let's answer a simple question for our head baker: how many of each
+variety of cookie does she need to make?
+</p>
+
+<p>
+We need to group by cookie variety and sum up the counts. Most Perl
+scripts I write conform to this general pattern: use a regex to
+extract records from a text file, then aggregate over some arbitrary
+grouping. The recipe in such situations typically calls for a hash
+(think "hashtable") that maps a string id to either a number (if we're
+only interested in accumulating the count) or another hash or array
+(if we need a more complex involving the actual values).
+</p>
+</div>
+
+<div id="outline-container-orgdcccf07" class="outline-3">
+<h3 id="orgdcccf07"><span class="section-number-3">1.1</span> Recipe 1: Extract and Aggregate with a Hash</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+In this case, the stream is our server logs, each record consists of a
+cookie variety, quantity, and customer email address, and we're
+aggregating the number of orders per cookie variety.
+</p>
+
+<p>
+Let's start simple and iterate. We'll create a hash where each key is
+a cookie variety and the value is the number of cookies of this variety.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">perl -nle <span style="color: #b9ca4a;">"/order for (\d+) '(.*)' from customer '(.*)'/ &amp;&amp; do { \$x{\$2} += \$1; }; "</span><span style="color: #b9ca4a;">\</span>
+<span style="color: #b9ca4a;">"END { foreach \$k (keys %x) { print \$k, \"\t\", \$x{\$k} } }"</span> logs.txt
+</pre>
+</div>
+
+<p>
+The regex is the same as before. <code>&amp;&amp;</code> does short-circuit boolean
+evaluation just like in Java or C, so the effect is to increment a
+per-customer counter on each match.
+</p>
+
+<p>
+Notice that we never declare our hash variable, <code>x</code>, nor do we
+explicitly initialize its values to 0. This works because Perl
+automagically initializes and assigns a hash to <code>x</code> the first time it
+is used (search <code>perldoc perlref</code> for 'autovivification' for further
+reading). Then when we try to perform addition on an undefined scalar,
+Perl helpfully treats that value as 0.
+</p>
+
+<p>
+Perl's autovivification and context-sensitive coercion of variables
+initially struck me as bizarre. The perldocs are full of WTF-inducing
+gems like this one, from <code>perldoc data</code>.
+</p>
+
+<pre class="example">
+To find out whether a given string is a valid non-zero number, it's
+sometimes enough to test it against both numeric 0 and also lexical "0"
+</pre>
+
+<p>
+Sometimes, but hey, maybe not! You never know.
+</p>
+
+<p>
+Taken in the abstract, this design choice sounds arbitrary and
+convoluted. But it's a perfect example of the pragmatism that makes
+Perl so <span class="underline">convenient</span>.
+</p>
+
+<p>
+Compare our one-liner in Perl to the equivalent Python:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #c397d8;">import</span> re
+<span style="color: #c397d8;">import</span> sys
+
+<span style="color: #e78c45;">order_re</span> = re.<span style="color: #70c0b1;">compile</span><span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">".*order for (\d+) '(.+)' from customer '(.+)'"</span><span style="color: #c397d8;">)</span>
+<span style="color: #e78c45;">orders</span> = <span style="color: #c397d8;">{}</span>
+
+<span style="color: #c397d8;">with</span> <span style="color: #70c0b1;">open</span><span style="color: #c397d8;">(</span>sys.argv<span style="color: #7aa6da;">[</span>1<span style="color: #7aa6da;">]</span>, <span style="color: #b9ca4a;">'r'</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">as</span> f:
+<span style="background-color: #2a2a2a;"> </span>   <span style="color: #c397d8;">for</span> line <span style="color: #c397d8;">in</span> f:
+<span style="background-color: #2a2a2a;"> </span>   <span style="background-color: #2a2a2a;"> </span>   <span style="color: #e78c45;">m</span> = order_re.match<span style="color: #c397d8;">(</span>line<span style="color: #c397d8;">)</span>
+<span style="background-color: #2a2a2a;"> </span>   <span style="background-color: #2a2a2a;"> </span>   <span style="color: #c397d8;">if</span> m:
+<span style="background-color: #2a2a2a;"> </span>   <span style="background-color: #2a2a2a;"> </span>   <span style="background-color: #2a2a2a;"> </span>   <span style="color: #c397d8;">(</span>quant, cookie, cust<span style="color: #c397d8;">)</span> = m.groups<span style="color: #c397d8;">()</span>
+<span style="background-color: #2a2a2a;"> </span>   <span style="background-color: #2a2a2a;"> </span>   <span style="background-color: #2a2a2a;"> </span>   <span style="color: #e78c45;">orders</span><span style="color: #c397d8;">[</span>cookie<span style="color: #c397d8;">]</span> = orders.get<span style="color: #c397d8;">(</span>cookie, 0<span style="color: #c397d8;">)</span> + <span style="color: #70c0b1;">int</span><span style="color: #c397d8;">(</span>quant<span style="color: #c397d8;">)</span>
+
+<span style="color: #c397d8;">for</span> cookie, quant <span style="color: #c397d8;">in</span> orders.iteritems<span style="color: #c397d8;">()</span>:
+<span style="background-color: #2a2a2a;"> </span>   <span style="color: #c397d8;">print</span> <span style="color: #b9ca4a;">"{}\t{}"</span>.<span style="color: #70c0b1;">format</span><span style="color: #c397d8;">(</span>cookie, quant<span style="color: #c397d8;">)</span>
+</pre>
+</div>
+
+<p>
+There's nothing wrong with this Python implementation. It's certainly
+easier to follow than our dense, Perl, one-liner. But it's also 13
+lines long and requires a dedicated file. If all you need is a quick
+answer to a one-off question, a couple of lines of throwaway Perl is
+almost always the faster route.
+</p>
+
+<p>
+Back to our Perl implementation. The only other interesting part of
+the code is the <code>END</code> block. Everything in this block is excluded from
+the implicit loop created by the <code>-n</code> flag and is executed exactly
+once at the end of the loop.
+</p>
+
+<p>
+So armed with cookie counts, our chef gets busy baking. But now our
+shipping department comes knocking. They need to prepare to package
+and ship these orders. Problem is, cookies that contain nuts need to
+be packaged separately from nut-free cookies. So for each customer we
+need two numbers: the number of cookies they've ordered that contain
+nuts, and the number of cookies that don't.
+</p>
+
+<p>
+Time for recipe number two: building a hash of hashes.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7a73582" class="outline-3">
+<h3 id="org7a73582"><span class="section-number-3">1.2</span> Recipe 2: Extract and Aggregate with a Hash of Hashes</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+<pre class="src src-sh">perl -nle <span style="color: #b9ca4a;">"m/order for (\d+) '(.*)' from customer '(.*)'/ "</span><span style="color: #b9ca4a;">\</span>
+<span style="color: #b9ca4a;">'&amp;&amp; do { $t = ($2 eq "Peanut Butter" or $2 eq "Chocolate Macadamia") ? "nutty" : "nut_free"; $x{$3}{$t} += $1; };</span>
+<span style="color: #b9ca4a;">END { foreach $cust (keys %x) { print join("\t", ($cust, $x{$cust}{"nutty"} || "0", $x{$cust}{"nut_free"} || "0")) } }'</span> logs.txt
+</pre>
+</div>
+
+<p>
+Let's break it down.
+</p>
+
+<p>
+Our regex hasn't changed, but the <code>do</code> block bears some
+explanation. For each order, we check if the cookie variety contains
+nuts and assign it to one of two categories: cookies with nuts are
+keyed off the string 'nutty', others are 'non_nutty'. We map each of
+these strings to a counter in each customer's hash, and increment the
+appropriate counter for each order.
+</p>
+
+<p>
+The <code>END</code> block makes use of Perl's final data type: the array. For
+each customer in our hash, we initialize an array inline and print its
+comma-separated contents. The elements of the array are the customer's
+email address, their count of cookies with nuts, and their count of
+nut-free cookies.
+</p>
+
+<p>
+This works, but it's getting unwieldly. If you ever need to hand this
+script off to a coworker, there will likely be a strong negative
+correlation between <code>$</code>'s per line and the peer feedback rating on
+your annual performance review.
+</p>
+
+<p>
+The typical lifecycle of my Perl scripts usually looks like:
+</p>
+
+<ol class="org-ol">
+<li>Craft a quick one-liner, edited and executed directly from the
+shell. Iterate until I start having to squint.</li>
+<li>Use fc to edit the inline script in vi, and throw in some newlines
+for readability.</li>
+<li>Accept that this is no longer a one-liner and save the command to a
+file in <code>/tmp</code>. Open this file in a split tmux pane for quick
+iteration.</li>
+</ol>
+
+<p>
+At this point, we've reached the final phase. We've had some great
+times with our one-liner, but if we needed to extend this any further
+then we should move on to phase 3. If you're more comfortable in
+Python or Ruby then I wouldn't blame you for falling back to what you
+know best at this stage, given that we're forfeiting Perl's killer
+advantage: it's inline scripting capability.
+</p>
+
+<p>
+But just for fun, let's go through the exercise of turning this
+jibberish into a respectable script.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4853be5" class="outline-3">
+<h3 id="org4853be5"><span class="section-number-3">1.3</span> Leaving the shell</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+First let's add some whitespace to make this a little more readable.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span>m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span><span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        $<span style="color: #e78c45;">t</span> = <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">2</span> eq <span style="color: #b9ca4a;">"Peanut Butter"</span> or $<span style="color: #e78c45;">2</span> eq <span style="color: #b9ca4a;">"Chocolate Macadamia"</span><span style="color: #70c0b1;">)</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">x</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">3</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">t</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">1</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+<span style="color: #c397d8;">foreach</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">x</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">x</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">x</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+Notice that we've dropped the <code>-n</code> flag in favor of an explicit <code>while
+(&lt;&gt;)</code> loop. This does exactly the same thing and allows us to drop the
+<code>END</code> block. We could do better, though.
+</p>
+
+<p>
+That "eq or eq" line is triggering my obsessive compulsive urge to
+refactor. It also affords an opportunity to introduce the idiomatic
+way of representing sets in Perl: a hash where each member of the set
+maps to the value 1.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl">%<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span>m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span><span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        $<span style="color: #e78c45;">t</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">2</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">x</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">3</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">t</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">1</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+<span style="color: #c397d8;">foreach</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">x</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">x</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">x</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+The logic above is exactly the same, except that we've replaced that
+gross "if-or-or-or&#x2026;" with a call to the <code>exists</code> function, which
+tests for membership in the set of nutty cookies.
+</p>
+
+<p>
+Also, now that we're no longer constrained by the width of our
+terminal, we should start using sensible variable names.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl">%<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span><span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">quant</span>, $<span style="color: #e78c45;">cookie</span>, $<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">)</span> = $<span style="color: #e78c45;">_</span> =~ m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span>g<span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        $<span style="color: #e78c45;">is_nutty</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">orders</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">quant</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+<span style="color: #c397d8;">foreach</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+Wait, 0 orders? That's obviously wrong. Ready for a neat debugging
+trick? We can <code>use</code> the <code>Data::Dumper</code> module to pretty-print
+data. Let's dump the contents of <code>%orders</code> to see where our
+refactoring went wrong.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">Data</span>::Dumper;
+
+%<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span><span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">quant</span>, $<span style="color: #e78c45;">cookie</span>, $<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">)</span> = $<span style="color: #e78c45;">_</span> =~ m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span>g<span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        $<span style="color: #e78c45;">is_nutty</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">orders</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">quant</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+print Dumper<span style="color: #c397d8;">(</span>\%<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">foreach</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+Now the problem is apparent: we're using the wrong key in the customer
+hash - it should be "nutty" or "nut_free", not the cookie variety.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">Data</span>::Dumper;
+
+%<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span><span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">quant</span>, $<span style="color: #e78c45;">cookie</span>, $<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">)</span> = $<span style="color: #e78c45;">_</span> =~ m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span>g<span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        $<span style="color: #e78c45;">is_nutty</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">orders</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">is_nutty</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">quant</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+print Dumper<span style="color: #c397d8;">(</span>\%<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">foreach</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+There, fixed. That debug output is just clutter now, though. Let's
+hide that behind a debug flag. Time to introduce a new Perl concept:
+subroutines. You declare a subroutine with the <code>sub</code> keyword. The
+arguments are available in the array <code>@_</code>. We can access the first
+argument by calling <code>shift</code> (as in, "shift left and pop the first
+element"), which operates on <code>@_</code> if no argument is specified.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">Data</span>::Dumper;
+
+$<span style="color: #e78c45;">is_debug</span> = 1;
+
+<span style="color: #c397d8;">sub</span> <span style="color: #7aa6da;">debug</span> <span style="color: #c397d8;">{</span> $<span style="color: #e78c45;">debug</span> &amp;&amp; print shift; <span style="color: #c397d8;">}</span>
+
+%<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span><span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">quant</span>, $<span style="color: #e78c45;">cookie</span>, $<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">)</span> = $<span style="color: #e78c45;">_</span> =~ m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span>g<span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        $<span style="color: #e78c45;">is_nutty</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">orders</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">is_nutty</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">quant</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+debug Dumper<span style="color: #c397d8;">(</span>\%<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">foreach</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+But wait, <code>$is_debug</code> is set - where's our debug output?
+</p>
+
+<p>
+Perl tolerates reckless behavior such as multiplying strings and
+tossing references to uninitialized variables around willy-nilly. But
+once you've eaten your pig slop and come crawling back, begging for
+some discipline in order to save you from yourself, Perl will
+graciously oblige. All you have to do is <code>use strict</code> and <code>use
+warnings</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">strict</span>;
+<span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">warnings</span>;
+<span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">Data</span>::Dumper;
+
+$<span style="color: #e78c45;">is_debug</span> = 1;
+
+<span style="color: #c397d8;">sub</span> <span style="color: #7aa6da;">debug</span> <span style="color: #c397d8;">{</span> $<span style="color: #e78c45;">debug</span> &amp;&amp; print shift; <span style="color: #c397d8;">}</span>
+
+%<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span><span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">quant</span>, $<span style="color: #e78c45;">cookie</span>, $<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">)</span> = $<span style="color: #e78c45;">_</span> =~ m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span>g<span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        $<span style="color: #e78c45;">is_nutty</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">orders</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">is_nutty</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">quant</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>;
+
+debug Dumper<span style="color: #c397d8;">(</span>\%<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">foreach</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+Yikes! That's a lot of warnings. Fortunately most of them are just
+telling us that we need to declare all of our variables using the <code>my</code>
+keyword before we reference them. Let's do that.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">strict</span>;
+<span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">warnings</span>;
+<span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">Data</span>::Dumper;
+
+<span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">is_debug</span> = 1;
+
+<span style="color: #c397d8;">sub</span> <span style="color: #7aa6da;">debug</span> <span style="color: #c397d8;">{</span> $<span style="color: #e78c45;">debug</span> &amp;&amp; print shift; <span style="color: #c397d8;">}</span>
+
+<span style="color: #e7c547;">my</span> %<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+<span style="color: #e7c547;">my</span> %<span style="color: #e78c45; text-decoration: underline;">orders</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span><span style="color: #e7c547;">my</span> <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">quant</span>, $<span style="color: #e78c45;">cookie</span>, $<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">)</span> = $<span style="color: #e78c45;">_</span> =~ m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span>g<span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        <span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">is_nutty</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">orders</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">is_nutty</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">quant</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+debug Dumper<span style="color: #c397d8;">(</span>\%<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">foreach</span> <span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+Sans clutter, the problem is easier to spot. The interpreter is giving
+us a hint here:
+</p>
+
+<pre class="example">
+Global symbol "$debug" requires explicit package name (did you forget to declare "my $debug"?) at /tmp/extract-orders line 8.
+</pre>
+
+<p>
+In our <code>debug</code> subroutine we reference a scalar named <code>$debug</code>, which
+we never declared. That's because we actually meant
+<code>$is_debug</code>. Thanks, interpreter!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">strict</span>;
+<span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">warnings</span>;
+<span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">Data</span>::Dumper;
+
+<span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">is_debug</span> = 1;
+
+<span style="color: #c397d8;">sub</span> <span style="color: #7aa6da;">debug</span> <span style="color: #c397d8;">{</span> $<span style="color: #e78c45;">is_debug</span> &amp;&amp; print shift; <span style="color: #c397d8;">}</span>
+
+<span style="color: #e7c547;">my</span> %<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+<span style="color: #e7c547;">my</span> %<span style="color: #e78c45; text-decoration: underline;">orders</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span><span style="color: #e7c547;">my</span> <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">quant</span>, $<span style="color: #e78c45;">cookie</span>, $<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">)</span> = $<span style="color: #e78c45;">_</span> =~ m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span>g<span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        <span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">is_nutty</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">orders</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">is_nutty</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">quant</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+debug Dumper<span style="color: #c397d8;">(</span>\%<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">foreach</span> <span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+Fixed. But it's annoying to have to edit the code every time we want
+to toggle debugging. Let's accept a flag from the command line to
+enable debugging. The arguments to our program are available in
+<code>@ARGV</code>, and we can get the length of an array by resolving it in
+scalar context.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">strict</span>;
+<span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">warnings</span>;
+<span style="color: #c397d8;">use</span> <span style="color: #70c0b1;">Data</span>::Dumper;
+
+<span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">is_debug</span> = scalar @<span style="color: #e78c45; text-decoration: underline;">ARGV</span> &gt; 1 &amp;&amp; shift @<span style="color: #e78c45; text-decoration: underline;">ARGV</span> eq <span style="color: #b9ca4a;">'--debug'</span>;
+
+<span style="color: #c397d8;">sub</span> <span style="color: #7aa6da;">debug</span> <span style="color: #c397d8;">{</span> $<span style="color: #e78c45;">is_debug</span> &amp;&amp; print shift; <span style="color: #c397d8;">}</span>
+
+<span style="color: #e7c547;">my</span> %<span style="color: #e78c45; text-decoration: underline;">nutty</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">'Peanut Butter'</span> =&gt; 1, <span style="color: #b9ca4a;">'Chocolate Macadamia'</span> =&gt; 1,<span style="color: #c397d8;">)</span>;
+<span style="color: #e7c547;">my</span> %<span style="color: #e78c45; text-decoration: underline;">orders</span>;
+
+<span style="color: #c397d8;">while</span> <span style="color: #c397d8;">(</span>&lt;&gt;<span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    <span style="color: #c397d8;">if</span> <span style="color: #7aa6da;">(</span><span style="color: #e7c547;">my</span> <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">quant</span>, $<span style="color: #e78c45;">cookie</span>, $<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">)</span> = $<span style="color: #e78c45;">_</span> =~ m<span style="color: #b9ca4a;">/order for (\d+) '(.*)' from customer '(.*)'/</span>g<span style="color: #7aa6da;">)</span> <span style="color: #7aa6da;">{</span>
+        <span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">is_nutty</span> = exists $<span style="color: #e78c45;">nutty</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cookie</span><span style="color: #70c0b1;">}</span> ? <span style="color: #b9ca4a;">"nutty"</span> : <span style="color: #b9ca4a;">"nut_free"</span>;
+        $<span style="color: #e78c45;">orders</span><span style="color: #70c0b1;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #70c0b1;">}{</span>$<span style="color: #e78c45;">is_nutty</span><span style="color: #70c0b1;">}</span> += $<span style="color: #e78c45;">quant</span>;
+    <span style="color: #7aa6da;">}</span>;
+<span style="color: #c397d8;">}</span>
+
+debug Dumper<span style="color: #c397d8;">(</span>\%<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span>;
+
+<span style="color: #c397d8;">foreach</span> <span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">cust</span> <span style="color: #c397d8;">(</span>keys %<span style="color: #e78c45; text-decoration: underline;">orders</span><span style="color: #c397d8;">)</span> <span style="color: #c397d8;">{</span>
+    print join<span style="color: #7aa6da;">(</span><span style="color: #b9ca4a;">"\t"</span>, <span style="color: #70c0b1;">(</span>$<span style="color: #e78c45;">cust</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nutty"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span>, $<span style="color: #e78c45;">orders</span><span style="color: #b9ca4a;">{</span>$<span style="color: #e78c45;">cust</span><span style="color: #b9ca4a;">}{</span><span style="color: #b9ca4a;">"nut_free"</span><span style="color: #b9ca4a;">}</span> || <span style="color: #b9ca4a;">"0"</span><span style="color: #70c0b1;">)</span><span style="color: #7aa6da;">)</span>
+<span style="color: #c397d8;">}</span>
+</pre>
+</div>
+
+<p>
+Much better! At this point, you could probably pass this script off to
+a coworker without fear of them throwing something at you.
+</p>
+
+<p>
+And with that, we've covered just enough Perl to be dangerous. Let's
+do a quick review of the concepts that we've touched on.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7190be3" class="outline-2">
+<h2 id="org7190be3"><span class="section-number-2">2</span> Perl 101</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-org220018d" class="outline-3">
+<h3 id="org220018d"><span class="section-number-3">2.1</span> Invocation</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+<code>-lne</code> covers 95% of your use cases.
+</p>
+
+<dl class="org-dl">
+<dt><code>-l</code></dt><dd>automatically strip the record separator (newline, by
+default) off each input record and append it to each output
+record</dd>
+<dt><code>-n</code></dt><dd>wrap your code in an implicit loop that iterates over each
+input record</dd>
+<dt><code>-e</code></dt><dd>Execute the following string as a Perl program</dd>
+</dl>
+
+<p>
+See <code>perldoc perlrun</code> for more information.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org12be221" class="outline-3">
+<h3 id="org12be221"><span class="section-number-3">2.2</span> Data Types</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Perl has three fundamental data types: scalars, arrays, and
+hashes. See <code>perldoc perldata</code> for further reading.
+</p>
+</div>
+
+<div id="outline-container-orgeb2e449" class="outline-4">
+<h4 id="orgeb2e449"><span class="section-number-4">2.2.1</span> Scalar</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+Scalars represent values. A scalar is either a string, number, or a
+reference. You don't explicitly declare the type of a scalar. In fact,
+scalars are automatically type-coerced depending on the context in
+which they are used. Scalar variables are prefixed with <code>$</code> - think
+"$calar".
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">pi</span> = 3.14;
+<span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">pi_string</span> = <span style="color: #b9ca4a;">"3.14"</span>;
+<span style="color: #e7c547;">my</span> $<span style="color: #e78c45;">pie</span> = <span style="color: #b9ca4a;">"rhubarb"</span>;
+print $<span style="color: #e78c45;">pi</span> + $<span style="color: #e78c45;">pi_string</span>, <span style="color: #b9ca4a;">"\n"</span>;
+print $<span style="color: #e78c45;">pi</span> + $<span style="color: #e78c45;">pi</span>, <span style="color: #b9ca4a;">"\n"</span>;
+print $<span style="color: #e78c45;">pi</span> + $<span style="color: #e78c45;">pie</span>, <span style="color: #b9ca4a;">"\n"</span>;
+print $<span style="color: #e78c45;">pi</span> . $<span style="color: #e78c45;">pie</span> . $<span style="color: #e78c45;">pi_string</span>, <span style="color: #b9ca4a;">"\n"</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8c4bd49" class="outline-4">
+<h4 id="org8c4bd49"><span class="section-number-4">2.2.2</span> Arrays</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+An array is just an ordered list of scalars. Array variables are
+prefixed with <code>@</code>, as in "@rray". Use the sigil <code>$</code> when subscripting
+to access individual elements of an array.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #e7c547;">my</span> @<span style="color: #e78c45; text-decoration: underline;">arr</span> = <span style="color: #c397d8;">(</span><span style="color: #b9ca4a;">"a"</span>, <span style="color: #b9ca4a;">"b"</span>, <span style="color: #b9ca4a;">"c"</span><span style="color: #c397d8;">)</span>;
+print <span style="color: #b9ca4a;">"The 2nd element is "</span>, $<span style="color: #e78c45;">arr</span><span style="color: #c397d8;">[</span>1<span style="color: #c397d8;">]</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1e03985" class="outline-4">
+<h4 id="org1e03985"><span class="section-number-4">2.2.3</span> Hashes</h4>
+<div class="outline-text-4" id="text-2-2-3">
+<p>
+Hashes are unordered collections of key-value pairs, where the keys
+are unique strings and the values are scalars. Hash variables start
+with <code>%</code>. (Why don't <span class="underline">hashes</span> start with a <span class="underline">hash</span> symbol, <code>#</code>? Seems
+like a missed opportunity there, Larry). As with arrays, you use the
+sigil <code>$</code> to access individual elements of a hash.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-perl"><span style="color: #e7c547;">my</span> %<span style="color: #e78c45; text-decoration: underline;">hash</span> = <span style="color: #c397d8;">(</span> <span style="color: #b9ca4a;">'cat'</span> =&gt; <span style="color: #b9ca4a;">'meow'</span>, <span style="color: #b9ca4a;">'dog'</span> =&gt; <span style="color: #b9ca4a;">'woof'</span> <span style="color: #c397d8;">)</span>;
+print <span style="color: #b9ca4a;">"The $_ says '$hash{$_}'.\n"</span> <span style="color: #c397d8;">for</span> keys %<span style="color: #e78c45; text-decoration: underline;">hash</span>;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8f42ec7" class="outline-3">
+<h3 id="org8f42ec7"><span class="section-number-3">2.3</span> Regexes</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Construct a regex with <code>/ /</code>. The syntax should look familiar if
+you've worked with regexes before. Captured groups are placed in <code>$1</code>,
+<code>$2</code>, <code>$3</code>, but you can also use destructuring assignment to put the
+captured groups into variables. Perl supports advanced constructs like
+positive and negative look-ahead and look-behind assertions, should
+you need them.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #70c0b1;">echo</span> <span style="color: #b9ca4a;">"There's a fish in my dish!"</span> | perl -lne <span style="color: #b9ca4a;">'/a (\w+) in my (\w+)/; print "$1, $2"'</span>
+<span style="color: #70c0b1;">echo</span> <span style="color: #b9ca4a;">"There's a snake in my boot!"</span> | perl -lne <span style="color: #b9ca4a;">'($thing, $place) = $_ =~ /a (\w+) in my (\w+)/; print "$thing, $place"'</span>
+</pre>
+</div>
+
+<p>
+For more information, see <code>perldoc perlre</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb5e84f7" class="outline-3">
+<h3 id="orgb5e84f7"><span class="section-number-3">2.4</span> BEGIN and END blocks</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+<code>BEGIN</code> and <code>END</code> blocks let you do things exactly once before and
+after an implicit while loop created by the <code>-n</code> flag.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc73441b" class="outline-3">
+<h3 id="orgc73441b"><span class="section-number-3">2.5</span> Subroutines</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+Subroutines, or functions, are declared with the <code>sub</code>
+keyword. Arguments are passed to the function via the array <code>@_</code>.
+Functions can be invoked with or without parenthesis around the
+arguments.
+</p>
+
+<p>
+See <code>perldoc perlsub</code> for more information.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org231fcdb" class="outline-2">
+<h2 id="org231fcdb"><span class="section-number-2">3</span> Areas for further exploration</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Check out <a href="https://learnxinyminutes.com/docs/perl/">Learn X in Y Minutes, where X = perl</a>. This is always my
+first stop when I'm working in an unfamiliar language. Then read up
+on:
+</p>
+
+<ul class="org-ul">
+<li>How references work (start with <code>perldoc perlreftut</code>)</li>
+<li>Map, grep, and reduce</li>
+<li>Perl's various special variables (<code>perldoc perlvar</code>)</li>
+<li>Chop and chomp</li>
+<li>The flip-flop operator</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org1b8d0d0" class="outline-2">
+<h2 id="org1b8d0d0"><span class="section-number-2">4</span> Bonus: Perl + q</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+If I have the luxury of working on my own laptop, I like to use Perl
+in conjunction with a utility called <a href="https://github.com/harelba/q">q</a>. q allows you to run SQL
+queries against data in .csv files.
+</p>
+
+<p>
+Perl and q complement each other beautifully. First, use Perl's regex
+capabilities to extract records from a stream. Then use q to slice and
+dice the data.
+</p>
+
+<p>
+Let's revisit the problem of counting the number of cookies ordered
+per variety. We use a regex to extract and print the fields we're
+interested in. We also output the column names as the first line, for
+readability.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">perl -nle <span style="color: #b9ca4a;">"BEGIN { print 'cnt,cookie,cust'; }</span>
+<span style="color: #b9ca4a;">@f = \$_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/;</span>
+<span style="color: #b9ca4a;">print join(',', @f) if @f"</span> logs.txt
+</pre>
+</div>
+
+<p>
+Now let's pipe this table into q. A quick overview of the flags:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Flag</th>
+<th scope="col" class="org-left">Type</th>
+<th scope="col" class="org-left">Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">-H</td>
+<td class="org-left">Input</td>
+<td class="org-left">Treat first line of input as headers</td>
+</tr>
+
+<tr>
+<td class="org-left">-O</td>
+<td class="org-left">Output</td>
+<td class="org-left">Output column names as the first line</td>
+</tr>
+
+<tr>
+<td class="org-left">-T</td>
+<td class="org-left">Output</td>
+<td class="org-left">Output is tab-delimited</td>
+</tr>
+
+<tr>
+<td class="org-left">-d,</td>
+<td class="org-left">Input</td>
+<td class="org-left">Input is comma-delimited</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-sh">perl -nle <span style="color: #b9ca4a;">"BEGIN { print 'cnt,cookie,cust'; }</span>
+<span style="color: #b9ca4a;">@f = \$_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/;</span>
+<span style="color: #b9ca4a;">print join(',', @f) if @f"</span> logs.txt | q -HOTd, <span style="color: #b9ca4a;">"\</span>
+<span style="color: #b9ca4a;">select cookie, sum(cnt) as total</span>
+<span style="color: #b9ca4a;">from -</span>
+<span style="color: #b9ca4a;">group by 1</span>
+<span style="color: #b9ca4a;">order by 2 desc"</span>
+</pre>
+</div>
+
+<p>
+Watch how easy it is to modify this to answer our other question: how
+many cookies with and without nuts, respectively, did each customer
+order? We simply need to modify our SQL query.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">perl -nle <span style="color: #b9ca4a;">"BEGIN { print 'cnt,cookie,cust'; }</span>
+<span style="color: #b9ca4a;">@f = \$_ =~ m/order for (\d+) '(.*)' from customer '(.*)'/;</span>
+<span style="color: #b9ca4a;">print join(',', @f) if @f"</span> logs.txt | q -HOTd, <span style="color: #b9ca4a;">"\</span>
+<span style="color: #b9ca4a;">select cust,</span>
+<span style="color: #b9ca4a;">       sum(case when cookie in ('Chocolate Macadamia', 'Peanut Butter') THEN cnt ELSE 0 END) as nutty,</span>
+<span style="color: #b9ca4a;">       sum(case when cookie not in ('Chocolate Macadamia', 'Peanut Butter') THEN cnt ELSE 0 END) as nut_free</span>
+<span style="color: #b9ca4a;">from -</span>
+<span style="color: #b9ca4a;">group by 1"</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Andrew Stahlman</p>
+<p class="date">Created: 2017-07-14 Fri 07:32</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

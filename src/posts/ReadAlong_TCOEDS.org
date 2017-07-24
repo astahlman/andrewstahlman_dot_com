@@ -1,4 +1,5 @@
 #+TITLE: Read Along: Time, Clocks, and the Ordering of Events in a Distributed System
+#+PROPERTY: header-args:python :tangle ../code/tcoeds/main.py :shebang #!/usr/bin/python2.7 :eval no
 
 In my first few months at Amazon, I needed (or at least thought I
 needed) to synchronize writes to a Dynamo table. My deskmate and I
@@ -139,20 +140,16 @@ That is, I can finally implement that (still naïve) distributed lock.
 Let's go ahead and do that.
 
 * Implementation
-:PROPERTIES:
-:header-args: :tangle ../code/tcoeds/main.py
-:END:
 
 You can find all of this code on [[https://github.com/astahlman/andrewstahlman_dot_com/blob/master/src/code/tcoeds/main.py][GitHub]].
 
-#+BEGIN_SRC emacs-lisp :tangle no :exports none
-(setq org-src-preserve-indentation t)
+#+BEGIN_SRC emacs-lisp :exports none :results silent
+  (setq-local org-src-preserve-indentation t)
 #+END_SRC
 
-#+RESULTS:
-: t
+Let's get some imports out of the way.
 
-#+BEGIN_SRC python :exports none :shebang #!/usr/bin/python2.7
+#+BEGIN_SRC python :exports code
 
 from random import randint
 import logging
@@ -171,7 +168,8 @@ can tick in two ways:
 The former is used upon sending a message (IR1). The latter is used
 upon receiving a message (IR2).
 
-#+begin_src python
+#+BEGIN_SRC python
+
 class LogicalClock(object):
 
     def __init__(self):
@@ -182,7 +180,7 @@ class LogicalClock(object):
 
     def ensure_at_least(self, t):
         self.time = max(self.time, t)
-#+end_src
+#+END_SRC
 
 ** Mutex
 
@@ -190,7 +188,8 @@ A Mutex can have at most one owner at a given time. It tracks its
 current owner and the number of times it has been claimed and
 released, respectively.
 
-#+begin_src python
+#+BEGIN_SRC python
+
 class Mutex(object):
 
     def __init__(self):
@@ -200,33 +199,34 @@ class Mutex(object):
 
     def owner(self):
         return self._owner
-#+end_src
+#+END_SRC
+
 
 We fail loudly if a Process attempts to claim the lock while it is
 owned by another Process. We also perform a sanity check that each
 claim has had a corresponding release.
 
-#+begin_src python
+#+BEGIN_SRC python
     def claim(self, new_owner):
         assert self._owner is None, "Aaaaaaaaaaaagh. {} tried to claim the lock, but {} owns it.".format(new_owner, self._owner)
         logging.debug("{} claims the lock.".format(new_owner))
         self._owner = new_owner
         self.num_claims += 1
         assert self.num_claims == self.num_releases + 1
-#+end_src
+#+END_SRC
 
 We also fail loudly if any Process other than the lock's owner
 attempts to release it. Upon release, we again assert that every claim
 has a corresponding release.
 
-#+begin_src python
+#+BEGIN_SRC python
     def release(self, owner):
         assert self._owner is owner, "{} tried to release a lock that {} owns.".format(owner, self._owner)
         logging.debug("{} releases the lock.".format(owner))
         self._owner = None
         self.num_releases += 1
         assert self.num_claims == self.num_releases
-#+end_src
+#+END_SRC
 
 ** Message
 
@@ -234,7 +234,8 @@ A Message has three components: a sender, a recipient, and a
 timestamp. The timestamp is the local time at which the message was
 sent from the perspective of the sending Process.
 
-#+begin_src python
+#+BEGIN_SRC python
+
 class Message(object):
 
     def __init__(self, sender, recipient, sent_at):
@@ -244,13 +245,13 @@ class Message(object):
 
     def __repr__(self):
         return "{}@{} -> {}: {}".format(self.sender.name, self.sent_at, self.recipient.name, self.content)
-#+end_src
+#+END_SRC
 
 There are three classes of Messages: a Request for the mutex, a
 Release of the mutex, and an Acknowledgement of a Request by another
 Process.
 
-#+begin_src python
+#+BEGIN_SRC python
     @classmethod
     def a_mutex_request(cls, sender, recipient, sent_at):
         m = Message(sender, recipient, sent_at)
@@ -268,7 +269,7 @@ Process.
         m = Message(sender, recipient, sent_at)
         m.content = "ACK"
         return m
-#+end_src
+#+END_SRC
 
 ** Message Broker
 
@@ -276,7 +277,7 @@ The MsgBroker mediates communication between Processes. A Process
 sends messages by posting the message to the MsgBroker, which enqueues
 the message for delivery.
 
-#+begin_src python
+#+BEGIN_SRC python
 class MsgBroker(object):
 
     def __init__(self):
@@ -288,7 +289,7 @@ class MsgBroker(object):
         self.queue[queue_key] = outbox
         outbox.append(msg)
 
-#+end_src
+#+END_SRC
 
 We add a random delay to the delivery of messages to simulate network
 latency. As Lamport points out, we are making the unrealistic
@@ -298,22 +299,14 @@ in which they were sent. In the real world we would use a protocol
 that allows the receiver to detect when messages are lost or delivered
 out of order.
 
-#+begin_src python
+#+BEGIN_SRC python
     def deliver(self):
         for (sender, recipient), outbox in self.queue.items():
             while outbox and randint(1, 20) == 1:
                 msg = outbox.pop(0)
                 logging.debug("[MSG]: {}".format(msg))
                 recipient.receive_message(sender, msg)
-#+end_src
-
-#+begin_src python :exports none
-    def __str__(self):
-        pending_msgs = 0
-        for (sender, recipient), outbox in self.queue.items():
-            pending_msgs += (len(outbox) if outbox else 0)
-        return 'Messages pending delivery: {}'.format(pending_msgs)
-#+end_src
+#+END_SRC
 
 ** Process
 
@@ -322,6 +315,7 @@ access to a shared resource via the_lock and communicate via a
 msg_broker.
 
 #+BEGIN_SRC python
+
 class Process(object):
 
     def __init__(self, name, the_lock, msg_broker, num_peers):
@@ -342,11 +336,6 @@ claim the lock.
         self.clock = LogicalClock()
         self.request_queue = []
         self.latest_ack_from = {}
-#+END_SRC
-
-#+BEGIN_SRC python :exports none
-    def __str__(self):
-        return "{name}@{time}".format(name=self.name, time=self.time())
 #+END_SRC
 
 To request the lock we send a timestamped message to each of our peers.
@@ -372,13 +361,13 @@ our simulation provided that it has no requests pending. We can run
 the simulation under different degrees of lock contention by adjusting
 the probability that the process "wants" the lock.
 
-#+begin_src python
+#+BEGIN_SRC python
     def wants_lock(self):
         return not self.has_request_pending() and randint(1, 10) == 1
 
     def has_request_pending(self):
         return any(x for x in self.request_queue if x.sender is self)
-#+end_src
+#+END_SRC
 
 If a process owns the lock, its request is guaranteed to be at the
 front of the queue. Thus, to release the lock we pop the head of the
@@ -395,7 +384,7 @@ IR1.
         for p in peers:
             self.send_message(p, Message.a_mutex_release(self, p, self.time()))
         self.clock.increment()
-#+end_src
+#+END_SRC
 
 We can adjust how long a process holds the lock here. Increasing the
 expected lock hold time while holding constant the probability that a
@@ -404,47 +393,47 @@ process wants the lock will increase lock contention.
 #+BEGIN_SRC python
     def ready_to_release(self):
         return randint(1, 2)
-#+end_src
+#+END_SRC
 
 According to IR2, when a process receives a message it sets its clock
 to a value greater than or equal to its present value and greater than
 timestamp on the incoming message.
 
-#+begin_src python
+#+BEGIN_SRC python
     def receive_message(self, sender, msg):
         self.clock.ensure_at_least(msg.sent_at + 1)
-#+end_src
+#+END_SRC
 
 The first type of message we must handle is a request for the lock.
 After we place the request on the request_queue, we send a timestamped
 acknowledgement to the process that claimed the lock.
 
-#+begin_src python
+#+BEGIN_SRC python
         if msg.content == "REQUEST":
             self.request_queue.append(msg)
             self.send_message(sender, Message.an_ack(self, sender, self.time()))
-#+end_src
+#+END_SRC
 
 The second type of message is a release of the lock. The (now former)
 owner of the lock is guaranteed to be at the head of the queue, so we
 just pop the head of the queue.
 
-#+begin_src python
+#+BEGIN_SRC python
         elif msg.content == "RELEASE":
             logging.debug("{} processing release by {}. Before removing:".format(self, sender))
             logging.debug(str(self.request_queue))
             self.request_queue.pop(0)
             logging.debug("After: {}:".format(self.request_queue))
-#+end_src
+#+END_SRC
 
 The third and final type of message is an acknowledgement of our claim
 from another process. In this case we simply record the time of the
 acknowledgement and the process that sent it.
 
-#+begin_src python
+#+BEGIN_SRC python
         elif msg.content == "ACK":
             self.latest_ack_from[sender.name] = msg.sent_at
-#+end_src
+#+END_SRC
 
 We could potentially claim the lock in response to two types of
 events: an acknowledgement of our claim (if no other process owns the
@@ -452,10 +441,10 @@ lock) or a notification of a release. When we receive either of these
 messages, we check whether we have the right to claim the lock. If we
 do, we take it.
 
-#+begin_src python
+#+BEGIN_SRC python
         if msg.content in ["ACK", "RELEASE"] and self.can_claim_lock():
                 self.the_lock.claim(self)
-#+end_src
+#+END_SRC
 
 We can claim the lock if and only if the following two conditions
 hold:
@@ -464,21 +453,21 @@ hold:
 2. We have received an acknowledgement of our claim from every other
    process which is timestamped after our request.
 
-#+begin_src python
+#+BEGIN_SRC python
     def can_claim_lock(self):
         first_req = self.get_request_queue()[0]
         if first_req.sender is self:
             acks = [sender for (sender, t) in self.latest_ack_from.iteritems()
                         if t > first_req.sent_at]
             return len(acks) == self.num_peers
-#+end_src
+#+END_SRC
 
 Ordering events by their timestamp would produce a partial ordering,
 but we need a total ordering. Thus, we break ties using an
 alphabetical ordering based on the process' name. Note that this
 requires that process names be unique.
 
-#+begin_src python
+#+BEGIN_SRC python
     @classmethod
     def total_ordering(cls, msg):
         return (msg.sent_at, msg.sender.name)
@@ -486,19 +475,21 @@ requires that process names be unique.
     def get_request_queue(self):
         self.request_queue.sort(key=Process.total_ordering)
         return self.request_queue
-#+end_src
+#+END_SRC
 
 Processes delegate the delivery of messages to the Message Broker.
 
-#+begin_src python
+#+BEGIN_SRC python
     def send_message(self, recipient, msg):
         self.msg_broker.send_message(self, recipient, msg)
-#+end_src
+#+END_SRC
 
-#+begin_src python :exports none
+Each Process maintains a local view of time.
+
+#+BEGIN_SRC python
     def time(self):
         return self.clock.time
-#+end_src
+#+END_SRC
 
 ** Driver
 
@@ -513,7 +504,7 @@ messages were enqueued for delivery. A non-zero exit status indicates
 that none of our assertions failed and our distributed algorithm
 worked.
 
-#+begin_src python :exports code
+#+BEGIN_SRC python
 import argparse
 
 if __name__ == "__main__":
@@ -526,9 +517,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     log_level = logging.DEBUG if args.verbose else logging.INFO
     logging.basicConfig(level=log_level)
-#+end_src
+#+END_SRC
 
-#+begin_src python
+#+BEGIN_SRC python
     the_lock = Mutex()
     msg_broker = MsgBroker()
 
@@ -563,18 +554,19 @@ if __name__ == "__main__":
 
     logging.info("Done. Simulation finished with no errors.")
     logging.info("The lock was claimed {} times and released {} times"
-                 .format(the_lock.num_claims, the_lock.num_releases))
+                .format(the_lock.num_claims, the_lock.num_releases))
 #+END_SRC
 
+Let's run it...
 
-#+BEGIN_SRC sh :dir ../ :results output :tangle no
-./code/tcoeds/main.py
+#+BEGIN_SRC bash :results output :prologue exec 2>&1 :exports both
+../code/tcoeds/main.py
 #+END_SRC
 
 #+RESULTS:
 : INFO:root:Starting simulation with 10 processes...
 : INFO:root:Done. Simulation finished with no errors.
-: INFO:root:The lock was claimed 382 times and released 382 times
+: INFO:root:The lock was claimed 377 times and released 377 times
 
 * Footnotes
 
@@ -587,6 +579,7 @@ guy. True story.
 * Appendix
 
 ** Proof that converse of Clock Condition does not hold
+
 #+BEGIN_EXAMPLE
 |     |
 |     |
