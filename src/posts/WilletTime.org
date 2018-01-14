@@ -1,0 +1,2105 @@
+#+TITLE: Willett Time
+#+PROPERTY: header-args:js :eval no
+#+OPTIONS: toc:nil
+#+HTML_HEAD: <script src="../js/willett-time/clock.js" type="text/javascript"></script>
+
+#+BEGIN_EXPORT html
+<svg id="willet_clock2"
+     class="svg-clock"
+     width="481"
+     height="565">
+  <image xlink:href="../assets/willett-time/clock-face-blank-no-pendulum.png"
+         width="100%"
+         height="100%"
+         id="bg-img"/>
+    <g id="hands">
+      <image xlink:href="../assets/willett-time/hour-hand.png" id="grandfather_hour_hand" class="hour_hand" x="404" y="240" width="14" height="34.45" />
+      <image xlink:href="../assets/willett-time/minute-hand.png" id="grandfather_min_hand" class="min_hand" x="404" y="190" width="19" height="65" />
+      <line id="grandfather_sec_hand" class="sec_hand" x1="405" y1="205" x2="405" y2="275"/>
+    </g>
+    <image xlink:href="../assets/willett-time/pendulum.png" id="pendulum" x="362" y="379" width="100" height="120" />
+</svg>
+<p id="grandfather_text">00:00:00</p>
+#+END_EXPORT
+
+
+This is a story about change in complex systems.
+
+* Prologue
+#+BEGIN_QUOTE
+And God said, Let there be light: and there was light.
+And God saw the light, that it was good: and God divided the light from the darkness.
+And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.
+
+-- Genesis 1:3-5
+#+END_QUOTE
+
+I used to work with an ex-military guy in Amazon Logistics named
+Ron. Ron had little patience for what he (rightly) viewed as needless
+complexity introduced by "the coders."
+
+Once, Ron asked for an export of some truck schedules, so I crafted a
+quick SQL query and sent him the results in a .csv file. A few minutes
+later he came to my desk to ask about the weird number in the
+"datetime" column.
+
+"Ah, right - that's just epoch time," I explained.
+
+"Epic time."
+
+"Right, epoch. It's a... well, it's like, how our machines represent
+time. It's the number of seconds since January 1, 1970."
+
+Ron's blank stare afforded me a few seconds to reflect on how stupid
+this idea sounds to a non-Unix user. "Oh, of course," he said
+finally. "1970 - when the world began."
+
+* Act I: George Vernon Hudson
+
+#+BEGIN_QUOTE
+Although adopting Mr. Meyrick's system in the present work I do not
+agree unreservedly with all his conclusions; but I have not attempted
+to alter his system in accordance with my own views, as I conceive
+that the conclusions of a naturalist, who has only had the opportunity
+of studying a restricted fauna, would necessarily be liable to
+considerable error.
+
+-- George Vernon Hudson, New Zealand Moths and Butterflies (1898)
+#+END_QUOTE
+
+If we can tell our MacBooks that the dawn of time was during the Nixon
+administration, who's to stop us from choosing the hour of sunset?
+
+Nobody, if you ask George Vernon Hudson. You can't actually ask him
+because he's been dead for a long time according to any clock you
+fancy, but I'm confident he would agree.
+
+George was a man of simple pleasures. When he clocked out of the post
+office in Wellington, New Zealand, he pursued one his two passions:
+bugs and stars. As any entomologist will tell you (I'm assuming - no
+entomologists were consulted), the daylight hours are primetime for
+spotting sweet insects.
+
+Being a father and the family's breadwinner, GVH pursued his hobbies
+like most parents with a 9-5 job: he snuck in an hour or two of
+star-gazing before bed and relegated his bug-hunting expeditions to
+the weekends while the kids were at soccer practice.
+
+Pscyhe! That's not how you amass "the finest and most perfect
+collection of New Zealand insects ever formed by any one person."[fn:1]
+
+Instead, he drafted the first formal proposal for seasonal time: on
+midnight of October 1st, the clock would spring forward to 2 am
+(remember, October is spring in the Southern hemisphere), and at 2 am
+on March 1st the clock would fall back to midnight. The effect would
+be to create two extra hours of daylight in the summer evenings for
+"cricket, gardening, cycling, or any other outdoor pursuit
+desired" [fn:2] (e.g., chasing butterflies).
+
+In 1895 he presented his paper "On Seasonal Time-adjustment in
+Countries South of Lat. 30°" before his scientifically-minded peers in
+the Wellington Philosophical Society. It didn't get the reception he
+was hoping for. In fact, it was so roundly scorned that the Society
+didn't even bother to publish it in their proceedings.
+
+Their secretary did, however, record the reaction of Mr. Harding, who
+called the scheme a "wholly unscientific and impracticable" rehash of
+an idea that Benjamin Franklin had more than a century earlier.
+
+Mr. Travers concurred. "It was out of the question to think of
+altering a system that had been in use for thousands of years, and
+found by experience to be the best. The paper was not practical."
+
+Mr. Hustwick, who would have fit right into moderate White America
+during the Civil Rights Movement, "was of opinion that the reform
+spoken of would have to wait a little longer." Translation: fantastic
+idea, George, old sport! I'll be 100% behind you just as soon as I'm
+dead enough not to be inconvenienced.
+
+Mr. Richardson voiced a sort of non-sensical support; he thought it
+"would be a good thing if the plan could be applied to the young
+people." Lest the partitioning of time into Old Fart and
+Whippersnapper Standard Time create confusion, Mr. Travers proposed
+that each clock have two sets of hands.
+
+Mr. Hawthorne's response is my favorite. He "did not see any
+difficulty in carrying out the views advocated so ably by Mr. Hudson."
+(Ha. Spoken like a man who's never been oncall during a daylight
+savings transition.)
+
+GVH was understandably hurt by the criticism, Mr. Hawthorne's naïve
+optimism aside. He "said that he was sorry to see the paper treated
+rather with ridicule. He intended it to be practical."[fn:3]
+
+His proposal for seasonal time adjustment might have amounted to
+nothing more than a footnote on the Wikipedia page of the guy with the
+biggest bug collection in New Zealand had Hudson's paper not somehow
+wound up several hundred kilometers and a ferry ride away in the hands
+of an anonymous True Believer. Sometime during 1896 (so at least 3
+months after Hudson's presentation in October), someone in
+Christchurch, New Zealand read Hudson's presentation and found it so
+inspiring that they re-printed it and distributed thousands of copies
+around town.
+
+Emboldened (and surprised) by the grassroots support, GVH returned to
+the Wellington Philosophical Society in 1898, 3 years after his first
+presentation. To the Mr. Maskell's of the world who believed that "the
+mere calling the hours different would not make any difference in the
+time," GVH responded that "time is merely an artificial standard,
+which might be further adjusted if by so doing it could be made more
+subservient to our requirements."
+
+He then proceeded to refute the most common objections to seasonal
+time: no, his proposal wouldn't deprive people of long winter
+evenings, because the clocks would only be altered during the summer
+(Did you even read the paper?); yes, the same effect could be achieved
+without altering the clocks if everyone agreed to wake up at 5:00
+instead of 6:00 and to show up for the noon train at 11:00, but
+enforcing such a policy would be impossible; yes, the milkman would
+have to start his route in the dark, and yes, the kerosene and theater
+industry stood to lose some money, but they would be compensated for
+their loss of wealth with a corresponding increase in health. [fn:2]
+
+No one seems to have been particularly enthused by his second speech,
+but at least this time the Society deemed it worthy of publication in
+their proceedings.
+
+Sir James Hector worried that it would be hard to wake up his boys up
+in the morning. "There would also," he fancied, "be some trouble in
+getting their domestic helpers to appreciate the change." "Mr. Hudson
+briefly replied," according to the official meeting minutes, and then
+they moved on to discussing James Hector's lizard collection. [fn:4]
+
+And that was pretty much the end of George Vernon Hudson's campaign
+for seasonal time.
+
+* Act II: William Willett
+
+#+BEGIN_QUOTE
+"Nevertheless, she persisted."
+
+-- Senate Majority Leader, Mitch McConnell
+#+END_QUOTE
+
+The campaign for seasonal time languished for the next 9 years until
+it found a new champion: William Willett.
+
+While riding his horse one summer morning in Pett's Wood (because what
+else would a man named "William Willett" be doing on a summer morning
+other than riding his horse in "Pett's Wood?"), he noticed that his
+neighbors' blinds were still drawn against the sun. This waste of
+daylight inspired Willett to write a pamphlet titled "The Waste of
+Daylight," in which he proposed his own version of seasonal time.
+
+He called for a series of 4 adjustments of 20 minutes forward each
+spring and another 4 adjustments of 20 minutes back in the fall. This
+promised less disruption to human biorythms than the 2 adjustments of
+2 hours each proposed by GVH, but at the cost of 6(!) additional clock
+adjustments per year. [fn:5]
+
+There's no evidence that Willett was aware of Hudson's campaign for
+seasonal time, but his pamphlet did echo many of Hudson's talking
+points: seasonal time would reduce the demand for artifical lighting,
+afford more leisure time, and no, it wouldn't be prohibitively
+difficult to implement.
+
+The content was familiar, but the rhetorical style wasn't.
+
+GVH deployed a measured appeal to logic with a cheerful brand of
+pathos thrown in for good measure: wouldn't it be nice if we had more
+time for nature walks?
+
+Willett, on the other hand, rallied his readers for an assault
+on... disease, or something. [fn:5]
+
+#+BEGIN_QUOTE
+Light is one of the great gifts of the Creator. While daylight
+surrounds us, cheerfulness reigns, anxieties press less heavily, and
+courage is bred for the struggle of life. Against our ever-besieging
+enemy, disease, light and fresh air act as guards in our defence, and
+when the conflict is close, supply us with most effective weapons with
+which to overcome the invader.
+#+END_QUOTE
+
+The martial metaphor was probably less jarring to Willett's
+contemporaries than it sounds to us, out of context. If Europe in the
+early 1900's was a house party, Germany would be that guy who parks
+himself by the keg and gets louder and more aggressive in his
+proclamations of naval superiority as the night wears on (it's been a
+while since I've been to a house party). Things got particularly tense
+in 1908 when Germany's old pal Austria-Hungary decided that
+"Austria-Hungary-Bosnia-Herzegovina" had a nice ring to it and
+formally annexed Bosnia and Herzegovina without really
+asking. [fn:6] [fn:7]
+
+In Willett's rhetorical universe, malevolent hordes of pathogens and
+Huns lurked outside the gate, presumably waiting for an early sunset
+to attack the defenseless British public. Unsurprisingly, butterfly
+chases didn't factor into Willett's ideal summer evening. He instead
+advocated that extra daylight be used for target practice, warning
+that "the nation may some day have cause to be thankful that by this
+means opportunities for rifle practice will have been created."
+
+With fear sufficiently mongered, he closed his pamphlet with a call to
+action, urging "every man and woman, and every youth in particular" to
+write to their representatives in Parliament in support of a 6-month
+trial of seasonal time. [fn:5]
+
+Willett paid to have the pamphlet printed and began distributing
+copies everywhere he went. Despite his zeal (or perhaps because of
+it), not many people took the proposal seriously. _The Spectator_, an
+influential London weekly newspaper, was "not sanguine of its
+success," and it seems most people agreed.
+
+Willett responded with a letter to the editor chastising him for his
+lack of faith. If he had any hope of being taken seriously, the editor
+of _The Spectator_ squashed it by squeezing Willet's irate reply in
+alongside a note from another reader who, for reasons that are
+unclear, felt compelled to share his opinion of squirrels. (If you're
+wondering, he was pretty high on the squirrel: "a species of
+handmaiden" and a "happy-go-lucky" creature "intending little ill, and
+if he does offend at times, his company and capers on the lawn or on
+the gean-tree or pear-tree make up for his mischiefs.") [fn:8]
+
+Undeterred, Willett spent the next year writing letters, printing
+pamphlets, wining and dining prominent businessmen, and lobbying
+lawmakers in support of seasonal time. He eventually won over a member
+of the House of Commons, Sir Robert Pearce. Pearce introduced the
+first Daylight Saving Bill, which was subsequently referred to a
+commitee tasked with studying its effects. The ensuing hearings
+provided Willett with a captive audience - a situation which he
+thoroughly abused.
+
+After introducing himself, Willett asked permission to read a list of
+the names of the gentleman who supported his proposal. "I do not think
+it is necessary to read all these names," said the Chairman. After
+some back and forth, Willett grudgingly agreed to read only "the
+principal" names.
+
+He then proceeded to rattle off the names and positions of 84 men and
+organizations, frequently stopping for some parenthetical aside,
+before the Chairman mercifully interjected that "for the present, that
+will do for reading the names. Will you please go on with your main
+evidence?" [fn:9]
+
+Willett launched into his prepared remarks, waxing eloquent about the
+joyous morning hours of the day and the beauty of youth before the
+Chairman cut him off again, begging him to "save the time of the
+Committee very considerably" by focusing on addressing the objections
+to his proposal.
+
+I'll spare you the details of all of the objections to his
+proposal. Suffice it to say that there were a lot of them, and they
+make for tedious reading. To give you a sense of the opposition:
+
+- the Liverpool Cotton Association objected to the shortening of their
+  trading window with American markets
+- the Director of the Meteorological Office objected on the grounds
+  that the timestamps on meteorological observations would be ambiguous
+- the general manager of the Great Eastern Railway worried that the
+  many alterations would cause mass confusion and delays
+
+Many of the witnesses supported an alternate proposal to cope with the
+confusion of adjusting the clocks: rather than revert back each
+autumn, why not just make a one-time adjustment and permanently adopt
+Mid-European Time (GMT +1:00)? This would afford the extra hour of
+daylight in the summer without the pain of coordinating multiple clock
+adjustments every year. The obvious drawback to this proposal is that
+sunrise would be very late during the winter - after 9:00 am in
+London.
+
+Another contingent didn't see any reason to adjust the clocks at
+all. Why not just convince everyone to wake up an hour earlier in the
+summer? No need to legislate what could be achieved by applying a bit
+of common sense.
+
+Of the countless objections to seasonal time, one of the most frequent
+involved the 8 clock adjustments. When asked his opinion of the 20
+minute adjustments, Sir Arthur Conan Doyle - yep, _that_ Sir Arthur
+Conan Doyle, creator of Sherlock Holmes and early supporter of
+seasonal time - admitted: "I could not quite understand that there was
+any particular reason for four 20 minutes - no doubt he had something
+in mind when he wrote it - no doubt there was some reason for it; but
+it struck me on simply reading it that a single alteration of an hour
+would be a round number, and cause less confusion and attain almost
+the same result."
+
+The contention over this point is so frequent and so tedious that
+while reading the proceedings, I wanted to grab Willett by the
+shoulders and beg him, "For the love of God, man, just make it an hour
+and spare everyone the next 67 pages of this transcript!" (I've since
+seen the error of my ways - more on that later.)
+
+But Willett was a True Believer. Convinced of the perfection and
+righteousness of his scheme, he made no concessions. The body would
+adjust more easily to waking up 20 minutes earlier than to a full
+hour, he argued. And in the inevitable mixups following a clock
+adjustment, being 20 minutes early or late to an appointment would be
+less catastrophic than a full hour.
+
+The Select Committee on the Daylight Savings Bill met 13 times and
+interviewed 42 men over the course of 56 days. In the end, they
+ignored Willett's insistence on 20 minute adjustments and recommended
+that Britain adopt a 1-hour alteration of the clocks in April and
+again in September.
+
+A promising, young politician named Winston Churchill, then the
+President of the Board of Trade, "read the report of this committee
+with much interest and with a lively recognition" of the Bill's
+advantages. [fn:10]
+
+Unfortunately for Willett, the Prime Minister took a much less lively
+view of the bill's advantages. "The Government have no intention of
+giving facilities for the passing of the Daylight Saving Bill,"
+Herbert Asquith announced during the July 8th, 1908 session of the
+House of Commons. In other words, it wasn't even up for
+discussion.[fn:11]
+
+Really, Herbert? Would it have killed you to say something 8 weeks
+ago?
+
+Willett was undeterred. He spent the next 9 months writing to over 400
+newspapers to solicit support for his proposal. In March of 1909,
+another Willett ally named Thomas Dobson introduced a revised Daylight
+Saving Bill to the House of Commons. This iteration dropped the
+controversial 20-minute adjustments in favor of the 1 hour adjustments
+recommended in the Select Committee's report.
+
+Several members of the 1908 Committee were unenthused by the prospect
+of another visit from William Willett and hastily tried to squash the
+bill before its second reading. Just when it looked as though the bill
+was dead on arrival, Churchill stood up and rescued it with the brand
+of masterful rhetoric for which he would soon become famous.
+
+He urged his colleagues to take the bill seriously and consider the
+many benefits that could be gotten for an "extra yawn some morning in
+April, an extra snooze some morning in September." He conceded that
+there were valid objections, particularly from the agricultural
+sector, and that the matter required more study before it was ready
+for a vote. He proposed that the bill once again be put before a
+select committee and the motion passed (I like to imagine Churchill
+shouting the line an "extra snooze some morning in September" over a
+triumphant crescendo of horns, prompting a raucous standing ovation in
+the House of Commons.) [fn:12]
+
+So once again, William Willett found himself before a Select Committee
+of the House of Commons tasked with studying the effects of seasonal
+time.
+
+Willett's reputation as a rambler proceeded him. By way of greeting,
+the Chairman told Willett, "I had better ask you at once to state, as
+shortly as you can, the fresh evidence you have to place before the
+Committee in regard to this Bill?"
+
+Willett being Willett, he totally ignored the qualifier "as shortly as
+you can" and launched into reading from a giant stack of letters. He
+quickly made it clear that he wasn't happy that the bill included a
+1-hour time change instead of a series of 20 minute changes.
+
+#+BEGIN_QUOTE
+I advocate the introduction of this wedge into our former arrangements
+of life by means of the thin end... and I am still of the opinion
+that, in order to effect this alteration in the habits of forty odd
+millions of people, it is desirable that the thin end of the wedge
+should be used, and not the thick end first. [fn:13]
+#+END_QUOTE
+
+This second hearing was much like the first: tedious and divisive.
+
+The committee heard from farmers who didn't want to shrink the already
+short window between the sun evaporating the dew off of the plums,
+leaving them ready to be picked, and the departure of the train that
+would ship them into town.
+
+There were farmers who were sure passage of the bill would lead to a
+revolt among the farmhands and there were farmers who were sure the
+employees would thank them for the extra hour of daylight.
+
+A representative of Big Banana was all for the bill, since fruit
+consumption peaked in the active, summer months. A tramcar operator
+thought the bill would be a boon to business. A theater manager was
+certain it would spell the end of his.
+
+Several people were concerned for the women; if the men left for work
+an hour earlier, the women would have to wake up an hour earlier to
+get their tea.
+
+It's funny listening to a roomful of men argue over how women would
+react, as if they were discussing an inscrutable, alien, race with a
+collective mind whose inner workings can only be guessed at. I suppose
+it's unsurprising, given the time period, that no one thought to just
+bring in some women and ask for their opinion.
+
+This committee got hung up on all of the same arguments as the
+previous one: why not just adopt Mid-European time? Why not just
+encourage everyone to wake up earlier? Was a 1-hour adjustment really
+better than several smaller ones?
+
+The second committee met 16 times and heard from 25 different
+witnesses. In August, it issued its recommendation after almost 5
+months of debate. Due to the "great diversity of opinion... your
+Committee recommend that the Bill be not further proceeded
+with." [fn:14]
+
+Willett campaigned for seasonal time for the rest of his life. His
+supporters in the legislature put forth a seasonal time bill every
+year between 1911 and 1914, and every time Asquith's Government
+refused to even hear it. [fn:15]
+
+In March 1914, Willett published the 19th edition of his pamphlet,
+"The Waste of Daylight". By that time he had secured the support of
+285 of the 650 members of the House of Commons and countless chambers
+of commerce and trade societies. [fn:16]
+
+He died of influenza one year later in March 1915 at just 58 years old.
+
+His timing really sucked.
+
+* Act III: Total War
+
+#+BEGIN_QUOTE
+You never want a serious crisis go to waste. And what I mean by
+that, it's an opportunity to do things you think you could not do
+before.
+
+-- Rahm Emanuel, former White House Chief of Staff
+#+END_QUOTE
+
+14 months later the House of Commons passed the Daylight Saving Bill
+with a lack of ceremony that belied its contentious history.
+
+Votes in favor: 170
+
+Votes against: 2
+
+2!
+
+After a decade of fretting over the right time to pick turnips and
+whether children would have difficulty falling asleep in the summer,
+Parliament adopted seasonal time with virtually zero opposition.
+
+What happened?
+
+If you were paying attention in history class, you may recall that
+there was a war going on when the bill finally passed on May
+8th, 1916. The British Empire had been fighting in the First World War
+since August 1914. At the beginning of the war, the Liberal government
+promoted a policy of "business as usual" designed to preserve the
+morale of the British people.
+
+In May 1915, just 2 months after Willett's death, the invaders that he
+had warned of in his pamphlet arrived in London - or more accurately,
+over London, via zeppelin. That extra hour of target practice was
+starting to look pretty valuable.
+
+Within a few months, Parliament introduced military conscription and
+young, unmarried men were shipped off to a combat zone where poison
+gas had just been introduced to the world. The headlines in _The
+Times_ bemoaning Britain's shortage of munitions did little to inspire
+confidence in the troops.[fn:17]
+
+In July of 1916, the British army suffered 57,470 casualties on the
+_first day_ of the Battle of the Somme.[fn:18] For comparison, the
+United States suffered an estimated 36,747 casualties in the Iraq War,
+which lasted nearly 9 years.[fn:19] The notion of "business as usual"
+suddenly seemed absurd in the face of the reports from the
+battlefield, where aeroplanes and a new war machine called the "tank"
+were inflicting carnage on an unprecedented scale.
+
+"Business as Usual" gave way to "Total War." As the outputs of the
+Empire's economic system shifted from gooseberries and cricket matches
+to munitions and machine guns, energy emerged as the new bottleneck in
+the system. Thus, the system was primed to adopt any change which
+alleviated the bottleneck.
+
+The ultimate adoption of seasonal time after so many years of failure
+is consistent with modern systems theory. In her excellent essay
+"Leverage Points: Places to Intervene in a Complex System" [fn:20],
+the late Donna Meadows argues that changing the _Goals_ of a system
+provides more leverage than changing its _Rules and Parameters_,
+because the Rules and Parameters are simply an extension of the
+system's Goals. By the same token, changing the _Paradigm_ or
+_Mindset_ of a system presents even greater leverage, because the
+Goals of a system arise from its Paradigm.
+
+Willett fought admirably for years to change a Rule. They argued over
+Parameters (20 minute increments or 1 hour?  Fall back in August or
+September?), but even his opponents conceded that his Goals were
+admirable; leaving aside the owners of theatres and coal companies,
+nobody was arguing against more recreation or energy efficiency.
+
+He faced resistance insofar as his proposed Rule change conflicted
+with the Goals of others. Changing the clocks jeopardized many
+politicians' Goal of not getting laughed out of office. Farmers,
+railroad operators, and pub owners saw it as a financial
+liability. The general public, fairly or not, perceived it as a threat
+to social order and cohesion.
+
+But things like ticket sales at the theatre or how Bessie will respond
+to being milked a little earlier start to seem pretty unimportant
+after a giant balloon starts dropping bombs on your city, a blockade
+of U-Boats in the harbor has blown up all your food and oil, and the
+men in your family are lying in a ditch in some god-forsaken field in
+France trying not to choke on mustard gas.
+
+"Get the plums off to market in time" is a Goal which stems from the
+Paradigm "Business as usual."
+
+"Total War" is a Paradigm which leads to very different Goals, like
+"Don't starve," and "Build a ton of bombs and drop them on Prussians."
+
+The odds of effecting radical change are much higher under "Total War"
+than "Business as usual." Thus, the mindset fostered by existential
+threat explains how seasonal time went from being laughed out of the
+legislature to universally accepted.
+
+* Act IV: French Fries and Fatalities
+
+#+BEGIN_VERSE
+Things fall apart; the centre cannot hold;
+Mere anarchy is loosed upon the world,
+The blood-dimmed tide is loosed, and everywhere
+The ceremony of innocence is drowned;
+The best lack all conviction, while the worst
+Are full of passionate intensity.
+
+-- The Second Coming, W.B. Yeats
+#+END_VERSE
+
+When a US politican needs to appear proactive during an energy crisis,
+Daylight Saving Time is their silver bullet of choice. The United
+States adopted seasonal time when we entered WWI, reinstituted it
+year-round in the aftermath of Pearl Harbor, and then made another
+attempt at year-round DST in 1974 during the OPEC oil embargo.
+
+So in the summer of 2005 when the average price of a regular unleaded
+gallon of gas in the US soared to nearly $3.00 [fn:21], almost triple
+the price from the beginning of 2002, Congress knew what to do.
+
+A politician would probably call the Energy Policy Act of 2005 [fn:22]
+"comprehensive". A normal person who bothered to read its 11 page
+table of contents would probably call it a schizophrenic, kitchen-sink
+of a bill. Among other things, it proposed to:
+
+- Invest $200 million into coal (yay!)
+- Authorize tax credits for wind energy producers
+- Arm security personnel at nuclear plants with machine guns
+- Fund a scholarship on behalf of the Nuclear Regulatory Commission
+- Exempt fracking companies from the protections in the Safe Drinking
+  Water Act (nothing to see here!)
+- Cut royalties that oil companies are obligated to pay the federal
+  government to incentivize deepwater drilling in the Gulf of Mexico
+- Commission a study on the benefits of telecommuting for federal
+  employees
+
+And, oh yeah, it would also extend Daylight Savings Time by 1 month.
+
+Unsurprisingly, a lot of people hated the idea, including the
+Conference of Catholic Bishops and the United Synagogue of
+Conservative Judaism, who opposed the extension on the grounds that
+pre-dawn religious services are poorly attended. The head of the
+National Parent Teacher Association warned that children walking to
+school were at increased risk of being mowed down by cars and
+kidnapped in the morning darkness.[fn:23]
+
+Stop me if you've heard this one: a priest, a rabbi, and a school
+teacher walk into the door of their congressman's office.
+
+That's it - that was the joke.
+
+They walk into a closed door, because their representative is in his
+office drinking scotch with the lobbyist from the sporting goods
+industry who just delivered a check made out to his re-election
+campaign and oh-by-the-way just so happens to think seasonal time is
+great for America.
+
+Forget it, it was funny in my head.
+
+To the chagrine of clergymen and the delight of Dick's Sporting Goods
+shareholders, George Dubya signed the bill on August 8th, 2005. But
+this bill included an uncharacteristically sensible provision: it
+required the Department of Energy to report back on the effect of
+extending Daylight Saving Time.
+
+The DoE put a few Ph.D's on it and 3 years later they came back with
+their findings. An extra month of Daylight Savings Time *does* save
+energy - 17 Trillion Btu of it.
+
+"Hooo-wee, that's a whole-buncha Btus!" you're probably thinking.
+
+But it's not; the US consumed 101,000 Trillion Btu in 2007. In other
+words, Extended Daylight Saving Time resulted in total energy savings
+of 0.02%. [fn:24] Which admittedly isn't great, but it gets worse.
+
+A 2008 study examined the effects of DST in Indiana, which until 2006
+was unique in that only certain counties in the state practiced
+DST. The presence of a naturally occurring treatment and control group
+made the Hoosier state the perfect place to study the effect of
+seasonal time on energy consumption.
+
+Incidentally, "Indiana, the perfect place to study the effect of
+seasonal time on energy consumption," would be a better state motto
+than "The Crossroads of America." Or how about, "Indiana: We apologize
+for Mike Pence." You can have those for free, Indiana Department of
+Tourism.
+
+Anyways, the authors of the study concluded that not only did DST not
+save energy - it actually increased energy consumption by 1%! Turns
+out all of the savings from reduced usage of artifical lighting were
+wiped out by people leaving their HVAC units cranked up later in the
+evening.[fn:25]
+
+So DST's value as an energy-saving device is dubious, at best. And if
+the most serious problem with DST were air-conditioner usage in
+Indiana, The Atlantic wouldn't be running articles with titles like,
+"[[https://www.theatlantic.com/national/archive/2013/11/daylight-saving-time-americas-greatest-shame/354753/][Daylight Saving Time Is America's Greatest Shame]]."
+
+Huh. Greatest shame - really? Genocide against the indigenous
+population, slavery, Japanese internment camps... fine, those weren't
+our proudest moments. But according to the Atlantic, our barbaric
+timekeeping practices are what send America ducking behind the cereal
+display whenever it spots Sweden in the supermarket.
+
+Offensively headlined though it may be, the article does reflect a
+growing resentment for seasonal time. [[https://www.petition2congress.com/ctas/end-daylight-savings-time][This petition]] to abolish DST
+currently has over 380,000 signatures from concerned citizens like
+steve k., who urges lawmakers to "stop daylight time right now do it
+right now its too much for florida get it out of florida."
+
+Or this thoughtful Texan, who writes, "PLEASE PLEASE PLEASE LEAVE IT
+AT DAY LIGHT SAVINGS YEAR AROUND. NO SINCE IN FALLING BACK FOR A FEW
+MONTHS. YOU KEEP DAY LIGHT SAVINGS SO LONG PEOPLE THING STANDARD TIME
+IS THAT!!!!!!!!!!!!!!!"
+
+Someone from Cascade, IA warns "Please end daylight savings
+time.. it's always even more later than you think!" Yikes. What does
+Someone from Cascade, IA know that we don't?
+
+"Please listen to all the voices," says Someone from Alpharetta,
+Georgia, "and end this chaos in the name of saving energy! We are not
+magically creating an hour of daylight by changing our clocks by an
+hour! We're creating chaos that we don't need in the world."
+
+As a general rule, when someone urges me to do something at the behest
+of "the voices," I do not do that thing. However, in this case, maybe
+Someone from Alpharetta, Georgia, has a point: DST does create
+chaos. Twice a year, every year, we reset our clocks and brace for:
+
+- Thousands of traffic fatalities [fn:26]
+- A 3-5% increased risk of heart attack every March [fn:27]
+- Countless lifetimes of prison sentences issued by grumpy,
+  sleep-deprived judges [fn:28]
+- A 5.7% increase in workplace injuries each March [fn:29]
+- Nearly half of a billion dollars in lost productivity annually in
+  the United States alone [fn:30]
+
+A 1-hour time change is simply too much for fragile meat-sacks like us
+to cope with. Every March, for weeks following the time change, we get
+sleepy and do dumb things, like wrap our cars around telephone poles
+and eat enough Hardee's french fries to power an NFL stadium for 34
+hours. (Gross but true, see [[*Appendix][Appendix]]).
+
+Defenders of DST argue that, sure, sleep-deprived motorists crash more
+often during one week in March, but on aggregate DST makes our
+highways safer by reducing the number of cars on the road after
+dark. But that argument has been pretty convincingly refuted; sleep
+deprivation has a much stronger effect on crash risk than ambient
+light, and even this small effect of ambient light tends only to shift
+crashes from the sunnier evenings to the darker mornings. [fn:26]
+
+Lawmakers have started to take notice of the groundswell against
+DST. A century after the passage of the Daylight Saving Bill the
+long-term survival of Daylight Saving Time is very much in doubt. My
+home state of Washington is considering legislation to abolish
+Daylight Saving Time [fn:31], and we're not alone: California, Iowa,
+Montana, Wyoming, New Mexico, Massachusetts, Michigan, Texas,
+Nebraska, and North Dakota are also considering scrapping seasonal
+time. [fn:32]
+
+[TODO: transition with quote from one of Willett's opponents about what
+a stupid idea DST was]
+
+* Act V: Hubris
+
+#+BEGIN_QUOTE
+You're going to have such great health care at a tiny fraction of the
+cost. And it's going to be so easy.
+
+-- U.S. presidential candidate Donald Trump, Oct. 25, 2016
+#+END_QUOTE
+
+Is seasonal time really an archaic practice? If so, can we draw any
+lessons from its arduous passage that we can apply to its reform? And
+what is the legacy of its chief proponent, William Willett?
+
+Whatever your opinion of seasonal time, it's undeniable that there are
+thousands of dead people who would otherwise still be alive were it
+not for DST. If Willett's legacy includes children across the world
+frolicking in the evening sunlight, it must also include all of the
+children mutilated in car accidents on the Monday following the spring
+forward.
+
+You might say that's unfair; Willett couldn't possibly have foreseen
+the rise in traffic fatalities on highways which hadn't even been
+built yet any more than he could have predicted the effect on
+french-fry consumption.
+
+But does that really exonerate him? _Of course_ he couldn't have
+foreseen all of the second-order effects of tampering with part of the
+bedrock of society - no one could. So why was he so gung-ho about it?
+What gives someone like Willett the conviction to lead a crusade with
+such potential for disaster with such self-assurance?
+
+In my experience, an irrational level of self-confidence is
+disproportionately common in two groups of people: lunatics and rich
+white guys. Willett was a card-carrying member of both.
+
+Ok, fine, "lunatic" may be overstating it, but not by much. Remember
+when he chastised the editor of _The Spectator_ for being less than
+sanguine of Willett's success? The editor who printed Willett's letter
+alongside the Squirrel Guy? That juxtaposition makes more sense when
+you read Willett's letter. Here's a representative excerpt:
+
+#+BEGIN_QUOTE
+Are these words quite worthy of the Spectator? ... [I]t is clear
+that we have passed the Slough of Despond. We are now climbing the
+Hill Difficulty. The Palace Beautiful awaits us at the top. Mistrust
+and Timorous will never reach it! Surely the "Great Heart" of the
+Spectator should encourage pilgrims to climb the Hill, and should
+use every weapon he can against any Grims that may bar the way or any
+lions that may appear to forbid the happy arrival of the Bill before
+his Majesty the King. What is there to fear? [fn:8]
+#+END_QUOTE
+
+Contrast _that_ response to critism with GVH's closing remarks at the
+Wellington Philosophical Society, in which he basically said, "Well,
+shucks, I thought it was kind of a good idea," then presumably went
+back to his couch to watch reruns of The Office and eat Ben and
+Jerry's out of the carton.
+
+That's Timorous for you! Abandoning the pilgrimage to the Palace
+Beautiful at the first sign of a few lions and Grims!
+
+Hudson is the kind of person who, when he has to send an email with
+more than 3 recipients, rereads it at least 10 times and has to google
+the rules regarding semicolon usage before clicking send. Willett is
+that guy who hits reply-all to 300 people and dashes off the first
+thing that pops into his head, ignoring all those red and green
+squiggles because he's fairly certain the word 'lose' has two 'o's -
+thanks anyway, spell-check!
+
+Willett was so sure of himself that he dedicated the last 8 years of
+his life to proselytizing for a cause that would lead to massive
+disruption based on practically zero empirical evidence - and look
+where it's gotten us! Isn't this level of belief tantamount to
+insanity, or at the least, arrogance?
+
+And if so, well, that's problematic; because if he was an arrogant
+lunatic, then we have to admit that he was an effective one. Which
+begs the question, was Willett ultimately successful precisely
+_because_ of his (over)confidence?
+
+It does pay to be overconfident. Apparently, in the good ol' USA it's
+now sufficient qualification to sit in the Oval Office. According to
+one depressing study, we incentivize overconfidence by conferring
+higher status on people with an inflated sense of their own
+abilities. Worse, overconfidence looks more like competence than does
+actual competence.[fn:33]
+
+Imagine if Willett had been completely transparent and said, "Gosh, you
+raise a good point, Farmer Ben - I _hadn't_ taken the shelf-life of
+gooseberries into account when I wrote my pamphlet. The only thing of
+which I can be certain is that altering our society's timekeeping
+practices will affect our lives and our children's lives in ways that
+no one in this room can possibly anticipate. Some effects may be
+harmful, but given the limited information that's available to us I
+think it's more likely than not that this will benefit society. So
+whaddya say? Who's with me?"
+
+No one obviously - he would have been bullied out of the room by some
+pigheaded farmer who was just as irrationally opposed to DST as Willett
+was in favor of it.
+
+There's some evidence that Willett began his campaign with a healthy
+sense of self-doubt and was forced to abandon it along the way. In his
+original pamphlet, he called for a mere 6-month trial of DST. But when
+asked if he believed the Bill could be passed on a trial basis,
+Willett's response was telling. "Yes," he said, "but then you
+immediately impart an element of doubt, and you cannot expect the
+House of Commons, I should think, to justify a Bill at all with an
+element of doubt in it."
+
+Efforts to curb the proliferation of nuclear weapons, guns, and false
+confidence all suffer from the same problem: somebody has to give
+theirs up first. Asymmetric compliance means that Reasonable People
+who adopt a policy of intellectual humility are left defenseless
+against Bad Guys who don't. So Willett bowed to reality and said,
+"Yep, this will definitely work, believe me," and a lot of people did.
+
+As Charles Duhigg points out In The Power of Habit, it's no accident
+that the second of Alcoholic's Anonymous 12 steps is to "believe that
+a power greater than ourselves could restore us to sanity." People who
+report a higher-degree of "spirituality" are more likely to achieve
+long-term recovery [fn:34]. One interpretation: faith, which is
+nothing more than irrational belief, is the foundation of change.
+
+In _Influence: The Psychology of Persuasion_, Robert Cialdini
+describes the process by which Chinese communists weaponized the power
+of belief during the Korean War. They began by asking American POWs to
+make an innocuous statement like, "America isn't perfect."  They then
+leveraged this small profession of belief into progressively larger
+ones until these red-blooded, apple pie-eating, God-fearing, American
+men were fervent supporters of communism. [fn:35]
+
+Churches, cults, and coups all live and die according to the degree
+that their members believe. Without an irrational level of faith,
+Willett would have abandoned his campaign after his 100th letter to a
+newspaper editor went unanswered.
+
+So yes, seasonal time may never have been adopted were it not for
+Willett's unshakeable belief. But it's important to remember that
+Willett died a failure. Faith may be a necessary condition for change,
+but it's not sufficient. It took the outbreak of one of the bloodiest
+wars in human history to push the Daylight Saving Bill through, an
+even bigger war to revive it, and a series of energy crises to make it
+stick.
+
+Humans hate change. This is actually pretty sensible - constantly
+changing the rules and parameters of our systems would create wild
+instability, so inertia staves off anarchy. The greater the change,
+the more risk it introduces into the system, the more strongly we'll
+oppose it. It follows then that the best time to introduce change is
+when some destabilizing force has already overcome inertia.
+
+The Patriot Act would have been inconceivable on September
+10th, 2001. A national speed limit of 55 mph would never have passed
+without the oil crisis of 1973. It took Pearl Harbor to get the United
+States into WWII. Before the bubble burst in 2008, no one would have
+believed that American taxpayers would come to the rescue of subprime
+mortgage lenders. The idea of women working in factories was
+unthinkable before the advent of Total War, but somebody had to build
+bombs and all of the men were busy dropping them.[fn:36]
+
+If you've been taking notes on how to effect change, the formula so
+far is:
+
+1. Delude yourself and others to build influence.
+2. Wait for a crisis to come along, and then...
+3. Ride that Trojan Horse into society's midst and exploit the ensuing
+   chaos to secure your objective before anyone can protest.
+
+The world is an icky place.
+
+Maybe we can't fix the world, but perhaps we can we find redemption
+for Willett? I like to think that there's a more satisfying
+explanation for his self-assurance than that he was an arrogant
+demagogue who would say anything to advance his personal agenda. Maybe
+his faith was rooted in true conviction that he was onto a great idea.
+
+As the unlikely defender of William Willett's legacy in the court of
+public opinion, I present the following arguments in his defense.
+
+First: you could argue that Willett was foolish to tamper with time,
+but not that he was arrogant or reckless. He engaged with opponents of
+DST from every walk of life, patiently hearing the concerns of
+farmers, financeers, and shopkeepers alike. In many cases, he even
+conceded the legitimacy of their objections. He was a tireless and at
+times insufferable cheerleader for seasonal time, but he never denied
+its inherent risks.
+
+Any large-scale intervention in a complex system requires a touch of
+hubris. Willett may have had a tad more than necessary, but we can
+forgive his excess in light of the fact that he was onto a great idea.
+
+Many of the original objections to seasonal time have been rendered
+moot by modern technology; a peek at modern farm equipment would have
+knocked the overalls off of Willett's opponents from the agricultural
+sector. By the same token, many of seasonal time's ill effects today
+stem from technology (e.g., cars) that didn't exist when Willett was
+alive.
+
+It's hardly Willett's fault that we haven't adapted seasonal time to
+reflect technological and societal change. He would surely be dismayed
+to learn that more than a century after he published his pamphlet,
+we're still using the same, archaic, implementation of seasonal time -
+especially considering that he was the one person who foresaw the
+self-inflicted death and destruction that we sign up for year after
+year.
+
+He warned everyone _repeatedly_ that a 1 hour time change would be too
+disruptive, and everyone ignored him. Remember all of that business
+about introducing change by means of the thin end of the wedge, and
+how obnoxiously persistent he was about it? Sounded silly at the
+time. Not so much now that sleepy people routinely sit inside huge
+chunks of metal hurtling past each other at relative speeds of well
+over 100 miles an hour.
+
+Critics of Daylight Saving Time are right: this is madness. Surely
+there has to be a better way?
+
+* Act VI: Willett Time
+
+#+BEGIN_VERSE
+  Chairman: I rather gather from what you have said that your ideal
+            method of making the change would be - if by a miracle
+            every clock and every watch could be made to gain a minute
+            a day?
+  Willett:  Half a minute almost would do it.
+  Chairman: Gain a minute a day beginning in the beginning of April, and
+            get half an hour fast by July, and then lose a minute each
+            day afterwards, and get right on the 1st of October?
+  Willett:  Yes.
+  Chairman: That would be your idea of perfection?
+  Willett:  Yes.
+  Chairman: But, of course, that is impossible?
+  Willett:  Of course, that is impossible.
+#+END_VERSE
+
+First, let's get a few things out of the way.
+
+Year-round Daylight Saving Time amounts to nothing more than using a
+different time zone. Depending on where you are relative to the
+eastern border of your current time zone and how much you value
+daylight in the evening relative to daylight in the morning, this
+might be an attractive option. But the people who argue, "If Daylight
+Saving Time is so great, why don't we have it the whole year?" are
+fundamentally missing the value proposition of seasonal time.
+
+The Earth has a tilted axis and orbits the Sun in an ellipse. There is
+simply no getting around the fact that we experience the Sun
+differently in June than in December. See for yourself in the chart
+below, which shows daylight hours (in local time) at varying latitude
+throughout the year.
+
+(Hint: it's interactive! Drag the slider to change the day of the
+year.)
+
+#+BEGIN_EXPORT html
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<style type="text/css">
+  .chart rect { stroke: white; }
+  #map-container { width: 100%; }
+  #slide-container {
+      display: flex;
+      width: 100%;
+  }
+
+  g:hover text { opacity: 1; } /* Shows the sunrise and sunset times, only on hover */
+  .sunrise-text {opacity: 0;}
+  .sunset-text {opacity: 0;}
+  .day:hover { fill-opacity: 0.7; }
+
+  /* The slider itself */
+  .slider {
+      -webkit-appearance: none;  /* Override default CSS styles */
+      appearance: none;
+      width: 100%; /* Full-width */
+      height: 25px; /* Specified height */
+      background: #d3d3d3; /* Grey background */
+      outline: none; /* Remove outline */
+      opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+      -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+      transition: opacity .2s;
+  }
+
+  .slider:hover {opacity: 1;}
+
+  /* The slider handle (use webkit (Chrome, Opera, Safari, Edge) and moz (Firefox) to override default look) */
+  .slider::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      appearance: none;
+      width: 25px; /* Set a specific slider handle width */
+      height: 25px; /* Slider handle height */
+      background: #4CAF50; /* Green background */
+      cursor: pointer; /* Cursor on hover */
+  }
+
+  .slider::-moz-range-thumb {
+      width: 25px; /* Set a specific slider handle width */
+      height: 25px; /* Slider handle height */
+      background: #4CAF50; /* Green background */
+      cursor: pointer; /* Cursor on hover */
+  }
+</style>
+
+<div id="map-container">
+</div>
+<div id="slide-container">
+<div style="margin-right: 25; width: 15%;">
+    <p id="day-of-year-text">Date: </p>
+    </div>
+    <div style="width: 75%">
+    <input type="range" min="0" max="364" value="0" class="slider" id="day-of-year">
+    </div>
+</div>
+
+<script>
+var totalHeight = 400;
+var tickHeight = 40;
+var titleHeight = 25;
+var mapHeight = totalHeight - tickHeight - titleHeight;
+var totalWidth = document.getElementById('map-container').offsetWidth;
+var plotWidth = totalWidth - 20;
+
+var latitudes = Array.from(new Array(180 + 1), (x, i) => i - 90)
+    .filter((x) => x % 5 == 0);
+
+var svgMap = d3.select("#map-container")
+    .append("svg")
+    .attr("class", "chart")
+    .attr("width", totalWidth) // TODO: Needed?
+    .attr("height", totalHeight);
+
+svgMap.append("image")
+    .attr("xlink:href", "../assets/willett-time/earth.jpeg")
+    .attr("y", titleHeight)
+    .attr("width", "95%")
+    .attr("height", (svgMap.attr("height") - tickHeight - titleHeight));
+
+svgMap.append("text")
+    .attr("x", (totalWidth / 2))
+    .attr("y", 20)
+    .attr("height", titleHeight)
+    .attr("text-anchor", "middle")
+    .style("font-size", "22px")
+    .style("text-decoration", "underline")
+    .text("Daylight Hours at Varying Latitude");
+
+var numRows = latitudes.length;
+var rowHeight = mapHeight / numRows;
+
+function formatHourOfDay(x) {
+    if (isNaN(x)) {
+        return "--:--";
+    } else {
+        var hr = Math.floor(x);
+        var minute = Math.floor(60 * (x - hr));
+        var pad = (x) => x.toString().padStart(2, "0");
+        return pad(hr) + ":" + pad(minute);
+    }
+}
+
+
+// TODO: recalculate on resize?
+var hourScale = d3.scaleLinear()
+    .domain([0, 24])
+    .range([0, plotWidth]);
+
+var scaleMidnightToNoon = d3.scaleLinear()
+    .domain([0, 12])
+    .range([0, 100]);
+
+var yOffsets = Array.from(new Array(numRows).keys()).map((i) => titleHeight + (i * rowHeight)).reverse();
+
+function updatePlots(dayOfYear) {
+
+    function daylightHoursWhenSunDidNotRise(lat) {
+        var step = lat > 0 ? -10 : 10;
+        var sunrise;
+        do {
+            lat += step;
+            sunrise = willet_time.clock.sunrise(lat, dayOfYear);
+        } while (isNaN(sunrise));
+
+        if (sunrise >= 6.0) { // the sun never came up here
+            return [12, 12];
+        } else { // the sun never went down here
+            return [0, 24];
+        }
+    }
+
+    var daylightHours = latitudes.map(function (lat) {
+        var sunriseHour = willet_time.clock.sunrise(lat, dayOfYear);
+        var sunsetHour = willet_time.clock.sunset(lat, dayOfYear);
+        if (isNaN(sunriseHour)) {
+            return daylightHoursWhenSunDidNotRise(lat)
+            ;
+        }
+        return [sunriseHour, sunsetHour];
+    });
+    updateMap(daylightHours);
+}
+
+function updateMap(daylightHours) {
+    var groups = svgMap.selectAll("g")
+        .data(daylightHours);
+
+    var groupsEnter = groups.enter().append("g")
+        .attr("transform", (_, i) => "translate(0, " + yOffsets[i] + ")");
+
+    // ENTER
+    // day
+    groupsEnter.append("rect")
+        .attr("class", "day")
+        .attr("height", rowHeight)
+        .attr("fill", "yellow")
+        .attr("fill-opacity", "0.45")
+        .attr("x", (d, i) => hourScale(d[0]))
+        .attr("width", (d, i) => (hourScale(d[1] - d[0])));
+
+    groupsEnter.append("text")
+        .attr("class", "sunrise-text")
+        .attr("x", (d, i) => 2 + hourScale(d[0]))
+        .attr("y", rowHeight / 2)
+        .attr("dy", ".35em")
+        .attr("width", "100%")
+        .attr("height", rowHeight)
+        .attr("font-size", "11")
+        .text((d, i) => d[0] > 0 && d[0] < 12 ? formatHourOfDay(d[0]) : null);
+
+    groupsEnter.append("text")
+        .attr("class", "sunset-text")
+        .attr("x", (d, i) => -35 + hourScale(d[1]))
+        .attr("y", rowHeight / 2)
+        .attr("dy", ".35em")
+        .attr("width", "100%")
+        .attr("height", rowHeight)
+        .attr("font-size", "11")
+        .text((d, i) => d[1] > 12 && d[1] < 24 ? formatHourOfDay(d[1]) : null);
+
+
+    // night - left
+    groupsEnter.append("rect")
+        .attr("class", "night-left")
+        .attr("height", rowHeight)
+        .attr("fill", "blue")
+        .attr("fill-opacity", "0.45")
+        .attr("x", 0)
+        .attr("width", (d, i) => hourScale(d[0]));
+
+    // night - right
+    groupsEnter.append("rect")
+        .attr("class", "night-right")
+        .attr("height", rowHeight)
+        .attr("fill", "blue")
+        .attr("fill-opacity", "0.45")
+        .attr("x", (d, i) => hourScale(d[1]))
+    //.attr("width", (d, i) => hourScale(d[0]));
+        .attr("width", (d, i) => plotWidth - hourScale(d[1]));
+
+    groupsEnter.append("text")
+        .attr("x", 10)
+        .attr("y", rowHeight / 2)
+        .attr("dy", ".35em")
+        .attr("width", "100%")
+        .attr("height", rowHeight)
+        .attr("font-size", "11")
+        .text((d, i) => (i % 2 == 0) ? latitudes[i] + "°" : null);
+
+    groupsEnter.append("text")
+        .attr("x", "95%")
+        .attr("y", rowHeight / 2)
+        .attr("dy", ".35em")
+        .attr("width", "100%")
+        .attr("height", rowHeight)
+        .attr("font-size", "11")
+        .text((d, i) => (i % 2 == 0) ? latitudes[i] + "°" : null);
+
+    // UPDATE
+    groups.select('.day')
+        .attr("x", (d) => hourScale(d[0]))
+        .attr("width", (d) => (hourScale(d[1] - d[0])));
+
+    groups.select('.sunrise-text')
+        .attr("x", (d, i) => 2 + hourScale(d[0]))
+        .text((d, i) => d[0] > 0 && d[0] < 12 ? formatHourOfDay(d[0]) : null);
+
+    groups.select('.sunset-text')
+        .attr("x", (d, i) => -35 + hourScale(d[1]))
+        .text((d, i) => d[1] > 12 && d[1] < 24 ? formatHourOfDay(d[1]) : null);
+
+    groups.select('.night-left')
+        .attr("x", 0)
+        .attr("width", (d) => hourScale(d[0]));
+
+    groups.select('.night-right')
+        .attr("x", (d) => hourScale(d[1]))
+        .attr("width", (d, i) => plotWidth - hourScale(d[1]));
+}
+
+var initDayOfYear = 0;
+updatePlots(initDayOfYear)
+
+var formatTime = d3.timeFormat("%H:%M"),
+    formatHour = function(d) { return formatTime(new Date(2016, 0, 1, d, 0)); };
+
+var xAxis = d3.axisBottom(hourScale)
+    .tickFormat(formatHour);
+var tickGroup = svgMap.append('g')
+    .attr('width', '100%')
+    .attr('height', tickHeight)
+    .attr('transform', 'translate(0, ' + (svgMap.attr("height") - tickHeight) + ')')
+    .call(xAxis);
+
+var xAxisLabel = svgMap.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('x', plotWidth / 2)
+    .attr('y', totalHeight - 10)
+    .text('Hour of Day');
+
+var slider = document.getElementById("day-of-year");
+var dayOfYearText = document.getElementById("day-of-year-text");
+
+function onDayOfYearChanged(dayOfYear) {
+    updatePlots(dayOfYear);
+    dayOfYearText.innerHTML = "Date: " + dayOfYearToString(dayOfYear);
+}
+
+slider.oninput = function() {
+    onDayOfYearChanged(parseInt(this.value));
+}
+
+function dayOfYearToString(n) {
+    if (n < 0 || n > 364) {
+        return "--";
+    } else {
+        return new Date(2017, 0, n + 1, 0, 0, 0, 0)
+            .toString() // 'Sun Feb 05 2017 00:00:00 GMT-0800 (PST)'
+            .split(' ') // [ 'Sun', 'Feb', '05', '2017', '00:00:00', 'GMT-0800', '(PST)' ]
+            .slice(1, 3) // [ 'Feb', '05' ]
+            .join(' ');
+    }
+}
+
+slider.value = initDayOfYear;
+onDayOfYearChanged(initDayOfYear);
+</script>
+#+END_EXPORT
+
+Notice that the values in the above chart depends on two variables:
+latitude and day of the year. Time zones are demarcated by longitude,
+which is completely irrelevant here. So go ahead, embrace darker
+mornings and join a neighboring time zone. But that's (literally)
+orthogonal to the problem addressed by seasonal time, so it's not part
+of this discussion.
+
+Second, most of our discontent with Daylight Savings is condensed into
+two weeks of the year following the start and end of DST. The spring
+forward is particularly bad since we lose an hour of sleep. But if we
+could magically do away with time changes while keeping the extra
+daylight in the evenings, most reasonable people would be satisfied.
+
+Third, even without Daylight Saving Time, time is still
+confusing. Imagine that we tossed DST onto history's discard pile of
+failed experiments and returned to the days of yore, when the clocks
+ticked out a steady and predictable stream of seconds. Then everything
+would be simple, right?
+
+Well, except for time zones - our trucks carrying radishes and
+gooseberries still time-travel across certain invisible
+boundaries.
+
+And oh yeah, every 4th Februrary has an extra day.
+
+Whoops, almost forgot about [[https://en.wikipedia.org/wiki/Leap_second][leap seconds]]! We'll need to add those
+whenever some committee in Paris decides that the Earth's rotation has
+slowed enough to warrant one. We've had 27 leap seconds since 1972,
+and on each day that includes a leap second, at one second before
+midnight the clock reads 23:59:60.
+
+Maybe not so simple. In fact, I would argue that it's next to
+impossible for anyone to correctly reason about clock time on a
+case-by-case basis. This has unsettling implications when you consider
+that the software responsible for scheduling flights, administering
+the correct dose of anesthetic after your next surgery, and emitting
+precisely timed electrical impulses in gramma's pacemaker was written
+by some ordinary guy named Doug from Wisconsin. Doug is pretty smart,
+but not _that_ smart, and he's probably never heard of a leap second.
+
+Yet we software developers still delude ourselves into thinking that
+we understand time and riddle our code with ticking time-bombs (see
+what I did there?) which go off every November and March. Every
+popular programming language in existence has battle-tested, freely
+available libraries for dealing with time. How do we continue to
+rationalize the choice not to use them?
+
+I think that it's precisely because the pain only comes twice a
+year. Sure, we're signing up for one bad day in March, but then it's
+over and done with. We have 6 months to forget that pain and then
+we're surprised again in the fall.
+
+If you're a software practicioner you may be getting a sneaking
+suspicion as to where this argument is heading. You're right,
+sorry. (But now that I have you here, do you have a minute to hear the
+Good News about Continuous Integration?)
+
+If you haven't spent time in the software industry during the last
+decade, the proposal I'm about to make may sound unintuitive and
+ridiculous. Many otherwise intelligent people would agree with you,
+but they are wrong. I bring up software because it's what I know, but
+I suspect that the application to software is merely one specific
+instance of a general truth. Fortunately, you don't have to take it
+from me, because I can appeal to an authority who never wrote a line
+of code: the inventor of Daylight Saving Time, Mr. William Willett,
+himself.
+
+My proposal, which is really just a rehash of one of Willett's
+proposals, is this: considering that adjusting the clocks is so
+painful, let's stop doing it twice a year; instead let's do it every
+day.
+
+Pick an arbitrary time at which you would like the sun to come up -
+let's say 5:30 am. That hour is now fixed as the time of sunrise
+throughout the summer. During the spring, we'll skip a few seconds
+each day such that the sun never rises before 5:30. During the fall,
+we'll gradually replace those extra seconds until we're back to the
+"real" time.
+
+Maybe it's best explained visually.
+
+Here's the shape of our daylight hours *without* Daylight Saving Time
+in Seattle, Washington.
+
+#+BEGIN_EXPORT html
+  <img src="../assets/willett-time/standard-daylight-hours.png"/>
+#+END_EXPORT
+
+Nice and smooth, but look at all that pre-5 a.m. daylight going to
+waste during the middle of the year!
+
+With Daylight Saving Time, we reclaim all of that pre-5 a.m. daylight
+by shifting the sunrise up an hour:
+
+#+BEGIN_EXPORT html
+  <img src="../assets/willett-time/dst-daylight-hours.png"/>
+#+END_EXPORT
+
+Not so smooth anymore, though. See the discontinuities in March and
+November? Those correspond to the spring forward and fall back. These
+are the Sleepy Death Zones, in which the lucky people get very grouchy
+for a few days and the unlucky people get very dead, forever.
+
+The idea behind what I'm calling Willett Time is to push those
+daylight hours up towards our normal, waking hours without any abrupt
+jumps. Here's how that might look:
+
+#+BEGIN_EXPORT html
+  <img src="../assets/willett-time/willet-time-daylight-hours.png"/>
+#+END_EXPORT
+
+See how the sunrise curve flattens out at 5:30 am? That daylight isn't
+magically disappearing, it's just being tacked on in the evening. The
+principle is exactly the same as with our current form of Daylight
+Saving Time, only with a more fine-grained adjustment.
+
+You might say that constantly adjusting the clocks is impractical. But
+why?
+
+In Willett's day, the hassle of adjusting non-networked, mechanical
+clocks limited the frequency of change. But that's no longer a
+problem; we don't have to wind our iPhones before we go to sleep on
+the night before a time change. Except for the clocks on the microwave
+and oven, every clock in my apartment has already adjusted itself by
+the time I wake up on the morning following a time change. As long as
+my Android displays the same time as your iPhone, who cares if
+yesterday was two seconds shorter than today?
+
+Still not convinced? Everyone told Willett that 20 minute time changes
+were impractical, too, and his response was cogent: "[T]he more often
+you do a thing, the more easily you do it." (TODO: Source?)
+
+Doing dishes isn't fun, but it's much easier to wash a glass as soon
+as you finish with it than it is to clean it a week later in an
+overflowing sink full of food-encrusted plates. Running a mile can be
+unpleasant, but it's especially unpleasant if you only do it once a
+year.
+
+Maybe you recognize the advantages, but you think this scheme is just
+too complicated. I would argue that the merit of this scheme is
+precisely that it's not easy. This way, we'll be forced to stop
+treating the calculation of time as an afterthough and start relying
+on reference implementations.
+
+Situations that call for a precise and unambiguous specification time
+will continue to use UTC, which they should already be doing
+anyway. References to time in the context of our daily schedules can
+use Willett Time. This system simply forces us to be explicit about a
+distinction that already exists.
+
+For example, you meet your friend for coffee at 10 a.m., Willett Time;
+your meeting with your coworkers in Boston starts at 10:00 UTC. TODO:
+Explain what UTC is.
+
+Happy Hour starts at 4 p.m. Willett Time; your plane boards at 16:00
+UTC.
+
+Before you argue that adopting this change would be too costly,
+consider that this argument cuts both ways: modifying Daylight Saving
+Time would absolutely be expensive, but so is inaction. The economic
+cost of our current implementation is staggering, and that's setting
+aside the cost in human lives. Even if you are among those who believe
+DST saves lives on aggregate, you have to admit that the ideal number
+of DST-related fatalities is 0.
+
+Maybe you're unconvinced, and think that we should just abolish DST
+forever. This too would come at a hefty price. Though we still have
+difficulty with the time adjustments, we've been doing it long enough
+that we *mostly* have it figured out. At this point, *not* changing
+the time twice a year would likely cause even more problems!
+Admittedly, the abolition of seasonal time would incur a one-time
+cost, but the undeniable benefits of seasonal time would be lost
+forever.
+
+The irony of my proposing this scheme is not lost on me. A few
+paragraphs ago I painted Willett as leading an irresponsible crusade
+which is still wreaking havoc more than a century later and a
+continent away. Now in the very same, much too-long, blog post, I am
+indeed suggesting a similar campaign. It appears that my hypocrisy
+knows no bounds.
+
+But you won't find me in the Letters to the Editor section or golfing
+with my congressperson. I'm alternately frustrated and fascinated with
+the Willetts of the world, but I'm not that type.
+
+Me, I aspire to be a Hudson. He may have been a total failure as head
+of the movement for seasonal time, but he was busy with other things,
+such as painting over 3500 bugs. If you've gotten nothing else out of
+this post, I urge you to salvage this experience by checking out
+George Vernon Hudson's bug portraits. They are in the public domain,
+and every one of them is painfully beautiful. [[https://upload.wikimedia.org/wikipedia/commons/e/e9/New_Zealand_Moths_and_Butterflies_(1898)_06.jpg][Here's one]] from _New
+Zealand Moths and Butterflies_ which was published in 1898, the same
+year that he spoke before the Wellington Philosophical Society.
+
+Like Hudson, I now abandon a brief and ineffective campaign for
+seasonal time in favor of my bugs. Specifically, the ones in this
+Github repository [TODO: link], which includes the code behind the
+clock at the top of this page (make sure you have JavaScript
+enabled). The clock shows the current Willett Time in Pett's Wood. Feel
+free to send a pull request if you find a mistake.
+
+#+BEGIN_QUOTE
+Reading the debates which took place in Parliament on daylight saving
+in 1908, 1909, and 1911, one marvels that so feeble a case should have
+been sustained so long, and that a measure whose effect has been to
+enlarge the opportunities for the pursuit of health and happiness
+among the millions of people who live in this country should have met
+with so frigid a reception. Let us, then, as we put forward our clocks
+for another summer, drink a silent toast to the memory of William
+Willett, who spared neither labour nor money over a long period of his
+life in his advocacy of this great reform. He did not live to see
+success crown his unselfish efforts; he died in 1915, a year before
+the passing of the wartime Act. But he has the monument he would have
+wished in the thousands of playing-fields crowded with eager young
+people every fine evening throughout the summer and one of the finest
+epitaphs that any man could win: He gave more light to his countrymen.
+
+-- Winston Churchill, A Silent Toast to William Willett [fn:37]
+#+END_QUOTE
+
+* References                                                       :noexport:
+
+TODO: At some point the numbering got off, and I still haven't fixed it.
+
+[1] http://rsnz.natlib.govt.nz/volume/rsnz_76/rsnz_76_02_003130.html
+[2] http://rsnz.natlib.govt.nz/volume/rsnz_31/rsnz_31_00_008570.html
+[3] http://rsnz.natlib.govt.nz/volume/rsnz_28/rsnz_28_00_006110.html
+[4] http://www.webexhibits.org/daylightsaving/willett.html
+[5] https://books.google.com/books/content?id=gm0_AQAAIAAJ&pg=PA458&img=1&zoom=3&hl=en&sig=ACfU3U04g2hBFZKEzVqGROXdOBWQZYkDow&ci=9,12,926,1495&edge=0
+[7] https://books.google.com/books?id=soY-AQAAMAAJ&lpg=PR940&ots=C017ukhBBv&dq=%22no%20intention%20of%20giving%20facilities%20for%20the%20passing%20of%20the%20Daylight%20Saving%20Bill%22&pg=PR941#v=onepage&q=%22no%20intention%20of%20giving%20facilities%20for%20the%20passing%20of%20the%20Daylight%20Saving%20Bill%22&f=false
+[8] http://hansard.millbanksystems.com/commons/1909/mar/05/daylight-saving-bill
+[9] https://martinfowler.com/bliki/FrequencyReducesDifficulty.html
+[10] https://www.slideshare.net/beamrider9/continuous-deployment-at-etsy-a-tale-of-two-approaches/35?src=clipshare
+[11] https://books.google.com/books?id=tWNYAAAAYAAJ&pg=PR1#v=onepage&q&f=false
+[12] http://www.historytoday.com/oliver-b-pollack/daylight-savings-time-movement
+[13] https://en.wikipedia.org/wiki/Battle_of_the_Somme
+[14] https://en.wikipedia.org/wiki/Iraq_War#Casualty_estimates
+[15] https://books.google.com/books?id=VCtRAgAAQBAJ&lpg=PT277&dq=The%20Home%20Front%201914%E2%80%931918%3A%20How%20Britain%20Survived%20the%20Great%20War&pg=PT272#v=onepage&q=rationing&f=false
+[16] https://en.wikipedia.org/wiki/Economic_history_of_World_War_I#cite_note-13
+[17] http://app.leg.wa.gov/billsummary?BillNumber=5329&Year=2017
+[18] https://www.timeanddate.com/news/time/usa-states-no-dst.html
+[19] https://www.aeaweb.org/articles?id=10.1257/app.20140100
+[20] http://www.nejm.org/doi/full/10.1056/NEJMc0807104
+[21] http://www.academia.edu/30442853/Sleepy_Punishers_Are_Harsh_Punishers_Daylight_Saving_Time_and_Legal_Sentences
+[22] http://www.apa.org/pubs/journals/releases/apl9451317.pdf
+[23] https://sleepbetter.org/Lost-Hour-Economic-Index/
+[24] http://haas.berkeley.edu/faculty/papers/anderson/status%20enhancement%20account%20of%20overconfidence.pdf
+[25] http://www.winstonchurchill.org/publications/finest-hour/finest-hour-114/a-silent-toast-to-william-willett-by-winston-s-churchill
+[26] [[https://en.wikipedia.org/wiki/Triple_Alliance_(1882)#Austria-Hungary][https://en.wikipedia.org/wiki/Triple_Alliance_(1882)#Austria-Hungary]]
+[27] https://en.wikipedia.org/wiki/Imperial_German_Navy#1906_to_1908.2C_The_Dreadnought_and_innovation:_First_Novelle
+[28] https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=EMM_EPMR_PTE_NUS_DPG&f=M
+[29] https://www.gpo.gov/fdsys/pkg/BILLS-109hr6enr/pdf/BILLS-109hr6enr.pdf
+[30] https://newrepublic.com/article/79023/roll-back-the-bush-changes-daylight-saving-time
+[31] http://www.nber.org/papers/w14429.pdf
+
+* Appendix
+** How long could you power an NFL stadium with the energy from the extra fries sold at Hardee's following start of DST?
+
+#+BEGIN_SRC python :results output :exports both
+avg_sales_increase_dollars = 880 # http://commdocs.house.gov/committees/science/hsy73325.000/hsy73325_0.HTM#0
+burger_combo_price_dollars = 7.09 # http://www.fastfoodmenuprices.com/hardees-carls-jr-prices/
+num_locations = 5812 # https://en.wikipedia.org/wiki/Hardees
+med_fry_grams = 132.0 # http://www.myfitnesspal.com/food/calories/369125865
+kcal_per_fries = 410 # http://www.myfitnesspal.com/food/calories/369125865
+avg_russet_grams = 155.0 # https://cooking.stackexchange.com/questions/10413/how-much-does-a-large-potato-weigh
+nfl_stadium_mw = 10 # http://oilprice.com/Energy/Energy-General/How-Much-Energy-Does-the-Super-Bowl-Use.html
+
+total_extra_fries_sold = (avg_sales_increase_dollars / burger_combo_price_dollars) * num_locations
+total_extra_potatoes = total_extra_fries_sold * (med_fry_grams / avg_russet_grams)
+total_extra_kcal = total_extra_fries_sold * kcal_per_fries
+fry_mwh = total_extra_kcal / 859845.22785899
+nfl_stadium_hours = fry_mwh / nfl_stadium_mw
+
+print "Hardee's DST fries sold: {}".format(total_extra_fries_sold)
+print "Potatoes required for Hardee's DST fries: {}".format(total_extra_potatoes)
+print "Kilocalories from Hardee's DST fries: {}".format(total_extra_kcal)
+print "Megawatt-hours from Hardee's DST fries: {}".format(fry_mwh)
+print "Hours an NFL stadium could be powered by Hardee's DST fries: {}".format(nfl_stadium_hours)
+#+END_SRC
+
+#+RESULTS:
+: Hardee's DST fries sold: 721376.586742
+: Potatoes required for Hardee's DST fries: 614333.609354
+: Kilocalories from Hardee's DST fries: 295764400.564
+: Megawatt-hours from Hardee's DST fries: 343.973997856
+: Hours an NFL stadium could be powered by Hardee's DST fries: 34.3973997856
+
+* Holding Area                                                     :noexport:
+
+TODO: Willett recognized leverage points; he sought to influence public
+opinion, but he also made more targeted appeals to politicians.
+
+Humans set not only the goals of the system, but the mindset out of
+which the system arises. The paradigm of the system is the point of
+greatest leverage, the lever which can move any of the various
+parameters, rules, or goals of the system. Change the paradigm and
+everything else will follow.
+
+"Move fast and break things" is a paradigm. That paradigm is why
+Facebook and NASA are very different organizations.
+
+Willett's "ideal" scheme is totally practical now. It would be
+trivially easy to build a clock that adds a few seconds every day in
+the spring and takes a few a way in the fall. People would say that
+this will wreak havoc in the software world. But I argue it would be
+better. Every major language has a time library. People get hit with
+the same Daylight Saving bugs every spring and fall because they'd
+rather roll their own, naïve, timekeeping logic and deal with the
+fallout twice a year than sit down and read the docs of a proper
+date-time library.
+
+What about high-precision, scientific software? Can it continue to use
+UTC?
+
+What about scheduling software? Calendar applications and dentist
+appointment schedulers and such?
+
+[TODO: Move this?]
+
+Part of what draws me to this story is the contrast between its two
+protagonists. Hudson and Willett are perfect foils for each other:
+Hudson, a naturalist chasing butterflies in a remote corner of the
+world stage; Willett, the successful businessman living in the heart of
+the British empire.
+
+I wonder if their dissimilar backgrounds led them to the same idea.
+
+GVH's environs must have fostered a detachment from society. From the
+island wilderness in the South Pacific, he would have viewed the world
+through a different lens than a typical resident of London.
+
+Decades of running a business in a compliance-heavy industry must have
+provided Willett with an education in the art of navigating regulations
+and influencing society's rulemakers.
+
+Accordingly, what most people took for an immutable law of the
+universe, both the businessman and the naturalist recognized as an
+artificial construct. The time on the clock is a shared agreement, and
+it was open for negotiation.
+
+
+
+Highways didn't even exist in 1908. Besides, Willett _warned_ everyone
+_repeatedly_ that the human body wouldn't adjust well to the loss of a
+full hour of sleep, but we ignored him and opted for a 1-hour clock
+adjustment anyway.
+
+[TODO: Hubris. On the other hand, isn't it irresponsible not to
+intervene, if the imperfect information you have suggests you'll be
+saving lives, on aggregate?]
+
+
+Willett couldn't possibly have anticipated the effects of DST on modern
+society. How broke does it need to be before "If it ain't broke don't
+fix it," no longer applies? And if it's time for a change, can we draw
+on any lessons from the first time around?
+
+We've already had a paradigm shift - the rise of massive, networked
+computers. Now we're laboring under a curse of complexity. Until we
+can fix software, we probably can't fix DST. Continous integration to
+the rescue?
+
+
+* Notes                                                            :noexport:
+** George Vernon Hudson
+- Patient, meticulous, painted 3500+ portraits of insects. Wrote and
+  illustrated 7 books of insects. ([[http://rsnz.natlib.govt.nz/volume/rsnz_76/rsnz_76_02_003130.html][Source]] and [[http://www.friendswbg.org.nz/newhudsonbiographical.html][this one]])
+- Found a bunch of shipwrecked people on an Arctic expedition
+- Lived to see DST implemented
+- 1893 - married a high-school teacher ([[http://rsnz.natlib.govt.nz/volume/rsnz_76/rsnz_76_02_003130.html][Source]])
+- Whole family went on bug-hunting expeditions. Recorded the weather
+  every day. Thought the educational system stifled creativity, so he
+  ran his own field trips. Invited kids over for bug-hunting
+  expeditions followed by ginger beer and cookies from the biscuit
+  barrel. ([[http://www.friendswbg.org.nz/newhudsonbiographical.html][Source]])
+
+
+** [[http://rsnz.natlib.govt.nz/volume/rsnz_28/rsnz_28_00_006110.html][First Proposal]] - 1895
+
+Pretty much everyone ridiculed it, the reactions were great. Despite
+cold reception, many in Christ-church liked it and agitated for it's
+adoption. Note that his proposal has two striking differences from the
+modern implementation:
+
+1. Spring back, fall forward (b/c Southern hemisphere)
+2. 2 hours difference instead of 1.
+
+** [[http://rsnz.natlib.govt.nz/volume/rsnz_31/rsnz_31_00_008570.html][Second Proposal]] - 1898
+
+Good quotes:
+
+- "It cannot be too strongly borne in mind that the time standard in
+  ordinary use—i.e., the mean solar day—is merely an abstraction
+  devised for human convenience, and does not represent any actual
+  time interval existing in nature... The above facts are no doubt
+  very familiar to many members, but, as most of the objections which
+  have been urged against my system of seasonal time depend on the
+  assumption that the ordinary time we employ is an
+  unchangeable-actuality existing in nature with which we must not and
+  cannot in any way interfere, it has been specially necessary to
+  emphasize the fact that our time is merely an artificial standard,
+  which might be further adjusted if by so doing it could be made more
+  subservient to our requirements." ([[http://rsnz.natlib.govt.nz/volume/rsnz_31/rsnz_31_00_008570.html][Source]]). Contrast to "the mere
+  calling the hours different would not make any difference in the
+  time" (Mr. Maskell, from above)
+- "...I think it will be agreed that my proposed adjustment of
+  two-hours is not likely to cause any very great amount of
+  inconvenience." ([[http://rsnz.natlib.govt.nz/volume/rsnz_31/rsnz_31_00_008570.html][Source]]) Spoken like a man who's never had to deal
+  with a date time library.
+- "By it all outdoor sports and pastimes would receive a great
+  impetus—the man of business, for instance, who leaves his work at 5
+  o'clock would in midsummer have five hours of continuous daylight
+  available, during which he would be at liberty to follow any of the
+  numerous outdoor pursuits, which are so essential to the health and
+  happiness of those whose bread-winning occupation obliges them to
+  remain indoors during the major part of the day." ([[http://rsnz.natlib.govt.nz/volume/rsnz_31/rsnz_31_00_008570.html][Source]])
+
+
+** Railroads
+Railroads had already shattered notion of "God's time" as sacred
+through the introduction of time zones. Adoption was organic. (Source: book)
+
+** [[https://www.jstor.org/stable/pdf/3288163.pdf][Time keeping in Rome]]
+
+The period of daylight was divided into 12 "hours". Thus, the hours
+floated in accordance with the season, naturally accounting for
+daylight savings time. The obvious disadvantage is that each "hour"
+was shorter during winter, so any more granular quantum of time such
+as seconds or minutes.
+
+** Willett
+
+#+BEGIN_QUOTE
+  I am sorry, however, that after making reference to the Daylight
+  Saving Bill you should add: "We are not sanguine of its success." Are
+  these words quite worthy of the _Spectator_? ... [I]t is clear that we
+  have passed the Slough of Despond. We are now climbing the Hill
+  Difficulty. The Palace Beautiful awaits us at the top. Mistrust and
+  Timorous will never reach it! Surely the "Great Heart" of the
+  _Spectator_ should encourage pilgrims to climb the Hill, and should
+  use every weapon he can against any Grims that may bar the way or any
+  lions that may appear to forbid the happy arrival of the Bill before
+  his Majesty the King. What is there to fear?
+#+END_QUOTE
+
+([[https://books.google.com/books/content?id=gm0_AQAAIAAJ&pg=PA458&img=1&zoom=3&hl=en&sig=ACfU3U04g2hBFZKEzVqGROXdOBWQZYkDow&ci=9%252C12%252C926%252C1495&edge=0][Source]])
+
+Fear-mongering anticipated war:
+
+#+BEGIN_QUOTE
+  The benefits afforded by parks and open spaces will be doubled, and
+  the nation may some day have cause to be thankful that by this means
+  opportunities for rifle practice will have been created, which under
+  existing conditions cannot be contemplated.
+#+END_QUOTE
+
+Problems of scale:
+
+#+BEGIN_QUOTE
+  One of the most powerful attractions of this scheme is that with one
+  exception all trains will run in accordance with existing time
+  tables. That is to say -- every train which now starts at 8 a.m. will
+  continue to start at 8 a.m., the 9 a.m. at 9 a.m., and so on; there
+  will be no alteration.
+
+  On Sunday at 2 a.m., the hour at which the hands of official clocks
+  will be advanced, very few trains are running. Such as are then
+  running will merely arrive 20 minutes late on four Sunday mornings in
+  April only and this will be known to both passengers and officials
+  before each journey is commenced.
+#+END_QUOTE
+
+Waxing philosophical on light:
+
+#+BEGIN_QUOTE
+  Light is one of the great gifts of the Creator. While daylight
+  surrounds us, cheerfulness reigns, anxieties press less heavily, and
+  courage is bred for the struggle of life. Against our ever-besieging
+  enemy, disease, light and fresh air act as guards in our defence, and
+  when the conflict is close, supply us with most effective weapons with
+  which to overcome the invader. Even the blind keenly realise the
+  difference between daylight and darkness. They are always cheered by
+  the former, but depressed by the latter.
+#+END_QUOTE
+
+Let's just try a 6-month experiment... Tim Ferriss' puppy dog
+sell. Echoed by Churchill in his speech (TODO: Look up).
+
+#+BEGIN_QUOTE
+  Let us not be so faint-hearted as to hesitate to make the effort when
+  the cost is to trifling and the reward so great. If any better method
+  than that I have suggested can be devised let it be produced, but
+  somehow or other let us secure these 210 hours. To obtain them
+  everyone who wants them must do something. Out of nothing nothing
+  comes. Let every man and woman, and every youth in particular, see to
+  it that every voter who is willing that the scheme should be tried for
+  six months communicates his wish to his Member of Parliament. This may
+  be done by means of a postcard, giving the name, address and
+  qualification of the voter. If postcards are sent in considerable
+  numbers, there ought to be no insuperable difficulty in obtaining an
+  Act for six months' experiment to be made.
+#+END_QUOTE
+
+On whether the bill should expire after a year.
+
+#+BEGIN_QUOTE
+  Yes, but then you immediately impart an element of doubt, and you
+  cannot expect the House of Commons, I should think, to justify a Bill
+  at all with an element of doubt in it. I hope that this Committee will
+  be unanimous, by the time we have finished, that it will be a good
+  thing."
+#+END_QUOTE
+([[https://books.google.com/books?id=tWNYAAAAYAAJ&lpg=PR16&dq=conan%2520doyle%2520william%2520willett&pg=PA7#v=onepage&q=conan%2520doyle%2520william%2520willett&f=false][Source]])
+
+Why not a 1-hour change? See page 10 of his pamphlet.
+
+- [[https://books.google.com/books?id=2FkxAQAAMAAJ&lpg=PA113&ots=VJ98kCUjnc&dq=full%2520text%2520daylight%2520savings%2520bill%25201908&pg=PA113#v=onepage&q=full%2520text%2520daylight%2520savings%2520bill%25201908&f=false][Story about practical joker setting the clocks ahead]]
+
+
+Mounted a more vigorous campaign than Hudson. Enlisted politicians,
+businessmen, and even sought out farmers to sway the opposition. His
+booklet went through 18(?) revisions, brought before Parliament 6(?)
+times before it was rejected.
+
+It finally passed with a lack of ceremony that belied its contentious
+history. Germany did it soon after the war began, enacting DST along
+with rules that allowed seizure of assets and rationing. DST looks
+reasonable in contrast with forfeiture and rationing.
+
+Factors:
+
+1. Crisis + FOMO (the Enemy did it first)
+2. Framing (DST vs. asset forfeiture and rationing)
+3. The economy's outputs changed: munitions vs. finance,
+   textiles. Process change introduces new bottleneck. Fear over
+   munitions production rates increased the perceived value of energy
+   saving measures.
+
+#+BEGIN_QUOTE
+  The annual output of artillery grew from 91 guns in 1914 to 8039 in
+  1918. Warplanes soared from 200 in 1914 to 3200 in 1918, while the
+  production of machine guns went from 300 to 121,000)
+#+END_QUOTE
+
+([[https://en.wikipedia.org/wiki/Economic_history_of_World_War_I#British_Empire][Source]])
+
+The new demands of the wartime economy also drove another significant
+social change: the introduction of women into the workforce. ([[https://en.wikipedia.org/wiki/Economic_history_of_World_War_I#cite_note-13][Source]])
+
+** TODO Supporters
+
+
+1. Churchill - look up his quote about the "extra snooze"
+2. Conan-Doyle
+
+*** Churchill
+
+**** A silent toast to William Willett
+
+#+BEGIN_EXAMPLE
+  Reading the debates which took place in Parliament on daylight saving
+  in 1908, 1909, and 1911, one marvels that so feeble a case should have
+  been sustained so long, and that a measure whose effect has been to
+  enlarge the opportunities for the pursuit of health and happiness
+  among the millions of people who live in this country should have met
+  with so frigid a reception. Let us, then, as we put forward our clocks
+  for another summer, drink a silent toast to the memory of William
+  Willett, who spared neither labour nor money over a long period of his
+  life in his advocacy of this great reform. He did not live to see
+  success crown his unselfish efforts; he died in 1915, a year before
+  the passing of the wartime Act. But he has the monument he would have
+  wished in the thousands of playing-fields crowded with eager young
+  people every fine evening throughout the summer and one of the finest
+  epitaphs that any man could win: He gave more light to his countrymen.
+#+END_QUOTE
+
+*** Conan Doyle
+
+[[https://books.google.com/books?id=tWNYAAAAYAAJ&lpg=PR16&ots=eT6xGQw1bL&dq=conan%2520doyle%2520william%2520willett&pg=PA116#v=onepage&q=conan%2520doyle%2520william%2520willett&f=false][Report And Special Report From the Select Comittee on the Daylight
+Savings Bill (1908)]] - p.1, p. 116
+
+** Overview: Path to passage
+
+Good timeline and quotes from Churchill, too.
+http://www.historytoday.com/oliver-b-pollack/daylight-savings-time-movement
+
+Asquith in 1908: the government had "no intention of giving facilities
+for the passing of the Daylight Savings Bill." Asquith was Prime
+Minister. His opposition effectively killed the bill before it made it
+to a vote in the House of Commons.
+
+1909 committee: "Willett was given an opportunity to testify. Despite
+the Chairman's request that he be brief and Sir Ivor Herbert's efforts
+to cut him off, Willett's testimony occupies thirty-three pages."
+
+The 1909 Committee generally conceded the apparent benefits cited by
+the 1908 Committee. However, because of substantial diversity over the
+manner of legislating and the serious inconvenience to important
+interests, they concluded 'Your Committee recommended that the Bill be
+not further proceeded with'.
+
+Daylight Savings was presented as a private bill in 1911, 1912, 1913
+and 1914 The Government refused the Bill its assistance. Willett
+continued to obtain signatures for his petitions.
+
+At the very time the Frankfurter Zeitung was noting scornfully that,
+despite its long Daylight Savings campaign, 'it is characteristic of
+England that she could not rouse herself to a decision', the War
+Cabinet met. Asquith at last gave the Bill Government time.
+
+He estimated this act of 'imperative patriotism' would save 2,500,000
+pounds. Joining the usual popular forces Willett had formerly
+marshalled in support of the Bill were now the influential Central
+Committee for the Disposal of Coal and the (General Conference of
+Railway Managers. Norman's only regret was that 'unhappily our enemies
+have been quicker than ourselves to realise the greater economy
+afforded'.
+
+The vote was taken at 7.27 p.m.; 170 ayes, 2 noes.
+
+** [[http://haas.berkeley.edu/faculty/papers/anderson/status%2520enhancement%2520account%2520of%2520overconfidence.pdf][Overconfidence]]
+
+#+BEGIN_EXAMPLE
+  overconfidence also predicted the grade that teammates assigned to the
+  individual, suggesting that overconfident individuals not only
+  attained higher status but were also assigned higher grades by peers.
+  (Study 2)
+#+END_QUOTE
+
+
+#+BEGIN_EXAMPLE
+  overconfident individuals attained higher status because they were
+  perceived by others to be competent, even when the impression was
+  artifice
+#+END_QUOTE
+
+
+#+BEGIN_EXAMPLE
+  Overconfident individuals behaved in ways that conveyed competence
+  more convincingly than did individuals who are actually competent.
+#+END_QUOTE
+
+
+#+BEGIN_EXAMPLE
+  humans might have the tendency to form false self beliefs because
+  doing so helps convince others of their positive value.
+#+END_QUOTE
+
+
+#+BEGIN_EXAMPLE
+  When will overconfidence lead to social benefits such as the ones we
+  observed and when will it not?
+#+END_QUOTE
+
+
+#+BEGIN_EXAMPLE
+  Those individuals among us who are elevated to positions of status
+  wield undue influence, have access to more resources, get better
+  information, and enjoy a variety of benefits. One of the most basic
+
+  societies, is the question of how we select individuals for positions
+  of status. Although we may seek to choose wisely, we are often forced
+  to rely on proxies for ability, such as individuals’ confidence.  In
+  so doing, we, as a society, create incentives for those who would seek
+  status to display more confidence than their actual ability merits.
+#+END_QUOTE
+
+** [[https://www1.eere.energy.gov/ba/pba/pdfs/epact_sec_110_edst_report_to_congress_2008.pdf][Department of Energy Study]]
+
+- 17% risk of dying in a car crash - Source: http://www.mcmaster.ca/inabis98/occupational/coren0164/
+- Americans sleep 40 minutes less on the night of spring
+  forward. Probability of workplace injury increases by 5.7% - Source:
+  http://www.apa.org/pubs/journals/releases/apl9451317.pdf
+- Sleep duration decreases 1 hour, efficiency by 10% - Source:
+  http://www.sciencedirect.com/science/article/pii/S0304394006007038
+- 3-5% more likely to have a heart attack in the 3 days following
+  spring forward - Source: http://www.nejm.org/doi/full/10.1056/NEJMc0807104
+- Judges issue 5% longer criminal sentences on the Monday following a
+  spring forward - Source: http://www.academia.edu/30442853/Sleepy_Punishers_Are_Harsh_Punishers_Daylight_Saving_Time_and_Legal_Sentences
+- Congressional testimony, Idaho farmer's in support after Hardee's
+  sales go up $880 per week:
+  http://commdocs.house.gov/committees/science/hsy73325.000/hsy73325_0.HTM#0
+- "Remember, the naming of the hours is an invention of man, and those
+  names must convey meaning to different audiences for different
+  purposes. Voluntary Standard Railway time went into effect in North America on
+  November 18, 1883 to simplify railway schedules not only for the
+  traveling public, but for the safe and efficient use of railroad
+  tracks." - http://commdocs.house.gov/committees/science/hsy73325.000/hsy73325_0.HTM#0
+
+#+BEGIN_EXAMPLE
+"You're going to have such great health care at a tiny fraction of the cost. And it's going to be so easy."
+- U.S. presidential candidate Donald Trump, Oct. 25, 2016
+#+END_QUOTE
+[[http://abcnews.go.com/Politics/fact-checking-trumps-repeal-replace-obamacare-timeline/story?id=46360908][Source]]
+
+
+#+BEGIN_EXAMPLE
+  New systems continue to fall victim to old and well-known problems.
+
+  You might think that the leap-day problems would be anticipated
+  adequately by now. Getting clock arithmetic correct might seem to be a
+  conceptually simple task -- which is perhaps why it is not taken
+  seriously enough. But even if earlier leap-year problems were caught
+  in older systems, they continue to recur in newer systems. So, every 4
+  years, we encounter new problems, giving us 4 more years to develop
+  new software with old leap-year bugs, and perhaps even to find some
+  creative new bugs!"
+  - http://www.csl.sri.com/users/neumann/cal.html#DatesTimes
+#+END_QUOTE
+
+
+#+BEGIN_EXAMPLE
+  If you are going to change the clocks, this is a huge
+  country. Somewhere it is going to be dark in the morning when it would
+  have been light, and somewhere a reporter is going to take a camera
+  and take a picture of a victim and say that victim would not have been
+  hurt if only you hadn't changed the clocks, and that is a story. You
+  may have 50 or 100 traffic accidents that didn't happen that evening
+  because it was still light while people were going home. You may have
+  50 robberies, rapes, burglaries that don't occur at 8 p.m. that
+  evening. But how do you take a picture of the traffic accident that
+  didn't occur?
+  - http://commdocs.house.gov/committees/science/hsy73325.000/hsy73325_0.HTM#0
+#+END_QUOTE
+
+
+#+BEGIN_EXAMPLE
+  I ran a dairy so I know about dairy, and none of the cows that I had
+  could read a clock. So I am not sure why the dairyman is changing his
+  hours at all. - http://commdocs.house.gov/committees/science/hsy73325.000/hsy73325_0.HTM#0
+#+END_QUOTE
+
+Daylight Saving Time: https://en.wikipedia.org/wiki/Daylight_saving_time#/media/File:Greenwich_GB_DaylightChart.png
+Make a corresponding continuous chart
+
+
+** TODO Before publication
+
+*** Prose
+**** Must
+1. [ ] Fix transition to redemption for Willett
+2. [ ] Elaborate on time zones vs. time as a function of latitude
+3. [ ] Add graphs to page
+4. [ ] Fix ordering of references, dedupe
+**** Maybe
+1. [ ] Include derivations of sunset in Appendix?
+*** Code
+**** Must
+1. [X] Use doy instead of days past solstice in "client" logic
+2. [X] Add date to slider
+3. [X] Incorporate globe graph
+4. [X] Fix clock (use onLoad() callback)
+5. [ ] Final cleanup pass, push to Github
+**** Maybe
+1. [ ] Stop hard-coding width and height of svg's
+2. [ ] Add second set of hands to clock face
+3. [ ] Use cljs-time instead of goog.date
+4. [ ] Add offset from Willett Time to globe graph
+5. [ ] Animate butterfly catchers on clock
+
+   
+** Outline
+
+*** GVH
+- Good idea, never gained momentum
+
+*** Willett
+- Good idea, uber confident
+- Determination and force of personality nearly pushed it through, but
+  still died a failure
+
+*** Total War
+- Suddenly, success, because the goals of the system changed
+- Crisis as opportunity for change
+
+*** Belief vs. arrogance
+- Contrast: GVH and Willett
+- Willett's secret weapon: belief
+- Why so confident? Justified?
+- Still died a failure
+
+*** Willett's Legacy
+- Still using DST to address crisis
+- DST is terrible
+- Before we judge Willett too harshly, let's look at the
+  implementation...
+
+*** Look to the future
+- DST is a good idea, implemented poorly
+- Ironically, the technological advances that make improvement
+  possible also create a new obstacle (networks -> increased
+  coordination)
+  - Coordination was only just starting to be a problem (astronomical
+    measurements, markets in New York)
+  - Now it's a bigger problem
+
+* Footnotes
+
+
+[fn:1] http://rsnz.natlib.govt.nz/volume/rsnz_76/rsnz_76_02_003130.html
+[fn:2] http://rsnz.natlib.govt.nz/volume/rsnz_31/rsnz_31_00_008570.html
+[fn:3] http://rsnz.natlib.govt.nz/volume/rsnz_28/rsnz_28_00_006110.html
+[fn:4] https://books.google.com/books/content?id=G2RRAQAAIAAJ&pg=PA719&img=1&zoom=3&hl=en&sig=ACfU3U3gPNWQcEgGw0T6Rv7mDRLGa6e_0w&ci=50%2C412%2C819%2C543&edge=0
+[fn:5] http://www.webexhibits.org/daylightsaving/willett.html
+[fn:6] https://en.wikipedia.org/wiki/Anglo-German_naval_arms_race
+[fn:7] https://en.wikipedia.org/wiki/Bosnian_crisis
+[fn:8] https://books.google.com/books/content?id=gm0_AQAAIAAJ&pg=PA458&img=1&zoom=3&hl=en&sig=ACfU3U04g2hBFZKEzVqGROXdOBWQZYkDow&ci=9,12,926,1495&edge=0
+[fn:9] https://books.google.com/books?id=tWNYAAAAYAAJ&dq=inauthor%3A%22Great%20Britain.%20Daylight%20Saving%20Bill%20Committee%22&pg=PR1#v=onepage&q&f=false
+[fn:10] https://books.google.com/books?id=gTEPAQAAIAAJ&lpg=PR722&ots=nVj0HXH5X1&pg=PR723#v=onepage&q&f=false
+[fn:11] https://books.google.com/books?id=soY-AQAAMAAJ&pg=PR940#v=onepage&q&f=false
+[fn:12] http://hansard.millbanksystems.com/commons/1909/mar/05/daylight-saving-bill#column_1778
+[fn:13] https://books.google.com/books?id=tWNYAAAAYAAJ&pg=RA1-PA92#v=onepage&q&f=false
+[fn:14] https://books.google.com/books?id=tWNYAAAAYAAJ&pg=RA1-PR14#v=onepage&q&f=false
+[fn:15] https://en.wikipedia.org/wiki/Daylight_saving_time#Politics
+[fn:16] https://www.staff.science.uu.nl/~gent0113/wettijd/downloads/willett.pdf
+[fn:17] http://www.firstworldwar.com/atoz/shellscandal.htm
+[fn:18] https://en.wikipedia.org/wiki/Battle_of_the_Somme
+[fn:19] https://en.wikipedia.org/wiki/Iraq_War#Casualty_estimates
+[fn:20] http://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/#two
+[fn:21] https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=EMM_EPMR_PTE_NUS_DPG&f=M
+[fn:22] https://www.gpo.gov/fdsys/pkg/BILLS-109hr6enr/pdf/BILLS-109hr6enr.pdf
+[fn:23] https://newrepublic.com/article/79023/roll-back-the-bush-changes-daylight-saving-time
+[fn:24] https://energy.gov/sites/prod/files/2015/05/f22/epact_sec_110_edst_report_to_congress_2008.pdf
+[fn:25] http://www.nber.org/papers/w14429.pdf
+[fn:26] https://www.aeaweb.org/articles?id=10.1257/app.20140100
+[fn:27] http://www.nejm.org/doi/full/10.1056/NEJMc0807104
+[fn:28] http://www.academia.edu/30442853/Sleepy_Punishers_Are_Harsh_Punishers_Daylight_Saving_Time_and_Legal_Sentences
+[fn:29] http://www.apa.org/pubs/journals/releases/apl9451317.pdf
+[fn:30] https://sleepbetter.org/Lost-Hour-Economic-Index/
+[fn:31] http://app.leg.wa.gov/billsummary?BillNumber=5329&Year=2017
+[fn:32] https://www.timeanddate.com/news/time/usa-states-no-dst.html
+[fn:33] http://haas.berkeley.edu/faculty/papers/anderson/status%20enhancement%20account%20of%20overconfidence.pdf
+[fn:34] https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3117904/
+[fn:35] https://en.wikipedia.org/wiki/Robert_Cialdini#Six_key_principles
+[fn:36] https://books.google.com/books?id=VCtRAgAAQBAJ&lpg=PT277&dq=The%20Home%20Front%201914%E2%80%931918%3A%20How%20Britain%20Survived%20the%20Great%20War&pg=PT135#v=onepage&q&f=false
+[fn:37] http://www.winstonchurchill.org/publications/finest-hour/finest-hour-114/a-silent-toast-to-william-willett-by-winston-s-churchill

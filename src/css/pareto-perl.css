@@ -12,12 +12,14 @@
 div.src-block-container {
   border: 1px solid black;
   font-family: consolas, sans-serif, monospace;
+  position: relative;
 }
 div.src-block-container:before {
   display: inline;
   position: absolute;
   background-color: white;
-  right: 50px;
+  right: 15px;
+  top: -15px;
   padding: 3px;
   border: 1px solid black;
   z-index: 1000;

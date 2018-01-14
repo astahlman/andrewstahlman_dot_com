@@ -158,12 +158,12 @@ perl -nle "/order for (\d+) '(.*)' from customer '(.*)'/ && do { \$x{\$2} += \$1
 #+END_SRC
 
 #+RESULTS:
-| Snickerdoodle       |  3 |
-| Chocolate Macadamia |  1 |
-| Chocolate Chip      |  7 |
 | Peanut Butter       |  3 |
-| Double Chocolate    |  1 |
 | Oatmeal Raisin      | 10 |
+| Chocolate Macadamia |  1 |
+| Snickerdoodle       |  3 |
+| Chocolate Chip      |  7 |
+| Double Chocolate    |  1 |
 
 The regex is the same as before. =&&= does short-circuit boolean
 evaluation just like in Java or C, so the effect is to increment a
@@ -200,11 +200,11 @@ perl -nle "/order for (\d+) '(.*)' from customer '(.*)'/ && do { \$x{\$2} += \$1
 #+END_SRC
 
 #+RESULTS:
-| Peanut Butter       |  3 |
 | Oatmeal Raisin      | 10 |
+| Peanut Butter       |  3 |
 | Chocolate Chip      |  7 |
-| Chocolate Macadamia |  1 |
 | Snickerdoodle       |  3 |
+| Chocolate Macadamia |  1 |
 | Double Chocolate    |  1 |
 
 ...to the equivalent Python:
@@ -246,10 +246,10 @@ perl -nle "/order for (\d+) '(.*)' from customer '(.*)'/ && do { \$x{\$2} += \$1
 
 #+RESULTS:
 | Chocolate Chip      |  7 |
-| Peanut Butter       |  3 |
 | Chocolate Macadamia |  1 |
-| Double Chocolate    |  1 |
 | Snickerdoodle       |  3 |
+| Double Chocolate    |  1 |
+| Peanut Butter       |  3 |
 | Oatmeal Raisin      | 10 |
 
 The only other interesting part of the code is the =END=
@@ -278,10 +278,10 @@ END { foreach $cust (keys %x) { print join("\t", ($cust, $x{$cust}{"nutty"} || "
 
 #+RESULTS:
 : taco_fiend@gmail.com	0	7
-: guineapiggurl@aol.com	0	5
-: guitarstar43@hotmail.com	1	0
-: luv2laugh@yahoo.com	0	4
 : billbob@hotmail.com	3	5
+: guitarstar43@hotmail.com	1	0
+: guineapiggurl@aol.com	0	5
+: luv2laugh@yahoo.com	0	4
 
 Let's break it down.
 
@@ -708,7 +708,7 @@ print "The $_ says '$hash{$_}'." for keys %hash;
 #+END_SRC
 
 #+RESULTS:
-: The dog says 'woof'.The cat says 'meow'.
+: The cat says 'meow'.The dog says 'woof'.
 
 ** Regexes
 
@@ -1319,7 +1319,8 @@ CodeMirror and Lambda-related Javascript files at the end of the
                  <script type=\"text/javascript\">window.onload = initCodeBlocks;</script>\n")
         (insert "<style type=\"text/css\">")
         (newline-and-indent)
-        (insert extra-css)
+        (insert-file-contents "../css/pareto-perl.css") ;; inline, to avoid multiple requests
+        ;; (insert extra-css)
         (newline-and-indent)
         (insert "/* Begin Section: CodeMirror */")
         (newline-and-indent)

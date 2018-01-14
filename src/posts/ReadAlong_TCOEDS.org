@@ -566,7 +566,7 @@ Let's run it...
 #+RESULTS:
 : INFO:root:Starting simulation with 10 processes...
 : INFO:root:Done. Simulation finished with no errors.
-: INFO:root:The lock was claimed 377 times and released 377 times
+: INFO:root:The lock was claimed 360 times and released 360 times
 
 * Footnotes
 
