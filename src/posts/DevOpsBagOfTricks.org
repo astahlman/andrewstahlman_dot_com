@@ -1,7 +1,17 @@
-#+TITLE: Devops Bag-of-Tricks
-#+PROPERTY: header-args:bash :session spotify :cache no
+#+TITLE: DevOps Bag-of-Tricks
+#+PROPERTY: header-args:bash :session spotify :cache no :exports both :eval never-export
 
-* What's going on on this machine?
+Every blog post I've tried to write in the last year has started from
+a simple idea and gradually expanded in scope until I'm left with a
+sprawling epic that I know no one will ever read and I will never
+bring myself to publish. So here's something different. This isn't so
+much a blog post as a wiki entry. I'm allowing myself to edit it at
+any time, which alleviates some of my publishing-related anxiety.
+
+Here are my notes to myself on how to play sysadmin in a cloud
+environment.
+
+* Inspecting a machine
 
 Sometimes you'll SSH in to an unfamiliar environment and need to get
 the lay of the land quickly in order to start debugging. We'll start
@@ -14,7 +24,7 @@ a box (e.g., the disk is nearly full, CPU or memory usage are spiking,
 etc.), the first thing I do is use =w= to check for humans doing silly
 things.
 
-#+BEGIN_SRC bash :session none :results output
+#+BEGIN_SRC bash :session none :results output :exports both
 w
 #+END_SRC
 
@@ -55,7 +65,7 @@ available keys. It even has a built-in help section.
 #+NAME: htop-demo-gif
 #+BEGIN_EXPORT html
 <figure>
-    <img src="../assets/devops-bag-of-tricks/top-demo.gif" alt="Screencast of top" />
+    <img src="../assets/devops-bag-of-tricks/htop-demo.gif" alt="Screencast of htop" />
     <figcaption>htop!</figcaption>
 </figure>
 #+END_EXPORT
@@ -86,7 +96,7 @@ I get it, breaking up is hard to do. But don't cry over the good times
 you and top had together - smile because they happened, and then move
 on with htop.
 
-* Inspecting processes
+* Inspecting individual processes
 
 Now you've narrowed your focus to a specific process. Here are a few
 techniques to see how it interacts with its environment.
@@ -96,16 +106,13 @@ techniques to see how it interacts with its environment.
 I've got Spotify running on my laptop. Let's see if it does any
 logging...
 
-#+BEGIN_SRC bash
-ps -ef | grep -i "Spotify.app"
+
+#+BEGIN_SRC bash :results example :session none
+ps -f --ppid 1 | grep "Spotify.app"
 #+END_SRC
 
 #+RESULTS:
-| 501 |   684 |     1 | 0 | 1:30PM | ?? | 1:22.77 | /Applications/Spotify.app/Contents/MacOS/Spotify      | -psn_0_73746                      |             |                                                  |                                         |                                                                 |                        |                                                                 |                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                 |                                          |                                      |                              |                                                                  |                                       |                                                                  |                        |
-| 501 |   801 |     1 | 0 | 1:30PM | ?? | 0:00.13 | /Applications/Spotify.app/Contents/Frameworks/Spotify | Helper.app/Contents/MacOS/Spotify | Helper      | --monitor-self-annotation=ptype=crashpad-handler | --type=crashpad-handler                 | --max-uploads=5                                                 | --max-db-size=20       | --max-db-age=5                                                  | --database=/Users/andrewstahlman/Library/Application | Support/Spotify/User                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Data                                                            | --url=https://crashdump.spotify.com:443/ | --annotation=platform=macos          | --annotation=product=spotify | --annotation=version=1.0.87.491                                  | --handshake-fd=8                      |                                                                  |                        |
-| 501 |   831 |   684 | 0 | 1:30PM | ?? | 0:44.95 | /Applications/Spotify.app/Contents/Frameworks/Spotify | Helper.app/Contents/MacOS/Spotify | Helper      | --type=gpu-process                               | --disable-features=ExtendedMouseButtons | --log-file=/Users/andrewstahlman/Library/Logs/Spotify_debug.log | --log-severity=disable | --product-version=Spotify/1.0.87.491                            | --lang=en                                            | --gpu-preferences=KAAAAAAAAACAAAAAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAADgBAAAmAAAAMAEAAAAAAAA4AQAAAAAAAEABAAAAAAAASAEAAAAAAABQAQAAAAAAAFgBAAAAAAAAYAEAAAAAAABoAQAAAAAAAHABAAAAAAAAeAEAAAAAAACAAQAAAAAAAIgBAAAAAAAAkAEAAAAAAACYAQAAAAAAAKABAAAAAAAAqAEAAAAAAACwAQAAAAAAALgBAAAAAAAAwAEAAAAAAADIAQAAAAAAANABAAAAAAAA2AEAAAAAAADgAQAAAAAAAOgBAAAAAAAA8AEAAAAAAAD4AQAAAAAAAAACAAAAAAAACAIAAAAAAAAQAgAAAAAAABgCAAAAAAAAIAIAAAAAAAAoAgAAAAAAADACAAAAAAAAOAIAAAAAAABAAgAAAAAAAEgCAAAAAAAAUAIAAAAAAABYAgAAAAAAABAAAAAAAAAAAAAAAAUAAAAQAAAAAAAAAAAAAAALAAAAEAAAAAAAAAAAAAAADAAAABAAAAAAAAAAAAAAAA0AAAAQAAAAAAAAAAAAAAAPAAAAEAAAAAAAAAAAAAAAEAAAABAAAAAAAAAAAAAAABIAAAAQAAAAAAAAAAAAAAATAAAAEAAAAAAAAAABAAAABQAAABAAAAAAAAAAAQAAAAsAAAAQAAAAAAAAAAEAAAAMAAAAEAAAAAAAAAABAAAADQAAABAAAAAAAAAAAQAAAA8AAAAQAAAAAAAAAAEAAAAQAAAAEAAAAAAAAAABAAAAEgAAABAAAAAAAAAAAQAAABMAAAAQAAAAAAAAAAMAAAAFAAAAEAAAAAAAAAADAAAACwAAABAAAAAAAAAAAwAAAAwAAAAQAAAAAAAAAAMAAAANAAAAEAAAAAAAAAADAAAADwAAABAAAAAAAAAAAwAAABAAAAAQAAAAAAAAAAMAAAASAAAAEAAAAAAAAAADAAAAEwAAABAAAAAAAAAABQAAAAUAAAAQAAAAAAAAAAUAAAALAAAAEAAAAAAAAAAFAAAADQAAABAAAAAAAAAABQAAAA8AAAAQAAAAAAAAAAUAAAAQAAAAEAAAAAAAAAAFAAAAEgAAABAAAAAAAAAABQAAABMAAAAQAAAAAAAAAAYAAAAFAAAAEAAAAAAAAAAGAAAACwAAABAAAAAAAAAABgAAAA0AAAAQAAAAAAAAAAYAAAAPAAAAEAAAAAAAAAAGAAAAEAAAABAAAAAAAAAABgAAABIAAAAQAAAAAAAAAAYAAAATAAAA | --log-file=/Users/andrewstahlman/Library/Logs/Spotify_debug.log | --log-severity=disable                   | --product-version=Spotify/1.0.87.491 | --lang=en                    | --service-request-channel-token=34180C07F3E9304908F8ADF63A87DF04 |                                       |                                                                  |                        |
-| 501 |   846 |   684 | 0 | 1:30PM | ?? | 1:59.20 | /Applications/Spotify.app/Contents/Frameworks/Spotify | Helper.app/Contents/MacOS/Spotify | Helper      | --type=renderer                                  | --disable-features=ExtendedMouseButtons | --service-pipe-token=16A831909EA47E75A8DB618C48ED4BEF           | --lang=en              | --log-file=/Users/andrewstahlman/Library/Logs/Spotify_debug.log | --log-severity=disable                               | --product-version=Spotify/1.0.87.491                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | --disable-scroll-bounce                                         | --disable-spell-checking                 | --num-raster-threads=4               | --enable-zero-copy           | --enable-gpu-memory-buffer-compositor-resources                  | --enable-main-frame-before-activation | --service-request-channel-token=16A831909EA47E75A8DB618C48ED4BEF | --renderer-client-id=3 |
-| 501 | 15177 | 15175 | 0 | 4:52PM | ?? | 0:00.00 | grep                                                  | -i                                | Spotify.app |                                                  |                                         |                                                                 |                        |                                                                 |                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                 |                                          |                                      |                              |                                                                  |                                       |                                                                  |                        |
+: 501    684      1  0  1:30PM  ??  1:22.77  /Applications/Spotify.app/Contents/MacOS/Spotify       -psn_0_73746                                   |                                                  |                                         |                                                                 |                        |                                                                 |                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                 |                                          |                                      |                              |                                                                  |                                       |                                                                  |                        |
 
 #+BEGIN_SRC bash :results silent
 export PID=684
@@ -114,7 +121,7 @@ export PID=684
 If the process is writing to a log file then it must have a file
 handle open for writing.
 
-#+BEGIN_SRC bash
+#+BEGIN_SRC bash :results example
 lsof -p $PID | grep -i log
 #+END_SRC
 
@@ -145,14 +152,13 @@ Spotify is using it to store some data locally on disk. Here's some
 ad-targeting configuration it's keeping on me:
 
 #+BEGIN_SRC bash :results output
-cat "/Users/andrewstahlman/Library/Caches/com.spotify.client/Browser/Local Storage/leveldb/000544.log" | LC_ALL=C sed 's/\\n/\
+cat "~/Library/Caches/com.spotify.client/Browser/Local Storage/leveldb/000544.log" | \
+LC_ALL=C sed 's/\\n/\
 /g' | perl -lne 'print if /var ad/ .. /}/'
 #+END_SRC
 
-
 #+RESULTS:
 #+begin_example
-
 var adMetadata = {
         ...
         targetingParams: {
@@ -176,7 +182,7 @@ Looks like I'm in the control group for the
 whatever that is.
 ** What are its environment variables?
 
-It's sometimes useful to inspect a process' environment variables, to
+It's sometimes useful to inspect a process' environment variables to
 verify that it has been launched with the correct =$PATH=, secret
 keys, log configuration, etc. Environment variables are exposed via
 the /proc filesystem on Linux, so you can read the (null-separated)
@@ -246,8 +252,7 @@ named "firefox".
 strace firefox 2>&1 | tee /tmp/firefox-syscalls.txt
 #+END_SRC
 
-Now launch firefox and give it a few seconds to initialize. Then check
-the syscalls.
+Give the process a few seconds to initialize, then check the syscalls:
 
 #+BEGIN_SRC bash :results output
 head -n 25 /tmp/firefox-syscalls.txt
@@ -448,7 +453,9 @@ StackExchange answers, and re-reading the AWS docs on EC2 security
 groups for what felt like the hundredth time.
 
 I am not a networking expert and there are probably smarter ways to do
-half of this stuff. Disclaimer over, let's get to it.
+half of this stuff.
+
+Disclaimer done, let's get to it.
 
 ** What's my IP address?
 
@@ -549,7 +556,9 @@ dig +short sea15s12-in-f14.1e100.net
 #+RESULTS:
 : 172.217.3.206
 
-Yep, same IP, two different hostnames.
+Yep, same IP, two different hostnames. I'm not sure _why_ Google is
+doing this, but creating multiple A records that point to the same IP
+is a totally valid thing to do.
 
 ** Can I reach someone at this IP address?
 
@@ -662,7 +671,7 @@ nc -z -w 1 172.217.3.206 22 || echo "Failed"
 
 Editorial note: I was considering trying to illustrate the various
 configurations for SSH tunnels until I came across [[https://unix.stackexchange.com/questions/46235/how-does-reverse-ssh-tunneling-work/118650#118650][How does reverse
-SSH tunneling work?]]  on unix.stackexchange. The answer from [[https://unix.stackexchange.com/users/31673/erik][user erik]]
+SSH tunneling work?]] on unix.stackexchange. The answer from [[https://unix.stackexchange.com/users/31673/erik][user erik]]
 has the best pictorial explanation I can imagine, so I'm just going to
 link to [[https://unix.stackexchange.com/a/118650][his answer]] here and include his diagram inline.
 
@@ -697,7 +706,9 @@ Forward SSH tunnels look like this:
 #+BEGIN_EXPORT html
 <figure>
     <img src="../assets/devops-bag-of-tricks/ssh-tunnel-forward.png" alt="Diagram of SSH tunnel" />
-    <figcaption>Image credit to <a href="https://unix.stackexchange.com/users/31673/erik">erik</a> (https://unix.stackexchange.com/a/118650)</figcaption>
+    <figcaption>
+      Image credit: <a href="https://unix.stackexchange.com/users/31673/erik">erik</a> - <a href="https://unix.stackexchange.com/a/118650">How does reverse SSH tunneling work?</a>
+    </figcaption>
 </figure>
 #+END_EXPORT
 
@@ -732,11 +743,13 @@ are forwarded "back" to your laptop, like this: =ssh -R
 #+BEGIN_EXPORT html
 <figure>
     <img src="../assets/devops-bag-of-tricks/ssh-tunnel-reverse.png" alt="Diagram of reverse SSH tunnel" />
-    <figcaption>Image credit to <a href="https://unix.stackexchange.com/users/31673/erik">erik</a> (https://unix.stackexchange.com/a/118650)</figcaption>
+    <figcaption>
+      Image credit: <a href="https://unix.stackexchange.com/users/31673/erik">erik</a> - <a href="https://unix.stackexchange.com/a/118650">How does reverse SSH tunneling work?</a>
+    </figcaption>
 </figure>
 #+END_EXPORT
 
-* Unix utilities
+* Appendix: Unix utilities
 ** hgrep
 
 Like grep, but print the first line unconditionally. This is useful
