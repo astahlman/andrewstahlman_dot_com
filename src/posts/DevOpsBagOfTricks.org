@@ -245,8 +245,8 @@ microscope with =strace= (or on OSX, =dtruss=) and trace all of its
 system calls.
 
 Let's say you can't remember from where Firefox loads user
-settings. You could fire up =dtruss= and tell it to wait for a process
-named "firefox".
+settings. You could fire up firefox under =strace= to record all of
+its system calls.
 
 #+BEGIN_SRC bash
 strace firefox 2>&1 | tee /tmp/firefox-syscalls.txt
@@ -288,7 +288,6 @@ mmap(0x7f6dcd7b9000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYW
 #+end_example
 
 Let's look at just the calls to =open()=.
-
 
 #+BEGIN_SRC bash :results output
 perl -lne 'm/openat\(\w+, "([^\"]+)\"/ && print $1' /tmp/firefox-syscalls.txt | head
