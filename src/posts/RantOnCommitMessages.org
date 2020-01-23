@@ -1,0 +1,181 @@
+#+TITLE: A Rant On Commit Messages
+
+I'm making an effort lately to grant others the benefit of the doubt.
+When I observe someone do a stupid thing, I start from the assumption
+that they are *not* a stupid person who intentionally does stupid
+things. This sounds obvious, but I need reminding every time I open a
+500-line Github Pull Request with a subject line like "refactoring"
+and the illuminating description, "No description provided."
+
+Why do people do this?
+
+Simple, because people are idiots.
+
+Wait, no! /Assume good intent, assume good intent.../
+
+In the spirit of being charitable, let's acknowledge that by the time
+the author of this pull request clicked "publish" they had probably
+already spent a lot of time and brainpower implementing and
+(hopefully - but don't get me started, because this is another rant
+for another time) testing their change. Maybe they submitted it just
+before rushing out the door to catch a bus. Maybe they were hungry or
+sleepy and simply lacked the attentional resources needed to write a
+good commit message.
+
+Maybe our hungry and/or sleepy, mentally-drained, bus-chasing PR
+author is actually making a perfectly rational choice. Maybe in their
+subjective cost/benefit analysis, writing a good commit message isn't
+worth trouble. If true, this explanation should give us hope! You
+can't really convince someone not to be hungry or tired or unable to
+focus, but you *can* point out the benefits of writing good commit
+messages, which is what I'm about to attempt.
+
+I won't discuss how to write a good commit message - that's been
+addressed elsewhere [fn:1][fn:2][fn:3]. Instead, I'll address the
+"why" by showing that good commit messages make everyone's life
+better.
+
+* Commit like everybody is watching
+
+The most obvious reason for writing commit messages is to capture and
+share context.
+
+One excuse I've heard for skimping on commit messages is, "Jimbo and I
+chatted about this yesterday, so we're already on the same page."
+That's swell for you and Jimbo, but the rest of us are stuck here
+wondering what "oops fix stuff again" means in relation to this weird
+function call on line 43. (In such cases, "git blame" takes on new
+significance.)
+
+Open-source communities tend to foster better git hygiene than
+corporate settings, I've noticed. When you can't just tap your
+collaborator on the shoulder and get instant feedback, you have to
+really take the time to communicate your intentions and anticipate
+potential objections. This is even harder if your code-reviewer is in
+some far-flung timezone or only responds on weekends. Low
+conversational bandwidth forces you to be clear and concise in your
+writing, else you get trapped in an endless back-and-forth. This is
+why in the open-source world you get beautiful commits like this
+one [fn:4], which in the corporate world probably would have looked
+something like:
+
+#+BEGIN_EXAMPLE
+  commit 1bd8346c98d705ac60d435e6cfb6x131c5b18ff8
+
+  Author: Jimbo Obmij <jimbo@bigcorp.com>
+
+  Date: Thu Apr 14 15:33:48 2019 +0700
+
+      deadlock bug fix attempt 2
+
+      Here's a fix for that weird bug I mentioned in standup
+#+END_EXAMPLE
+
+The tragic irony of the open-plan office is that cramming engineers
+together really *does* promote collaboration and communication, but
+only of the synchronous and ephemeral variety. Tapping your neighbor
+on the shoulder is a short-term win for productivity, but the cost
+becomes apparent when they go on parental leave, or change jobs, or
+take vacation, or just forget why they once felt that it was
+super-important to put a mutex around the call on line 241.
+
+* WARNING: repos in web browser are richer than they appear
+
+The history of your repository can be a trove of useful information,
+but only if you a) populate it with good commit messages, and b) know
+how to explore it. There's a vicious cycle at play here: no one reads
+commit messages because no one writes good commit messages, and no one
+writes good commit messages because no one reads them. To break out of
+this trap, the goodness of good commit messages needs to be more
+apparent, which starts with knowing how to find them.
+
+As of 2019, Github has been around for 11 years. That's long enough
+that there's an entire cohort of us who have only ever used git in
+conjunction with the Github web interface (This generational divide is
+reflected in our vocabulary, I've noticed: 20-somethings "open a PR"
+to submit their code changes for review, whereas anyone older than ~30
+"sends a patch").
+
+Github is great, but a lot of people treat git like a glorified
+shuttle that gets code from your laptop into Github. To do any serious
+exploring you need to go beyond the Github web UI and use a more
+capable tool. Magit is amazing but inaccessible to the 97.5% [fn:5]
+who aren't Emacs users, so realistically you're probably going to use
+good ol' git.
+
+Talking with other developers, I've realized that many aren't aware of
+git's capabilities. Here are a few examples that illustrate the type
+of spelunking you can do with the git CLI:
+
+- ~git log --grep="ocelot"~
+  - List all the commits which mention "ocelot" in their commit
+    message
+
+- ~git log -G "ocelot\.pounce\(\)"~
+  - List all the commits whose diff includes the text
+    ~"ocelot.pounce()"~
+
+- ~git log --author="Albert Camus"~
+  - List all the commits by Albert Camus. Partial matches are
+    supported, so you could also use ~--author="Albert"~,
+    ~--author="@bigcorp.net"~, etc.
+
+- ~git log -- tests/ README.md~
+  - List all the commits which touched files in the ~tests/~ directory
+    or the file ~README.md~
+
+- ~git blame -L 223,228 -- tests/core.py~
+  - Annotate lines 223 - 228 of ~tests/core.py~ with information about
+    the last commit that touched these lines
+
+* Writing as a tool for thinking
+
+Writing clearly is difficult and time-consuming. So why expect
+engineers who sit next to each other to spend time writing prose that
+apparently no one reads when they could instead spend that time
+writing code? *Maybe* some savvy git user will one day stumble across
+your commit and be grateful for its detailed commit message, but the
+probability is low. It's more likely that your commit messages will be
+skimmed exactly once during a code review by someone sitting so close
+that you can hear the Daft Punk leaking out of their noise-cancelling
+headphones. So why bother?
+
+I would argue that even if no one ever reads your commit message, it's
+still worth taking the time to write it. In this case, the value isn't
+in the artifact - it's in the process.
+
+When I struggle to write a commit message, it's usually an indication
+that my code isn't actually ready for review. Often I'll begin typing
+something like, "We persist the intermediate results on disk, which
+should always be safe because...", only to find that I can't
+truthfully complete the sentence. I then have to revisit the code and
+either convince myself of the soundness of my implementation or revise
+the code until I'm able to write a coherent commit message.
+
+This happens often enough that I'll occasionally reverse the order of
+the process. Rather than do all of that hard thinking post facto, I'll
+front-load it and write the commit message before I start on the
+implementation. This idea isn't particularly novel - rubber-duck
+debugging, TDD, README-driven development, etc. are all based on the
+same insight: namely, the act of exposition teases out ambiguity and
+exposes sloppy thinking. In this way, the commit message is both
+prescriptive and descriptive; it guides us to what we ought to do,
+then it tells everyone else what we did and why.
+
+* Conclusion
+
+So please, invest more effort into your commit messages - if not for
+the sake of your git-savvy colleagues, then for yourself. The prose
+itself is a great resource once you know how to find it (=git log= and
+=git blame= are your friends!), but the mere act of writing will
+improve your software. It's also a good way to build writing practice
+into your daily routine (which I clearly need, considering how
+difficult this was to write!)
+
+* Footnotes
+
+[fn:1] https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+[fn:2] https://juffalow.com/other/write-good-git-commit-message
+[fn:3] https://chris.beams.io/posts/git-commit/
+[fn:4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=10dce8af34226d90fa56746a934f8da5dcdba3df
+[fn:5] https://triplebyte.com/blog/editor-report-the-rise-of-visual-studio-code

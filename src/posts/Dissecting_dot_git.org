@@ -1,0 +1,922 @@
+#+TITLE: Dissecting .git/
+#+PROPERTY: header-args:bash :session dissection :exports both
+
+One of my favorite pieces of software is Magit, the self-described
+"Git porcelain inside Emacs." A commenter on Hacker News claimed to
+finally grok git after switching to Magit, so I decided to try it
+out. I wasn't sold immediately; I had a hard time discovering the
+available actions and keybindings, so I frequently got stuck and fell
+back to the git command-line interface. But I slowly grew to like
+Magit, particularly the ability to commit _parts_ of a file, which I
+had no idea was possible!
+
+Somewhere along the way I read something in the magit docs about
+"hunks", and made the connection that "git add-ing the changed parts
+of a file" was the same thing as "staging a hunk." I had a working
+understanding of the git index: I knew that =git add= would put things
+in it, and that =git commit= would commit its contents.
+
+So in my mental model, git tracked "hunks", which were just a set of
+lines in a file that changed between two commits. In other words, a
+"hunk" was something like "the delta between two revisions of a file."
+Hunks were stored in the index until they were committed. A commit was
+just some metadata with a set of hunks and a pointer to the previous
+commit.
+
+This mental model makes it easy to imagine how =git diff= would work:
+=git diff A B= would just walk the tree of commits from root to HEAD,
+incrementally adding hunks until it reached commit =B=, at which point
+it would print out a pretty representation of the accumulated deltas
+between commits =A= and =B=.
+
+In retrospect, it's a credit to the interface of both =git= and
+=Magit= that I was able to use these tools for years even though I
+totally misundestood what was going on under the hood.
+
+I realized that my understanding was off when I stumbled across this
+StackOverflow answer [fn:1] to the question "Is there a “theirs”
+version of “git merge -s ours”?" The answer demonstrates how to make
+branch A look *exactly* like branch B with a clever sequence of git
+commands.
+
+The summary is:
+
+1. =git merge -s ours B= to create a "dummy" merge-commit
+2. =git branch TEMP= to mark this commit with a temp branch
+3. =git reset --hard B= to make the contents of the working tree and
+   index look exactly like B
+4. =git reset --soft TEMP= to put HEAD back to the dummy merge-commit
+5. =git commit --amend= to overwrite the dummy merge-commit
+
+This totally blew up my mental model. If it were true that commits
+only store incremental changes between files, then this sequence of
+steps shouldn't work: discarding all the hunks created by =git merge=
+and overwriting them with hunks from another branch should have
+resulted in a jumbled Frankenstein commit full of hunks that didn't
+fit together at all. And yet, it worked beautifully.
+
+I spent some time digging around in the =.git/= subdirectory and I now
+have a better understanding. Here's a quick summary of what I learned.
+
+- =.git/= is a lot like a key-value store; it's also a lot like a
+  filesystem, where git blobs = Unix inodes and git trees = Unix
+  directory entries.
+- git does *not* store hunks, deltas, or diffs; it stores the full
+  content of files (compressed)
+- Almost everything git stores is one of three types of objects:
+  - blob: the compressed content of a file
+  - tree: each tree node consists of entries; each entry consist of a
+    mode, a type, and a filename, and corresponds to either a blob
+    (i.e., a file) or another tree node (i.e., a directory)
+  - commit: a pointer to a tree, some metadata associated with
+    provenance (e.g., author, commit message), and a pointer to the
+    previous commit object (the parent)
+
+What follows is a guided tour of my journey into =.git/=. When I got
+stuck, I consulted Chapter 10 of the Git Book [fn:2].
+
+* A first look at .git/
+
+Everything that git stores is in the =.git/= directory. Let's start by
+creating a dummy repo and inspecting its contents.
+
+#+BEGIN_SRC bash :results silent :exports none
+  if [[ -d /tmp/dissect-me ]]; then rm -rf /tmp/dissect-me; fi
+  mkdir /tmp/dissect-me
+  cd /tmp/dissect-me
+#+END_SRC
+
+#+BEGIN_SRC bash :results silent
+git init
+#+END_SRC
+
+#+BEGIN_SRC bash :results output
+tree .git
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+.git
+├── branches
+├── config
+├── description
+├── HEAD
+├── hooks
+│   ├── applypatch-msg.sample
+│   ├── commit-msg.sample
+│   ├── fsmonitor-watchman.sample
+│   ├── post-update.sample
+│   ├── pre-applypatch.sample
+│   ├── pre-commit.sample
+│   ├── prepare-commit-msg.sample
+│   ├── pre-push.sample
+│   ├── pre-rebase.sample
+│   ├── pre-receive.sample
+│   └── update.sample
+├── info
+│   └── exclude
+├── objects
+│   ├── info
+│   └── pack
+└── refs
+    ├── heads
+    └── tags
+
+9 directories, 15 files
+#+end_example
+
+We don't really care about git hooks or the repo metadata for now, so
+let's filter those out:
+
+#+BEGIN_SRC bash :results output
+alias gittree="tree -I 'hooks|description|info|config|branches' .git"
+gittree
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+.git
+├── HEAD
+├── objects
+│   └── pack
+└── refs
+    ├── heads
+    └── tags
+
+5 directories, 1 file
+#+end_example
+
+So we've got HEAD, which presumably points to the tip of our current branch.
+
+#+BEGIN_SRC bash :results output
+file .git/HEAD
+cat .git/HEAD
+#+END_SRC
+
+#+RESULTS:
+: .git/HEAD: ASCII text
+: ref: refs/heads/master
+
+Hey, it's just a plain ol' ASCII file. That's easy. Ok, we need some
+content for this repo. Let's create a file with a list of numbers.
+
+#+BEGIN_SRC bash :results output
+  for i in {1..15}; do echo "$i" >> numbers.txt; done
+  head -n5 numbers.txt
+#+END_SRC
+
+#+RESULTS:
+: 
+: 1
+: 2
+: 3
+: 4
+: 5
+
+#+BEGIN_SRC bash :results output
+git status
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+On branch master
+
+No commits yet
+
+Untracked files:
+..." to include in what will be committed)
+
+	numbers.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+#+end_example
+
+Now let's add our file to the index. We should expect _something_ to
+change here...
+
+#+BEGIN_SRC bash :results output
+git add numbers.txt
+gittree
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+.git
+├── HEAD
+├── index
+├── objects
+│   ├── 97
+│   │   └── b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd
+│   └── pack
+└── refs
+    ├── heads
+    └── tags
+
+6 directories, 3 files
+#+end_example
+
+Aha! We've got a new file: =index=! Let's crack it open...
+
+* .git/index
+
+#+BEGIN_SRC bash :results output
+file .git/index
+#+END_SRC
+
+#+RESULTS:
+: .git/index: Git index, version 2, 1 entries
+
+Ok, this seems to be some sort of git-internal binary format. A bit of
+googling turns up the command =git ls-files=, which according to the
+manpage is used to "show information about files in the index and
+working tree."
+
+#+BEGIN_SRC bash :results output
+git ls-files --stage
+#+END_SRC
+
+#+RESULTS:
+: 100644 97b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd 0	numbers.txt
+
+The manpage says the format is:
+
+#+BEGIN_EXAMPLE
+[<tag> ]<mode> <object> <stage> <file>
+#+END_EXAMPLE
+
+=<mode>= (roughly) corresponds to the Unix file mode; =<object>= looks
+like some kind of hash; =<stage> = 0= isn't exactly self-explanatory,
+but we can always revisit that; and finally, =<file>=, which is
+self-explanatory.
+
+Pssst. That object hash =97b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd= -
+does it look familiar?
+
+#+BEGIN_SRC bash :results output
+tree --prune .git/objects
+#+END_SRC
+
+#+RESULTS:
+: .git/objects
+: └── 97
+:     └── b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd
+: 
+: 1 directory, 1 file
+
+Concatenate the directory name with the name of the file inside it,
+and you get the =<object>= corresponding to =numbers.txt= in the
+index. Now let's see what the object is...
+
+* .git/objects
+
+#+BEGIN_SRC bash
+file .git/objects/97/b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd
+#+END_SRC
+
+#+RESULTS:
+: .git/objects/97/b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd: zlib compressed data
+
+Ok, it's zlib-compressed. No problem, Python has a built-in =zlib=
+module. Let's whip up a quick script to decompress and print zlib
+compressed bytes.
+
+#+BEGIN_SRC python :tangle ~/tools/zprint :shebang #!/usr/bin/env python3 :mkdirp yes
+  """
+  Deflate zlib-encoded bytes and print as UTF-8
+  """
+
+  import zlib
+  import sys
+  import _io
+  import textwrap
+
+
+  def as_hex(buf: bytes):
+      return ''.join('{:02x}'.format(b) for b in buf)
+
+  def deflate_and_print(buf: _io.BufferedReader):
+      """
+      Decompress with zlib and dump the uncompressed bytes to stdout.
+
+      If we can't decode as UTF-8 then print two representations:
+
+          1. Python's string representation (nice for when a payload contains
+             both Unicode and non-Unicode)
+          2. Hex
+      """
+      _bytes = zlib.decompress(buf.read())
+      try:
+          s = _bytes.decode('utf8')
+      except UnicodeDecodeError:
+          s = repr(_bytes)
+          s += '\n[hex repr]\n' + textwrap.fill(as_hex(_bytes), 16)
+
+      print(s)
+
+  file_arg = sys.argv[1] if len(sys.argv) > 1 else '-'
+  if file_arg == '-':
+      deflate_and_print(sys.stdin.buffer)
+  else:
+      with open(file_arg, 'rb') as f:
+          deflate_and_print(f)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC bash :exports none
+export PATH="$PATH:~/tools/"
+#+END_SRC
+
+#+RESULTS:
+
+Now we're ready to decompress and print it:
+
+#+BEGIN_SRC bash :results output
+  zprint .git/objects/97/b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+blob 36 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+#+end_example
+
+Hey, that's just the full content of =numbers.txt=, prefixed with some
+sort of header: =blob 36\0= (the null byte isn't rendered in the HTML
+export, but it's there). Could "36" be the size of the content that
+follows?
+
+#+BEGIN_SRC bash :results output
+wc -c numbers.txt
+#+END_SRC
+
+#+RESULTS:
+: 36 numbers.txt
+
+36 bytes - probably not a coincidence.
+
+So to recap what happened when we staged our new file:
+
+- =git add numbers.txt= created a new entry in the index
+- That entry included a filename (=numbers.txt=) and some sort of ID
+- That ID corresponds to the name of a file in =.git/objects=
+- The file in =.git/objects= is just a metadata header + the compressed content of
+  =numbers.txt=
+
+So far, so good. Now let's create a commit.
+
+* git commit
+
+#+BEGIN_SRC bash :results output
+git commit -m "First commit: Add numbers.txt"
+gittree
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+[master (root-commit) 20d4ec0] First commit: Add numbers.txt
+ 1 file changed, 15 insertions(+)
+ create mode 100644 numbers.txt
+.git
+├── COMMIT_EDITMSG
+├── HEAD
+├── index
+├── logs
+│   ├── HEAD
+│   └── refs
+│       └── heads
+│           └── master
+├── objects
+│   ├── 0b
+│   │   └── 4252fee2e097732e264bea210e35be1cb63345
+│   ├── 20
+│   │   └── d4ec028f0025f597495a7986e544d84699b59b
+│   ├── 97
+│   │   └── b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd
+│   └── pack
+└── refs
+    ├── heads
+    │   └── master
+    └── tags
+
+11 directories, 9 files
+#+end_example
+
+Ok, we've got a lot of new stuff to look at:
+
+- =COMMIT_EDITMSG=
+- =.git/refs/heads/master=
+- =.git/logs/=
+- 2 new objects in =.git/objects=
+
+Let's take them in order...
+
+#+BEGIN_SRC bash :results output
+cat .git/COMMIT_EDITMSG
+#+END_SRC
+
+#+RESULTS:
+: First commit: Add numbers.txt
+
+Ok, that's simple enough. Next:
+
+#+BEGIN_SRC bash
+cat .git/refs/heads/master
+#+END_SRC
+
+#+RESULTS:
+: 20d4ec028f0025f597495a7986e544d84699b59b
+
+So the ref =master= is just a pointer to one of our
+=.git/objects=. How about =.git/logs=?
+
+#+BEGIN_SRC bash
+cat .git/logs/HEAD
+#+END_SRC
+
+#+RESULTS:
+| 1579800726 -0800 | commit (initial): First commit: Add numbers.txt |
+
+#+BEGIN_SRC bash
+cat .git/logs/refs/heads/master
+#+END_SRC
+
+#+RESULTS:
+| 1579800726 -0800 | commit (initial): First commit: Add numbers.txt |
+
+=HEAD= and =master= are identical - no surprise there - and it appears
+to just have a timestamp, a reference to the commit, and the commit
+message.
+
+That brings us to the interesting part: our 2 new objects. We already
+know that =HEAD=/=master= is pointing at a file in
+=.git/objects=. What's in the file?
+
+#+BEGIN_SRC bash :results silent
+sha=$(cat .git/refs/heads/master)
+object="${sha:0:2}/${sha:2}"
+#+END_SRC
+
+#+BEGIN_SRC bash :results output
+file .git/objects/${object}
+#+END_SRC
+
+#+RESULTS:
+: .git/objects/20/d4ec028f0025f597495a7986e544d84699b59b: zlib compressed data
+
+Ok, more zlib-compression. We can handle that:
+
+#+BEGIN_SRC bash :results output
+zprint .git/objects/${object}
+#+END_SRC
+
+#+RESULTS:
+: commit 216 tree 0b4252fee2e097732e264bea210e35be1cb63345
+: 1579800726 -0800
+: 1579800726 -0800
+: 
+: First commit: Add numbers.txt
+
+Let's take a closer look at the header. Recall the header from the
+last object we looked at (the compressed content of =numbers.txt=):
+
+#+BEGIN_SRC bash :results output
+  zprint .git/objects/97/b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd | head -n1
+#+END_SRC
+
+#+RESULTS:
+: blob 36 1
+
+This time, instead of "blob" we have "commit":
+
+#+BEGIN_SRC bash :results output
+zprint .git/objects/${object} | head -n1
+#+END_SRC
+
+#+RESULTS:
+: commit 216 tree 0b4252fee2e097732e264bea210e35be1cb63345
+
+We can now deduce that the header is something like =<object type>
+<content size in bytes>\0<content>=, where =<object type>= is one of
+"blob" or "commit". Blobs contain compressed file content, and
+commits contain:
+
+1. A reference to what looks like our mysterious 3rd object
+2. Two timestamps (identical, in this case)
+3. The commit message
+
+Finally, let's crack open that final file in =.git/objects= which is
+referenced by the commit.
+
+#+BEGIN_SRC bash :results output
+zprint .git/objects/0b/4252fee2e097732e264bea210e35be1cb63345
+#+END_SRC
+
+#+RESULTS:
+: b'tree 39\x00100644 numbers.txt\x00\x97\xb3\xd1\xa5p\x7f\x8a\x11\xfa_\xa8\xbcl;\xd7\xb3\x96V\x01\xfd'
+: [hex repr]
+: 7472656520333900
+: 313030363434206e
+: 756d626572732e74
+: 78740097b3d1a570
+: 7f8a11fa5fa8bc6c
+: 3bd7b3965601fd
+
+As usual, the payload has a header of the form =<object type> <content
+size in bytes>\0=. This time we've got a new object type: =tree=. The
+tree object appears to contain:
+
+1. A file mode (=100644=)
+2. A filename (=numbers.txt=)
+3. A reference to object =97b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd=,
+   which is the blob object corresponding to =numbers.txt=
+
+So to recap what we've found:
+
+- There are three types of objects: blobs, commits, and trees
+- Blobs are just compressed file content
+- Commits point to a tree and store some metadata
+- Trees are comprised of filenames, file modes, and an associated blob
+
+Let's add a new file in a new commit and validate our understanding:
+
+#+BEGIN_SRC bash :results output
+echo "red\nblue\ngreen" > colors.txt
+git add colors.txt
+#+END_SRC
+
+#+RESULTS:
+
+Now we check the index:
+
+#+BEGIN_SRC bash :results output
+git ls-files --stage
+#+END_SRC
+
+#+RESULTS:
+: 100644 ae981935c385a7575d2e992c626cc72fbf552c90 0	colors.txt
+: 100644 97b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd 0	numbers.txt
+
+We should have 1 new object:
+=ae981935c385a7575d2e992c626cc72fbf552c90=. Do we?
+
+#+BEGIN_SRC bash :results output
+tree --prune .git/objects
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+.git/objects
+├── 0b
+│   └── 4252fee2e097732e264bea210e35be1cb63345
+├── 20
+│   └── d4ec028f0025f597495a7986e544d84699b59b
+├── 97
+│   └── b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd
+└── ae
+    └── 981935c385a7575d2e992c626cc72fbf552c90
+
+4 directories, 4 files
+#+end_example
+
+Indeed we do. Now let's commit it.
+
+#+BEGIN_SRC bash :results output
+git commit -m "Add colors" -m "Here's a commit message with an actual body, not just a subject line"
+#+END_SRC
+
+#+RESULTS:
+: [master 97c5441] Add colors
+:  1 file changed, 1 insertion(+)
+:  create mode 100644 colors.txt
+
+=git commit= should have produced (at least) 2 new objects: a tree and
+a commit.
+
+#+BEGIN_SRC bash :results output
+  tree --prune .git/objects
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+.git/objects
+├── 0b
+│   └── 4252fee2e097732e264bea210e35be1cb63345
+├── 20
+│   └── d4ec028f0025f597495a7986e544d84699b59b
+├── 97
+│   ├── b3d1a5707f8a11fa5fa8bc6c3bd7b3965601fd
+│   └── c5441be71ab15c7022b6bc894382c46b12258c
+├── ae
+│   └── 981935c385a7575d2e992c626cc72fbf552c90
+└── fd
+    └── 8cf227b67f57d753468f6f0319a5558d37bd0d
+
+5 directories, 6 files
+#+end_example
+
+Here's the commit object:
+
+#+BEGIN_SRC bash :results silent
+sha=$(cat .git/refs/heads/master)
+object="${sha:0:2}/${sha:2}"
+#+END_SRC
+
+#+BEGIN_SRC bash :results output
+zprint .git/objects/${object}
+#+END_SRC
+
+#+RESULTS:
+: commit 315 tree fd8cf227b67f57d753468f6f0319a5558d37bd0d
+: parent 20d4ec028f0025f597495a7986e544d84699b59b
+: 1579800727 -0800
+: 1579800727 -0800
+: 
+: Add colors
+: 
+: Here's a commit message with an actual body, not just a subject line
+
+Notice that the commit has a field we haven't seen before:
+=parent=. This looks like a pointer to our previous commit.
+
+And now for our tree:
+
+#+BEGIN_SRC bash :results output
+zprint .git/objects/fd/8cf227b67f57d753468f6f0319a5558d37bd0d
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+b'tree 77\x00100644 colors.txt\x00\xae\x98\x195\xc3\x85\xa7W].\x99,bl\xc7/\xbfU,\x90100644 numbers.txt\x00\x97\xb3\xd1\xa5p\x7f\x8a\x11\xfa_\xa8\xbcl;\xd7\xb3\x96V\x01\xfd'
+[hex repr]
+7472656520373700
+3130303634342063
+6f6c6f72732e7478
+7400ae981935c385
+a7575d2e992c626c
+c72fbf552c903130
+30363434206e756d
+626572732e747874
+0097b3d1a5707f8a
+11fa5fa8bc6c3bd7
+b3965601fd
+#+end_example
+
+As expected, this tree object has two entries - one for each
+file.
+
+* What about hunks?
+
+This is all great, but I still don't know how to incorporate the
+concept of "hunks" into this mental model. Let's stage a hunk and see
+what our index object looks like.
+
+#+BEGIN_SRC bash :results output
+mv numbers.txt{,.bak}
+awk '{ if (NR == 1) print "Stage me!"; else if (NR == 14) print "But not me!"; else print ; }' numbers.txt.bak > numbers.txt
+rm numbers.txt.bak
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC bash :results output
+cat numbers.txt
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Stage me!
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+But not me!
+15
+#+end_example
+
+Normally I would use Magit or =git add -i= to interactively stage
+hunks, but for the sake of reproducibility, I'm going to script
+it. First, we'll add our file to the index, then we create a patch:
+
+#+BEGIN_SRC bash :results output
+git diff | tee /tmp/stageme.patch
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+diff --git a/numbers.txt b/numbers.txt
+index 97b3d1a..8a10488 100644
+--- a/numbers.txt
++++ b/numbers.txt
+@@ -1,4 +1,4 @@
+-1
++Stage me!
+ 2
+ 3
+ 4
+@@ -11,5 +11,5 @@
+ 11
+ 12
+ 13
+-14
++But not me!
+ 15
+#+end_example
+
+This patch has two hunks. Let's remove the second one:
+
+#+BEGIN_SRC bash :results output
+perl -lne 'if (m/^@@/) { $hunk_count++ }; print if $hunk_count < 2' /tmp/stageme.patch | tee /tmp/onehunk.patch
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+diff --git a/numbers.txt b/numbers.txt
+index 97b3d1a..8a10488 100644
+--- a/numbers.txt
++++ b/numbers.txt
+@@ -1,4 +1,4 @@
+-1
++Stage me!
+ 2
+ 3
+ 4
+#+end_example
+
+Now let's stage *only* the first hunk. Note that we use =--cached= so
+that the change is applied to the index but *not* to our working tree,
+i.e., the version of =numbers.txt= that we have on disk.
+
+#+BEGIN_SRC bash :results output
+git apply --cached /tmp/onehunk.patch
+#+END_SRC
+
+#+RESULTS:
+
+Let's check the contents of the index and confirm that only the first
+hunk is staged:
+
+#+BEGIN_SRC bash :results output
+git --no-pager diff --cached
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+diff --git a/numbers.txt b/numbers.txt
+index 97b3d1a..576880b 100644
+--- a/numbers.txt
++++ b/numbers.txt
+@@ -1,4 +1,4 @@
+-1
++Stage me!
+ 2
+ 3
+ 4
+#+end_example
+
+Looks good. Let's also double-check that our working tree includes
+_both_ hunks.
+
+#+BEGIN_SRC bash :results output
+cat numbers.txt
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+Stage me!
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+But not me!
+15
+#+end_example
+
+Ok, good - the version of =numbers.txt= in the git index and the
+version in our working tree are completely different. Let's look at
+the git object corresponding to =numbers.txt= in the index:
+
+#+BEGIN_SRC bash :results output
+git ls-files --stage | grep numbers.txt
+#+END_SRC
+
+#+RESULTS:
+: 100644 576880b02860bc2fb8ccfd0437884cfbff621cc5 0	numbers.txt
+
+#+BEGIN_SRC bash :results output
+zprint .git/objects/57/6880b02860bc2fb8ccfd0437884cfbff621cc5
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+blob 44 Stage me!
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+#+end_example
+
+Interesting... so the blob object that =git apply --cached= creates is
+a standalone object. That is, there's no structural sharing or "delta"
+that's layered on top of some other object; git has created a new,
+independent object with the file's contents. Furthermore, the content
+in this object can't be found anywhere in the working tree - it lives
+only in =.git/objects=.
+
+* Conclusion
+
+Git's data model is both simple and elegant. Consider how much is
+accomplished with so little; all of git's functionality rests on a
+foundation of just three data structures: blobs, trees, and
+commits. Nothing that can be computed needs to be materialized or
+stored, so it isn't.
+
+This exercise got me thinking about Steve Yegge's "Kingdom of
+Nouns" [fn:3], in which he describes the elevation of Nouns over Verbs
+in Object Oriented Programming. I can't imagine a citizen of Javaland
+designing anything that remotely resembles git's data model.
+
+In OOP, you model a problem domain by identifying the important Nouns
+and turning them into classes. For a version control system, you'd
+have Commits, sure, and maybe you get Trees, too. But you'd also have
+Diffs, because diffs are a Very Important _Thing_, and it's
+practically inconceivable that an important _thing_ would not be
+modeled as an object.
+
+And what do you do with important objects? You build them with
+Factories, you persist them in databases via an ORM, or maybe you
+serialize them as XML and store them on disk. You _could_ have the
+insight that Diffs are cheaply computed given Blobs and Trees, so they
+need not be first-class citizens in your data model; it's just so
+improbable that this would occur to you if you're thinking in terms of
+objects and methods.
+
+This quote from Linus Torvalds now makes more sense to me:
+
+#+BEGIN_EXAMPLE
+In fact, I'm a huge proponent of designing your code around the data, rather
+than the other way around, and I think it's one of the reasons git has
+been fairly successful (*).
+
+...
+
+(*) I will, in fact, claim that the difference between a bad programmer
+and a good one is whether he considers his code or his data structures
+more important. Bad programmers worry about the code. Good programmers
+worry about data structures and their relationships.
+#+END_EXAMPLE
+
+-- Linus Torvalds [fn:4]
+
+I generally avoid engaging in hero-worship, and I'm especially wary of
+making a hero of anyone who casually divides the world into "bad
+programmers" and "good programmers". But I do have a renewed sense of
+respect for both the design and the designer of git.
+
+* Footnotes
+
+[fn:1] https://stackoverflow.com/a/4969679/895769
+[fn:2] https://git-scm.com/book/en/v2/Git-Internals-Plumbing-and-Porcelain
+[fn:3] http://steve-yegge.blogspot.com/2006/03/execution-in-kingdom-of-nouns.html
+[fn:4] https://lwn.net/Articles/193245/
