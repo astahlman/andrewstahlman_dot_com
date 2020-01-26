@@ -2,7 +2,7 @@
 clean:
 	rm -rf build/
 
-dockerfile := $(PWD)/.github/actions/build-site/Dockerfile
+dockerfile := Dockerfile
 docker-build:
 	docker build -t latest -f $(dockerfile) .
 
