@@ -232,7 +232,7 @@ actually need after we've generated the HTML.
 #+END_SRC
 
 #+RESULTS: css-temp-file
-: /tmp/cssLwj8bj
+: /tmp/cssdKhdSC
 
 
 #+BEGIN_SRC css :noweb yes :tangle (print blog/css-temp-file)
