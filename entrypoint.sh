@@ -15,5 +15,4 @@ cask install
 stat build/
 echo "Github workspace is: ${GITHUB_WORKSPACE}"
 stat "${GITHUB_WORKSPACE}"
-cp -r build/ "${GITHUB_WORKSPACE}"
 
