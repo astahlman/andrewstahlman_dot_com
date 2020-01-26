@@ -7,7 +7,7 @@ finally grok git after switching to Magit, so I decided to try it
 out. I wasn't sold immediately; I had a hard time discovering the
 available actions and keybindings, so I frequently got stuck and fell
 back to the git command-line interface. But I slowly grew to like
-Magit, particularly the ability to commit _parts_ of a file, which I
+Magit, particularly the ability to commit /parts/ of a file, which I
 had no idea was possible!
 
 Somewhere along the way I read something in the magit docs about
@@ -74,6 +74,24 @@ have a better understanding. Here's a quick summary of what I learned.
 
 What follows is a guided tour of my journey into =.git/=. When I got
 stuck, I consulted Chapter 10 of the Git Book [fn:2].
+
+* Setup                                                            :noexport:
+
+[This section should not be exported]
+
+If we're running in a Docker container, we need to configure git so
+that we can run =git commit= without it prompting us to identify
+ourselves.
+
+#+BEGIN_SRC bash :results output
+  if [[ -f /proc/self/cgroup ]] && grep -q "docker" /proc/self/cgroup; then
+    git config --global --add user.name 'Andrew Stahlman'
+    git config --global --add user.email 'andrew.stahlman@gmail.com'
+  else
+    echo "Not in a Docker container, so git is already configured:"
+    git config -l | grep user
+  fi
+#+END_SRC
 
 * A first look at .git/
 
@@ -192,7 +210,7 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 #+end_example
 
-Now let's add our file to the index. We should expect _something_ to
+Now let's add our file to the index. We should expect /something/ to
 change here...
 
 #+BEGIN_SRC bash :results output
@@ -798,7 +816,7 @@ index 97b3d1a..576880b 100644
 #+end_example
 
 Looks good. Let's also double-check that our working tree includes
-_both_ hunks.
+/both/ hunks.
 
 #+BEGIN_SRC bash :results output
 cat numbers.txt
@@ -880,13 +898,13 @@ designing anything that remotely resembles git's data model.
 In OOP, you model a problem domain by identifying the important Nouns
 and turning them into classes. For a version control system, you'd
 have Commits, sure, and maybe you get Trees, too. But you'd also have
-Diffs, because diffs are a Very Important _Thing_, and it's
-practically inconceivable that an important _thing_ would not be
+Diffs, because diffs are a Very Important /Thing/, and it's
+practically inconceivable that an important /thing/ would not be
 modeled as an object.
 
 And what do you do with important objects? You build them with
 Factories, you persist them in databases via an ORM, or maybe you
-serialize them as XML and store them on disk. You _could_ have the
+serialize them as XML and store them on disk. You /could/ have the
 insight that Diffs are cheaply computed given Blobs and Trees, so they
 need not be first-class citizens in your data model; it's just so
 improbable that this would occur to you if you're thinking in terms of
@@ -911,7 +929,7 @@ worry about data structures and their relationships.
 
 I generally avoid engaging in hero-worship, and I'm especially wary of
 making a hero of anyone who casually divides the world into "bad
-programmers" and "good programmers". But I do have a renewed sense of
+programmers" and "good programmers." But I do have a renewed sense of
 respect for both the design and the designer of git.
 
 * Footnotes

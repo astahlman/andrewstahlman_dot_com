@@ -1,0 +1,5 @@
+name: 'Build site'
+description: 'Build a tarball of the assets that will be pushed to S3'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

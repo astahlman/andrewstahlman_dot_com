@@ -2,11 +2,11 @@
 clean:
 	rm -rf build/
 
-.PHONY: build
-build:
-	emacs -l ~/.emacs.d/init.el \
-		--eval '(find-file "project.org")' \
-                --eval '(org-babel-execute-buffer)' \
-                --eval '(kill-emacs)'
+docker-build:
+	docker build -t latest -f Dockerfile .
 
+docker-run:
+	docker run latest
 
+docker-enter:
+	docker run --rm -it -v $(PWD):/root/website --entrypoint /bin/bash latest
