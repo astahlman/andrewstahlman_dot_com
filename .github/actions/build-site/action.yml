@@ -1,5 +1,5 @@
 name: 'Build site'
-description: 'Build a tarball of the assets that will be pushed to S3'
+description: 'Zip and upload the ./build directory as an artifact'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: '../../../Dockerfile'
