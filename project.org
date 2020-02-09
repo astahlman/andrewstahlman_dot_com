@@ -204,6 +204,9 @@ so long.
 
 #+NAME: my-custom-css
 #+BEGIN_SRC css
+  body {
+    font-family: Palatino, Garamond, Baskerville, "Times New Roman", Serif;
+  }
   #content {
     max-width:45em;
     margin:auto;
