@@ -218,7 +218,6 @@ so long.
   }
 #+END_SRC
 
-
 *** Combining all styling rules
 
 There is no execute function for css, but we can tangle it to a
