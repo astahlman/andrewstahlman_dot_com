@@ -4,6 +4,7 @@ on: [push]
 
 jobs:
   build:
+    name: Build the site
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,3 +14,17 @@ jobs:
         with:
           name: site-root
           path: build
+  push-to-staging:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download .zip
+        uses: actions/download-artifact@v1
+        with:
+          name: site-root
+      - name: Push to staging bucket
+        shell: bash
+        run: "aws s3 sync site-root s3://staging.andrewstahlman.com"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.staging_website_publisher_access_key }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.staging_website_publisher_secret_key }}
