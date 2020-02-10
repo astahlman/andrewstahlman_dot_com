@@ -26,5 +26,5 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: {{ secrets.website_publisher_access_key }}
           AWS_SECRET_ACCESS_KEY: {{ secrets.website_publisher_secret_key }}
-          shell: bash
-          run: aws s3 sync site-root s3://staging.andrewstahlman.com
+        shell: bash
+        run: aws s3 sync site-root s3://staging.andrewstahlman.com
