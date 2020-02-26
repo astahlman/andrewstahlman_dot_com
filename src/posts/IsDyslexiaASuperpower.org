@@ -1,0 +1,572 @@
+#+TITLE: Is Dyslexia a superpower?
+* Intro
+
+#+BEGIN_EXAMPLE
+  Everybody kind of wondered why Ali had this miraculous ability to
+  dodge a punch, and some doctors I talked to said it might've actually
+  been connected to his dyslexia, that when you're dyslexic your brain
+  works differently. When you learn to read, your brain gets re-wired so
+  that you focus really carefully on one thing, you can concentrate
+  really hard on those letters on the page.
+
+  But when you never learn to read, your brain remains more accessible
+  to outside forces. You can maybe hear and understand two conversations
+  at one time, because your brain hasn't been re-wired by the process of
+  learning to read.
+
+  Ali, because he learned to read very late and never really very well,
+  may have been better at picking up visual clues than most people. He
+  may have been able to see little signs in his opponent's body that
+  suggested when and where the punch was going to come. It's a
+  fascinating theory, I think.
+#+END_EXAMPLE
+
+This is an excerpt from an interview on Fresh Air with Jonathan Eig,
+the author of a biography of Muhammad Ali [fn:1]. I was intrigued but
+skeptical of this idea, so I decided to do some research.
+
+I quickly learned that boxing isn't the only domain in which dyslexics
+have a purported advantage. Malcom Gladwell popularized the idea that
+dyslexia is a "desirable difficulty" in his 2013 book _David and
+Goliath_, because dyslexics are forced to develop alternative learning
+strategies.
+
+There might be something to this. Evidently, there are a surprising
+number of talented dyslexic artists [fn:2]. Also, apparently a lot of
+famous, successful people are dyslexic. Like, a /lot/.
+
+Here are [[http://www.dyslexiaspeaks.com/html/famous.html][just]] [[http://dyslexia.com.au/dyslexic-billionaires/][a]] [[http://www.dyslexiaonline.com/basics/famous_dyslexics.html][few]] [[https://www.businessinsider.com/tech-leaders-with-dyslexia-2015-2#apples-steve-jobs-1][lists]] of famous, successful people with
+dyslexia. Combine all of those names and you basically get a Who's Who
+list of the 19th and 20th century: Albert Einstein, Thomas Edison,
+Nikola Tesla, Steve Jobs, Bill Gates...
+
+Thumb through an American history book and pick a name at random:
+George Washington? Dyslexic. Abraham Lincoln? Yup. Ben Franklin?
+Check. Nelson Rockefeller, Henry Ford, the Wright Brothers, Walt
+Disney, General Patton, Dwight Eisenhower? You guessed it, [[http://www.dyslexiaspeaks.com/html/famous.html][all
+dyslexic]].
+
+At this point, I decided something weird was going on. Either:
+
+1. A shadowy cabal with the power to manipulate Google search rankings
+   is running a sophisticated, pro-dyslexia, propaganda campaign
+2. A lot of well-meaning people for some reason mistakenly believe
+   that dyslexia is a superpower, or...
+3. Dyslexia is legitimately a superpower
+
+My prior for #1 is pretty low, but I wasn't sure what to make of #2
+vs. #3. It's well-established that the brain can compensate for the
+loss of one sense by reallocating the unused gray matter to another,
+as when a blind person's visual cortex is appropriated for
+speech-processing [fn:3]. So the idea that decreased verbal ability
+could be offset by increased abilities in another domain _sounds_
+plausible, at least.
+
+Fortunately, psychologists have spent a lot of time and grant money
+studying this.
+
+* von Károlyi and Winner's research
+
+Most of the papers I found focused on the purported advantage in
+visuo-spatial abilities. I started with this study [fn:4] by Winner,
+von Károlyi, et. al., which was funded by the International Dyslexia
+Association. This study was cited by almost every other paper that I
+read, so apparently it was pretty important.
+
+The authors ran three studies in which they administered various tests
+of spatial abilities. They even threw in a drawing exercise, to test
+for artistic ability. Contrary to their predictions, not only did the
+dyslexic group perform no better than the control group, they actually
+performed worse on almost every test.
+
+von Károlyi was busy in 2001 - in addition to the previous paper, she
+published a study that focused on a possible link between dyslexia and
+enhanced "global" visuo-spatial processing [fn:5]. The premise of the
+study is fascinating and goes something like this:
+
+Studies of brain-damaged artists suggest that the left-brain handles
+local, detail-oriented, visual-spatial processing, whereas the
+right-brain does global, holistic spatial processing. Language
+processing, which dyslexics struggle with, is mediated by the
+left-brain. Therefore, if dyslexics /did/ have an advantage in
+visual-spatial processing, it may be confined to right-brain dominant
+tasks that involve global (as opposed to local) processing.
+
+It's a fascinating hypothesis, but the the experimental results were
+mixed. In the test of local/left-brain visual-spatial ability, there
+was no significant difference between the two groups. In the test of
+global visual-spatial ability, there was no difference in accuracy,
+but the dyslexic group did respond _faster_ (N=62, p=.03). The author
+took this as evidence that global visual-spatial processing might be
+slightly more efficient in the dyslexic brain.
+
+This was promising enough for the International Dyslexia Association
+to break out the checkbook for another study, so von Károlyi and
+Winner reunited for this 2003 paper [fn:6], in which they successfully
+replicated von Károlyi's results (N=64, p=.0003): the dyslexic group
+recognized "Impossible Figures" (a test of global spatial-processing
+ability) more quickly than the control group.
+
+So the theory that Ali's dyslexia contributed to his success in boxing
+is sounding more plausible. After all, "holistic visual-spatial
+processing" sounds like psychology-speak for what boxers are doing
+when they anticipate their opponent's next punch. In a sport where you
+can literally die [fn:7] by failing to move your chin quickly enough,
+you want that right-hemisphere firing on all cylinders.
+
+* The fMRI study
+
+At this point you're probably thinking, "If only we had
+high-resolution brain scans of dyslexics performing tasks that involve
+global visual-spatial processing, then we'd have indisputable evidence
+of a dyslexic advantage!"
+
+Which do you want first: the good news or the bad news?
+
+The good news is that Diehl et. al. stuck a bunch of people with
+dyslexia in an fMRI machine and quizzed them with von Károlyi's
+Impossible Figures [fn:8], and they _did_ see marked differences
+between dyslexic and typical brains.
+
+The bad news is that the results still weren't 100% conclusive.
+
+Their findings were consistent with von Károlyi's results in that the
+dyslexic group was slightly faster on some tests of visual-spatial
+ability, namely the Impossible Figures test and a test of mental
+rotation abilities. But, because /of course/ they were, the dyslexic
+group was only faster when tested outside of the fMRI machine.
+
+Also, the evidence with regards to von Károlyi's theory re: global
+vs. local processing was mixed: the dyslexics were faster to recognize
+Impossible Figures, but no faster on the other test of global spatial
+ability. However, it's difficult to draw any conclusions from this
+second test because it required the subject to recognize a target
+letter which is itself composed of smaller letters, like this letter
+"H" which is composed of the letter "S":
+
+#+BEGIN_EXAMPLE
+  SSS      SSS
+  SSS      SSS
+  SSS      SSS
+  SSS      SSS
+  SSSSSSSSSSSS
+  SSSSSSSSSSSS
+  SSS      SSS
+  SSS      SSS
+  SSS      SSS
+  SSS      SSS
+#+END_EXAMPLE
+
+I don't mean to go full, arm-chair, experimental psychologist, but did
+no one that reviewed the design of this experiment notice a potential
+issue? Like the fact that their test of visual-spatial ability
+involves the alphabet? For a group whose membership criteria is
+essentially, "Has trouble with the alphabet?"
+
+To their credit, the authors do acknowledge this shortcoming in their
+discussion of the results. And despite these frustrations, the fMRI
+data was revealing.
+
+In neuro-typical brains, the Impossible Figures caused the brain to
+light up with activity, whereas printed text barely provoked a
+response at all. Relative to the neuro-typical group, the dyslexic
+brains were less stimulated by the Impossible Figures but
+significantly more stimulated by the text. In other words, the
+dyslexic group had to work harder than the neurotypical group to
+process text, but less hard to process the Impossible Figures.
+
+Not only was the overall _level_ of brain activity different between
+the two groups - the _location_ of the activity differed, too. In
+neuro-typical subjects, text caused the left-hemisphere to light up,
+whereas the Impossible Figures predominantly activated the
+right-hemisphere. But there was little differentiation in the dyslexic
+brains: both the left and right hemispheres stayed active, regardless
+of the task.
+
+The authors concluded that there is probably some trade-off between
+language processing and spatial processing, and that faster response
+times for a given task (i.e., reading vs. visual-spatial processing)
+are correlated with more efficient neural circuitry.
+
+If there is a trade-off between language and spatial processing, then
+this raises an interesting question: are dyslexics born better at
+spatial processing? Or does the process of learning to read reorganize
+the brain at the expense of spatial processing? That is, does becoming
+a better reader make you worse at spatial visualization?
+
+Unsurprisingly, the authors conclude that answering this question will
+require further study. If I have learned one thing from reading all of
+these psych papers, it's that the only thing that psychologists can
+ever be sure of is that, while their results are promising, nothing is
+settled and everything warrants further study.
+
+As for me, I've had enough studies: I'm ready to answer the question
+that started this whole investigation: yes, Muhammad Ali probably had
+some atypical neuro-circuitry in his right-hemisphere that made him
+slightly better-than-average at dodging punches.
+
+I'm still confused by something, though: what about Einstein and all
+of the dyslexic super-geniuses? Surely a small advantage in global
+visual-spatial processing can't account for what seems to be a
+*massive* overrepresentation of dyslexics in the Who's Who list of
+modern, Western history?
+
+Ok, I lied. We need more studies.
+
+* Meta-analysis #1
+
+First, let's get one thing out of the way: the case for dyslexics
+having _generally_ superior spatial abilities is pretty weak. If
+people with dyslexia do have enhanced visual-spatial abilities, then
+they hide them very well when subjected to formal testing.
+
+In "Reading disability and enhanced dynamic spatial reasoning: A
+review of the literature" [fn:9], the authors compiled and analyzed
+the results of 21 studies that examined spatial-processing abilities
+in people with reading disabilities ("RD", in their terminology). The
+conclusion:
+
+#+BEGIN_EXAMPLE
+  RD samples do not perform better on dynamic spatial reasoning tasks
+  than nRD samples. In fact, subjects with RD most often perform worse
+  than, or equal to, controls... The few studies that found a
+  significant RD advantage tended to deal with virtual or Impossible
+  Figures types of tests, and the RD advantage was most often limited to
+  measures of [reaction time].
+#+END_EXAMPLE
+
+Three of the four "studies that found a significant RD advantage" are
+ones that we've already seen: two are from Winner and/or von Károlyi,
+and the other is Diehl's fMRI study.
+
+The fourth study is the triumphantly-titled, "A Virtual Reality Test
+(FINALLY!!!!) Identifies the Visuospatial Strengths of Adolescents
+with Dyslexia, Thereby Justifying The International Dyslexia
+Foundation's Continued Funding Of This Type of Research and
+Vindicating The Unsubstantiated Diagnoses of Dyslexia in Many Famous,
+Dead Scientists."
+
+Just kidding, the actual title is just, "A Virtual Reality Test
+Identifies the Visuospatial Strengths of Adolescents with
+Dyslexia" [fn:10]. Also, my lawyers [fn:11] have asked me to emphasize
+that the previous paragraph constitutes a joke and that the authors of
+this paper include the Disclosure Statement: "The authors have no
+conflict of interest."
+
+This study tested participant's spatial memory in "virtual reality,"
+which apparently in 2009 meant, "a rendering of a 3D-environment on a
+laptop screen." The study's enthusiastic-sounding title belies the
+authors' circumspection about the experimental results, which
+suggested only a modest increase in spatial memory among the dyslexic
+group. A subsequent study failed to replicate their results [fn:12].
+
+So to summarize our findings, so far: dyslexics may be slightly faster
+at certain types of spatial processing (e.g., the Impossible Figures
+task), but in general they have slightly _lower_ spatial abilities
+than the rest of the population.
+
+One possible criticism of this meta-analysis is that most of the
+experimental data that it aggregates is based on paper-and-pencil
+tests. And though the Virtual Reality study failed to replicate, there
+was at least one other study that found a speed-advantage among the
+dyslexic group when the tests were administered via a laptop [fn:13].
+
+From a purely intuitive perspective, it wouldn't be surprising if
+paper-and-pencil tests failed to accurately measure visual-spatial
+ability, especially in dyslexics. In fact, it would be more
+surprising if "sitting quietly at a desk answering multiple-choice
+questions about abstract shapes" /was/ an effective way to gauge
+spatial ability, especially among a group of kids with a poor
+track-record in a classroom setting.
+
+Also, the fMRI data is a pretty strong signal that there is something
+different about the way that the dyslexic brain performs spatial
+processing. It would be surprising if that neurological difference
+didn't manifest as a difference in ability.
+
+So we're no closer to an explanation of Einstein. Perhaps another
+meta-analysis holds the key to this mystery?
+
+* Meta-analysis #2
+
+Here's where things get interesting. The meta-analytic findings of
+"Meta-analytic findings reveal lower means but higher variances in
+visuo-spatial ability in dyslexia" [fn:14] reveal lower means but
+higher variances in visuo-spatial ability in dyslexia (sorry).
+
+This study collated the experimental results of 28 other
+studies. Presumably their dataset has a lot of overlap with the 21
+studies from the previous meta-analysis, so all of the same caveats
+re: the validity of paper-and-pencil testing still apply. But whereas
+the conclusion of the other study focused on the lower _average_
+scores for the dyslexic population, the authors of this study noticed
+that the _variance_ was higher. In their words:
+
+#+BEGIN_EXAMPLE
+  An alternative way to account for the inconclusive results regarding
+  visuospatial processing in dyslexia would be to posit that there exist
+  subsets of people with dyslexia who have extremely enhanced or
+  impoverished visuospatial processing abilities, arising from greater
+  variance in dyslexic samples.
+#+END_EXAMPLE
+
+A subset of people with dyslexia with "extremely enhanced"
+visuospatial abilities? Tell me more...
+
+#+BEGIN_EXAMPLE
+  The notion of increased variance in one subpopulation has been most
+  notably employed in the study of sex differences in intelligence and
+  mathematical ability (Arden & Plomin, 2006; Halpern et al., 2007; Hyde
+  & Mertz, 2009; Irwing & Lynn, 2005), leading some authors to claim
+  that, ‘a small difference in variance [between males and females] may
+  have consequences at the extremes of ability resulting in visibly
+  unequal numbers of one sex among the less able or among the elite’
+  (Arden & Plomin, 2006, p.46).
+#+END_EXAMPLE
+
+Uhhhhh, OK. Not going to comment on this one, other than to note that
+"a slight increase in variance leading to overrepresentation of one
+group at the extreme ends of ability" would fit perfectly with the
+observation that a shocking number of famous people are supposedly
+dyslexic.
+
+* Einstein, Edison, Tesla, et. al.
+
+So maybe dyslexics tend towards the extremes of the spatial abilities
+bell-curve, and Einstein et. al. were the lucky ones who landed way
+out on the right tail. This seems plausible, and there could be
+something to it.
+
+But after taking a closer look at the diagnoses on a case-by-case
+basis, I have a simpler explanation: most of these people weren't
+actually dyslexic.
+
+** Einstein
+
+Let's get Einstein out of the way first.
+
+As far as I can tell, the theory that he was dyslexic is founded on
+just two pieces of evidence: he learned to speak late, and he
+struggled academically. But by his family's account, Einstein spoke in
+complete sentences by age 2. Also, he was at the top of his class in
+grade school, and he read enough philosophy to have an informed
+opinion regarding Immanuel Kant by age 13.
+
+He did fail his college entrance exam on the first attempt, and this
+is often cited as evidence of a "learning disability". But he was also
+taking the exam two years ahead of schedule, and apparently his heart
+was never really in it [fn:15]
+
+So Einstein's probably out. What about Edison?
+
+** Edison
+
+Curiously, Edison's entry in Wikipedia's [[https://en.wikipedia.org/wiki/List_of_people_with_dyslexia][List of People With Dyslexia]]
+cites no sources.
+
+The Edison-as-dyslexic case again rests on his supposed struggles in
+school. He evidently had a ginormous melon head as a kid, which his
+teacher took as evidence of an "addled brain." Edison got kicked out
+of school after 2 months for reading too quickly and being kind of a
+twat about it [fn:15], so he used his newfound free-time to attempt to
+read every book in the Detroit Free Library [fn:16], including _The
+History of the World_ and _The Decline and Fall of the Roman
+Empire_. Being a voracious reader doesn't necessarily exonerate him,
+but I think the burden of proof is on the prosecution, here.
+
+** Tesla
+
+Tesla's Wikipedia entry does cite sources, but the first one [fn:17]
+just says this:
+
+#+BEGIN_EXAMPLE
+  Some famous inventors (Michael Faraday, James Clerk Maxwell, and
+  Nikola Tesla, artist and inventor Leonardo da Vinci, and others) also
+  display weakness in reading and writing or using language (West,
+  1991).
+#+END_EXAMPLE
+
+Sure, OK... Let's follow that reference and see what "West,
+1991" [fn:18] has to say:
+
+#+BEGIN_EXAMPLE
+  Tesla is of special interest for us primarily because of his
+  especially vivid visual imagination. He does not appear to have been
+  dyslexic or learning disabled in any of the usual ways.
+#+END_EXAMPLE
+
+Alright, so that's a no for Tesla.
+
+** Anyone?
+
+At this rate we'll be here forever, so let me save us some time:
+
+- Steve Jobs?
+  - No, but he dropped out of an elite liberal arts college and once
+    filled out a job application with sloppy handwriting [fn:19].
+- Bill Gates?
+  - No, and I can't even figure out where this one is coming
+    from.
+- Auguste Rodin?
+  - Probably just nearsighted. _Scrotal asymmetry and Rodin's
+    dyslexia_ [fn:20] (I swear I'm not making this up) cites Rodin's
+    placement of the left testicle lower than the right in his
+    sculpture L'Age d'Airain as evidence of dyslexia, but this
+    hero [fn:21] went and checked the photographs on which the
+    sculpture was based. According to him, the model just had an
+    unusual pair of testicles.
+- Leonardo da Vinci?
+  - Maybe! He was a poor student, a bad speller, and he occasionally
+    wrote backwards in his journals [fn:22]. But the backwards writing
+    was clearly a conscious choice which could have been an attempt at
+    obfuscation or a practical measure to prevent smearing ink as his
+    writing hand moved across the page [fn:15]. Some claims center on
+    the fact that his eyes are misaligned in his self-portraits, but
+    contrary to popular belief, this is not associated with
+    dyslexia [fn:23]. Seems like shaky ground for a retroactive
+    diagnosis, but I can't argue with dyslexia.com, which definitively
+    states that, "[h]is extraordinary art work and inventive genius
+    are proof that he truly possessed the gift of dyslexia." [fn:24]
+- Lil' Pump?
+  - Sure, you can have Lil' Pump. Any joke about [[https://www.instagram.com/p/BjyPZ_ElnaT/?utm_source=ig_embed][this video]] would be
+    in poor taste, so we're moving on to...
+
+* Conclusions
+
+** On Muhammad Ali's dyslexia
+
+It is highly plausible (though still unproven) that Muhammad Ali was a
+slightly better boxer because of his dyslexia. The obvious next step
+here is a study in which Mike Tyson throws left hooks at a bunch of
+psychology undergrads, but I'm not optimistic that an Ethical Review
+Board will sign off.
+
+Assuming the effect is real, dyslexia is still just one of countless,
+complicated, factors that led to Ali's becoming the heavyweight
+champion of the world (and probably not even a particularly
+significant one).
+
+** On dyslexia and general spatial reasoning ability
+
+Despite the claims of pop-psychology articles across the internet,
+dyslexics score lower than average on conventional tests of
+visual-spatial ability.
+
+However, the variance in their scores is higher. Also, they respond
+more quickly on some tests, and fMRI data suggests that their brains
+are working more efficiently.
+
+I'm no psychologist, but I'm skeptical that conventional tests of
+visual-spatial ability measuring anything beyond the ability to sit
+quietly in a room and answer multiple-choice questions about abstract
+shapes. Given that the data is contradictory and maybe not even valid,
+I have no definitive conclusions here. I think it's likely that the
+"dyslexic advantage" is real but greatly exaggerated.
+
+** On the dyslexic overrepresentation in some fields
+
+For some reason, dyslexics are more likely to be artists and
+mathematicians [fn:4] [fn:2] than lawyers and doctors. On the
+surface, this seems to support the idea that dyslexia confers
+increased spatial ability, since art and math depend on spatial
+reasoning more than fields like law and medicine.
+
+But Winner, von Károlyi, et. al. have a reasonable explanation for
+this: dyslexics choose fields where they have a /relative/
+advantage [fn:4]. Even if they have only average spatial ability,
+their spatial ability will still be greater than their verbal
+ability. Careers that involve intensive reading simply aren't an
+option for some people with dyslexia, so they default to the fields
+that remain open to them.
+
+** On Einstein, Edison, et. al.
+
+Why is everyone so eager to claim Albert Einstein as dyslexic? I think
+it's because it makes for a better story. Consider the following two,
+possible worlds:
+
+In the first, dyslexics have average intelligence but struggle with
+language. Super-geniuses like Einstein are anomalies that defy simple
+explanation and kind of freak us out.
+
+In the second, dyslexia is a secret superpower; Einstein puts his
+Clark Kent glasses back on, and suddenly we recognize him as one of
+us! This story is more compelling for several reasons.
+
+First, it has an underdog: everyone counts out the dyslexics, but in
+the end society gets its come-uppance.
+
+Second, it has a whiff of conspiracy to it. Mankind has wallowed in
+ignorance for thousands of years, and now you, the person reading
+pop-psychology articles on the Internet, are one of the enlightened!
+
+Third, it appeals to our sense of fairness. It's unfair that some
+people struggle to read while others are super-geniuses. But if the
+two groups are actually one and the same, then the playing field is
+level again.
+
+Fourth, it offers a comforting explanation for something that makes us
+uncomfortable - namely, the fact that some people are way smarter than
+the rest of us. In this account, Einstein's freakish intelligence has
+a simple explanation: dyslexia. /I'm/ not dyslexic, therefore I'm not
+a super-genius. So it's totally OK that I'm just sitting here in my
+underwear reading Wikipedia instead of theorizing about the nature of
+spacetime. And come to think of it, in a way I'm actually a little
+/smarter/ than Einstein, because he had a reading disability and I
+don't!
+
+In short, "Super-geniuses all share this one, weird, quirk!" is better
+clickbait, "Some people struggle while others succeed for myriad,
+complicated reasons that include pure luck."
+
+* Footnotes
+
+[fn:1] [[https://www.npr.org/2017/10/04/555301222/new-muhammad-ali-biography-reveals-a-flawed-rebel-who-loved-attention][New Muhammad Ali Biography Reveals A Flawed Rebel Who Loved Attention]]
+
+[fn:2] [[https://www.ncbi.nlm.nih.gov/pubmed/11990223][The prevalence of dyslexia among art students]]
+
+[fn:3] People who go blind after birth but before adulthood process
+speech almost 3x faster than sighted people: 22 syllables per second,
+vs. 8 syllables per second. From [[https://www.ncbi.nlm.nih.gov/pubmed/23879896][Dietrich, et. al]].
+
+[fn:4] [[https://pdfs.semanticscholar.org/bea7/f6ecb814daa1f994e4ece2c0a423caeabd30.pdf][Dyslexia and Visual-Spatial Talents: Compensation vs Deficit Model]]
+
+[fn:5] [[https://www.ncbi.nlm.nih.gov/pubmed/15503582][Visual-spatial strength in dyslexia: rapid discrimination of impossible figures.]]
+
+[fn:6] [[https://www.sciencedirect.com/science/article/abs/pii/S0093934X0300052X][Dyslexia linked to talent: Global visual-spatial ability]]
+
+[fn:7] https://en.wikipedia.org/wiki/List_of_deaths_due_to_injuries_sustained_in_boxing
+
+[fn:8] [[https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4167780/][Neural correlates of language and non-language visuospatial processing in adolescents with reading disability]]
+
+[fn:9] [[https://www.sciencedirect.com/science/article/pii/S0278262616300227?via%253Dihub][Reading disability and enhanced dynamic spatial reasoning: A review of the literature]]
+
+[fn:10] [[https://fdocuments.in/document/a-virtual-reality-test-identifies-the-visuospatial-strengths-of-adolescents.html][A Virtual Reality Test Identifies the Visuospatial Strengths of Adolescents with Dyslexia]]
+
+[fn:11] I don't really have lawyers.
+
+[fn:12] [[http://riverapublications.com/assets/files/pdf_files/common-beliefs-and-research-evidence-about-dyslexic-students-specific-skills-is-it-time-to-reassess-some-of-the-evidence.pdf][Common Beliefs and Research Evidence about Dyslexic Students’ Specific Skills: Is it time to reassess some of the evidence?]]
+
+[fn:13] [[https://www.sciencedirect.com/science/article/abs/pii/S0891422211000291][The comparison of the visuo-spatial abilities of dyslexic and normal students in Taiwan and Hong Kong]]
+
+[fn:14] [[https://www.researchgate.net/publication/325971712_Meta-analytic_findings_reveal_lower_means_but_higher_variances_in_visuospatial_ability_in_dyslexia/link/5b30ee3ba6fdcc8506cc2fe9/download][Meta-analytic findings reveal lower means but higher variances in visuo-spatial ability in dyslexia]]
+
+[fn:15] http://dyslexia.learninginfo.org/famous-people.htm
+
+[fn:16] [[https://books.google.com/books?id=eLjQg_JFiboC&lpg=PA165&ots=BlcpaEDab2&dq=edison%2520rise%2520and%2520fall%2520of%2520the%2520roman%2520empire&pg=PA167&ci=44%252C890%252C880%252C215&source=bookclip][True Stories of Great Americans for Young Americans, p. 167]]
+
+[fn:17] [[https://books.google.com/books?id=ttOldWRanuEC&lpg=PA94&ots=ZaYUF7PU8s&dq=%2522Focus%2520on%2520Dyslexia%2520Research%2522%2520page%25206&pg=PA94#v=onepage&q=Tesla&f=false][Focus on Dyslexia Research, p. 6]]
+
+[fn:18] [[https://books.google.com/books?id=vGBAQWOsKmUC&newbks=1&newbks_redir=0&lpg=PA1&dq=In%2520the%2520mind's%2520eye%2520google%2520books&pg=PA176#v=onepage&q=tesla&f=false][In the Mind's Eye - p. 176]]
+
+[fn:19] https://www.sciencealert.com/chaotic-1973-job-application-steve-jobs-proof-anything-is-possible-stanford-inspiring
+
+[fn:20] [[https://www.ncbi.nlm.nih.gov/pubmed/794733][Scrotal asymmetry and Rodin's dyslexia]]
+
+[fn:21] [[https://books.google.com/books?id=30gpesJe3gwC&lpg=PA47&ots=YZOSb01QD5&dq=Scrotal%2520asymmetry%2520and%2520Rodin's%2520dyslexia.&pg=PA47#v=onepage&q=Scrotal%2520asymmetry%2520and%2520Rodin's%2520dyslexia.&f=false][Rodin's Art: The Rodin Collection of Iris & B. Gerald Cantor Center For Visual Arts at Stanford University - p. 47]]
+
+[fn:22] [[https://neurosciencenews.com/da-vinci-dyslexia-13021/][https://neurosciencenews.com/da-vinci-dyslexia-13021/]]
+
+[fn:23] [[https://www.ncbi.nlm.nih.gov/pubmed/26009619][Ophthalmic abnormalities and reading impairment.]]
+
+[fn:24] [[https://www.dyslexia.com/famous/leonardo-da-vinci/]]
