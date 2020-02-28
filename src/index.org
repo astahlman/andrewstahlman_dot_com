@@ -3,8 +3,9 @@
 
 | Date             | Title                                                                       |
 |------------------+-----------------------------------------------------------------------------|
-| <2020-01-23 Thu> | [[./posts/Dissecting_dot_git.html][Dissecting .git/]]                                                        |
-| <2020-01-11 Sat> | [[./posts/RantOnCommitMessages.html][Rant: Commit Messages]]                                                        |
+| <2020-02-26 Wed> | [[./posts/IsDyslexiaASuperpower.html][Is Dyslexia a Superpower?]]                                                   |
+| <2020-01-23 Thu> | [[./posts/Dissecting_dot_git.html][Dissecting .git/]]                                                            |
+| <2020-01-11 Sat> | [[./posts/RantOnCommitMessages.html][Rant: Commit Messages]]                                                       |
 | <2018-10-10 Wed> | [[./posts/DevOpsBagOfTricks.html][DevOps Bag-of-Tricks]]                                                        |
 | <2017-07-24 Mon> | [[./posts/ParetoPerl.html][Pareto Perl]]                                                                 |
 | <2017-02-27 Mon> | [[./posts/IsItWorthTheTime.html][Is It Worth The Time?]]                                                       |
