@@ -815,7 +815,7 @@ Butterflies_ which was published in 1898, the same year that he spoke
 before the Wellington Philosophical Society.
 
 #+BEGIN_EXPORT html
-  <img src="assets/willett-time/New_Zealand_Moths_and_Butterflies_(1898)_06.jpg"/>
+  <img src="assets/willett-time/New_Zealand_Moths_and_Butterflies.jpg"/>
 #+END_EXPORT
 
 So here's to the reformers: to Willett, and to whoever takes up his
