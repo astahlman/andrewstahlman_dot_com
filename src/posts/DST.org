@@ -816,7 +816,7 @@ before the Wellington Philosophical Society.
 
 #+BEGIN_EXPORT html
   <img src="assets/willett-time/New_Zealand_Moths_and_Butterflies_(1898)_06.jpg"/>
-#+END_EXPORT html
+#+END_EXPORT
 
 So here's to the reformers: to Willett, and to whoever takes up his
 mantle and undoes what he did. May your results be as good as your
