@@ -202,7 +202,7 @@ reception: they were "not sanguine of its success."
 
 Let us return to our study in contrast.
 
-When Hudson received "constructive feedback" at his local science
+When Hudson received "constructive feedback" [fn:7] at his local science
 club, he said that "he was sorry to see the paper treated rather with
 ridicule. He intended it to be practical," [fn:3] and then went back
 to studying butterflies.
@@ -216,7 +216,7 @@ compelled to share his feelings about squirrels. (If you're wondering,
 he was really high on the squirrel: "a species of handmaiden" and a
 "happy-go-lucky" creature "intending little ill, and if he does offend
 at times, his company and capers on the lawn or on the gean-tree or
-pear-tree make up for his mischiefs.") [fn:7]
+pear-tree make up for his mischiefs.") [fn:8]
 
 But getting lumped in with squirrel-guy didn't phase Willett. He spent
 the next year writing letters, printing pamphlets, and schmoozing with
@@ -226,13 +226,13 @@ which went to a committee tasked with studying its effects. The
 ensuing hearings provided Willett with a captive audience - an
 opportunity which he thoroughly abused.
 
-The transcript of Willett's testimony is alternately tedious and
-hilarious. He starts by asking permission to read a list with the
+The transcript of his testimony is alternately tedious and
+hilarious. Willett starts by asking permission to read a list with the
 names of all of his supporters. Mercifully, the Chairman interjects
 and after some argument Willett agrees to read only "the principal"
 names. "Principal" to Willett evidently meant "at least 84", because
 that's how many names he made it through (with frequent stops for
-parenthetical asides) before he finally got cut off. [fn:8]
+parenthetical asides) before he finally got cut off. [fn:9]
 
 I'll spare you all of the objections to his proposal. Suffice it to
 say that there were many, and they make for tedious reading. To give
@@ -258,7 +258,7 @@ Several alternate proposals emerged, too:
 
 Even Willett's supporters didn't agree with him on this last
 point. Sir Arthur Conan Doyle (yep, that Sir Arthur Conan
-Doyle [fn:9]), testified that "it struck me on simply reading it that
+Doyle [fn:10]), testified that "it struck me on simply reading it that
 a single alteration of an hour would be a round number, and cause less
 confusion and attain almost the same result."
 
@@ -274,9 +274,9 @@ alteration of the clocks: one in April and one in September.
 A promising, young politician named Winston Churchill, then the
 President of the Board of Trade, "read the report of this committee
 with much interest and with a lively recognition" of the Bill's
-advantages. [fn:10] Unfortunately for Willett, Prime Minister Herbert
+advantages. [fn:11] Unfortunately for Willett, Prime Minister Herbert
 Asquith took a less lively view of the bill's advantages and dismissed
-it before it could even be discussed. [fn:11]
+it before it could even be discussed. [fn:12]
 
 Really, Herbert? Would it have killed you to say something sooner?
 Like, /before/ everyone spent 8 weeks discussing the best time of day
@@ -302,7 +302,7 @@ in September." He urged his colleagues to refer the bill to committee
 (again) and his motion passed. (In the cinema of my imagination,
 Churchill shouts an "extra snooze some morning in September!" over a
 triumphant crescendo of horns, followed by a raucous chorus of cheers
-in the House of Commons.) [fn:12]
+in the House of Commons.) [fn:13]
 
 So once again Willett found himself with a captive audience. And once
 again, he made everyone miserable. By way of greeting the Chairman
@@ -315,7 +315,7 @@ launched into reading from an enormous stack of letters. He made it
 abundantly clear that he was unhappy with the 1-hour adjustments, and
 would prefer to "effect his alteration in the habits of forty odd
 millions of people... [with] the thin of the wedge... and not the
-thick end first." [fn:13]
+thick end first." [fn:14]
 
 The second set of hearings were much like the first: tedious and
 divisive. They got hung up on all the same arguments as the first
@@ -334,12 +334,12 @@ more unthinkable: perhaps the men could make their own tea?
 The committee met 16 times over nearly 5 months. They ultimately
 concluded that due to the "great diversity of opinion... your
 Committee recommend that the Bill be not further proceeded
-with." [fn:14]
+with." [fn:15]
 
 Willett spent the rest of his life campaigning for seasonal
 time. Every year from 1911 to 1914, his allies in the legislature
-proposed the bill, and every year Asquith's Government refused to hear
-it. [fn:15]
+proposed the bill, and every year Asquith refused to even hear
+it. [fn:16]
 
 Willett died of the flu one year later in March 1915 at age 58.
 
@@ -356,8 +356,8 @@ before.
 #+END_QUOTE
 
 Ironically, the "invaders" that Willett warned about in his pamphlet
-were the first to adopt his proposal. Germany adopted seasonal time
-just 14 months after Willett's death. The British House of Commons
+were the first to adopt his proposal. Germany instituted seasonal time
+just 14 months after Willett's death, and the British House of Commons
 passed Willett's Daylight Saving Bill a week later.
 
 Votes in favor? 120. Votes against? 2.
@@ -372,7 +372,7 @@ nothing to fret about!
 
 But it's hard to stay nonchalant with a giant zeppelin dropping bombs
 in your backyard, which is what London was dealing with by the spring
-of 1915 [fn:16]. The flood of innovation and mechanization that
+of 1915 [fn:17]. The flood of innovation and mechanization that
 carried over from the Industrial Revolution resulted in a sort of
 Cambrian explosion of killing machines: in addition to zeppelins, the
 Great War also marked the battlefield-debut of chlorine gas,
@@ -382,22 +382,24 @@ Once human ingenuity turned towards the problem of how to kill as
 efficiently as possible, we traded bayonets for machine guns and heavy
 artillery. The results were devastating. The British lost more men on
 the first day of the Battle of the Somme than they did during the
-entirety of the Second Boer War, just 14 years earlier - 57,000 men
-/in one day/. [fn:17] [fn:18] For a more modern comparison, the United
-States spent 9 years fighting in Iraq and suffered less than 37,000
-casualties [fn:19].
+entirety of the Second Boer War, which had ended a mere 14 years
+earlier.
+
+57,000 men /in one day/. [fn:18] [fn:19] To put that in modern
+context, the United States spent 9 years fighting in Iraq and suffered
+<37,000 casualties [fn:20].
 
 All this to say, "Business as Usual" didn't last long. It was followed
-by the policy of "Total War," which overhauled society and reoriented
-the economy around wartime manufacturing. Running a bomb factory
-requires energy, and by May of 1916 the British empire needed all the
-energy it could get. Voting against a wartime energy-saving measure
-wouldn't have been a good look, politically, so opposition to seasonal
-time evaporated.
+by the policy of "Total War," which overhauled every aspect of society
+and reoriented the economy around wartime manufacturing. Running a
+bomb factory requires energy, and by May of 1916 the British empire
+needed all the energy it could get. Voting against a wartime
+energy-saving measure wouldn't have been a good look, politically, and
+opposition to seasonal time quickly evaporated.
 
-And so for all of Willett's pamphlet-publishing and proselytizing and
-wining-and-dining of politicians, in the end all it took was the
-outbreak of the bloodiest war in human history.
+So for all of Willett's pamphlet-publishing and haranguing newspaper
+editors and wining-and-dining of politicians, all it took in the end
+was the outbreak of the bloodiest war in human history.
 
 * Interlude: On Hubris and Conviction
 
@@ -418,19 +420,18 @@ expires, all I hear is a blaring alarm warning me to STOP TALKING
 IMMEDIATELY FOR THE LOVE OF GOD so that everyone in the room will look
 /anywhere/ besides at me.
 
-Willett clearly didn't have a timer.
+Willett clearly had no such timer.
 
-Or sometimes at work I'll be asked to weigh on in some unsettled
-question. Every once in a while, a weird and scary thing happens:
+Or sometimes at work I'll be asked to weigh in on some unsettled
+question. And every once in a while, a weird and scary thing happens:
 people actually listen to my argument and change their minds. As soon
 as I recognize that I'm being persuasive, I have to quell a sense
 self-defeating panic: are they really listening critically, or are
-they just acquiesing because of our relative positions in a
-mostly-arbitrary corporate hierarchy? Maybe I don't have enough
-information to have an informed opinion. What if I'm missing some
-crucial bit of context? How should I qualify my opinion to reflect my
-level of uncertainty? How culpable am I now for the outcome of this
-decision???
+they just acquiesing because of our relative positions in a largely
+arbitrary corporate hierarchy? Maybe I don't have enough information
+to have an informed opinion. What if I'm missing some crucial bit of
+context? How should I qualify my opinion to reflect my level of
+uncertainty? How culpable am I now for the outcome of this decision???
 
 I can't imagine Willett having this internal monologue. I'm fully
 aware that I'm an outlier on the introspective/introverted tail of the
@@ -439,10 +440,9 @@ amazed that people like Willett exist.
 
 Where did he get the conviction? Opponents of seasonal time emerged
 from every sector of society. This should have been a strong signal
-that tampering with something so fundamental to modern society would
-have ripple-effects that he couldn't anticipate. Did he ever have
-doubts? Or was his outward bluster a reflection of perfect
-inner-tranquility?
+that tampering with something so fundamental to society would have
+ripple-effects that he couldn't anticipate. Did he ever have doubts?
+Or was his outward bluster a reflection of perfect inner-tranquility?
 
 In my experience, this type of irrational and totally unfounded level
 of self-assurance is disproportionately common in two groups of
@@ -463,14 +463,14 @@ Timorous will never reach it! Surely the "Great Heart" of the
 Spectator should encourage pilgrims to climb the Hill, and should use
 every weapon he can against any Grims that may bar the way or any
 lions that may appear to forbid the happy arrival of the Bill before
-his Majesty the King. What is there to fear? [fn:7]
+his Majesty the King. What is there to fear? [fn:8]
 #+END_QUOTE
 
 Contrast _that_ response to critism with Hudson's closing remarks at
 the Wellington Philosophical Society, in which he basically said,
 "Well, shucks, I thought it was a good idea. Sorry for wasting your
-time," then fled home to stargaze and eat Ben and Jerry's straight out
-of the carton.
+time," then fled home to his telescope and a carton of Ben and
+Jerry's.
 
 That's Timorous for you! Throwing down his weapons and abandoning the
 pilgrimage to the Palace Beautiful at the first sign of a few lions
@@ -512,25 +512,24 @@ an element of doubt, and you cannot expect the House of Commons, I
 should think, to justify a Bill at all with an element of doubt in
 it."
 
-But even more depressing is that Willett's overconfidence seems to
-have been necessary but insufficient: his bill didn't actually pass
-until society was leveled by the most horrifying and pointless war in
+Even more depressing is that Willett's overconfidence was probably
+necessary, yet insufficient: his bill didn't actually pass until the
+opposition was leveled by the most horrifying and pointless war in
 modern history.
 
-As a group, humans hate radical changes. And historically this
-aversion to boat-rocking has served us well: we've never eaten that
-potentially poisonous berry before, so why start now? Remember the
-great harvest we had after we did the rain dance last year? Let's get
-to dancing.
+Humans generally hate radical change. Historically this aversion to
+boat-rocking has served us well: we've never eaten that potentially
+poisonous berry before, so why start now? Remember the great harvest
+we had after we planted corn and did the rain dance last year? Let's
+plant some corn and get to dancing.
 
-When things are good, society has a lot of inertia. When things are
-bad, we suddenly become a lot more willing to experiment. The Patriot
-Act would have been inconceivable on September 10th, 2001; a national
-speed limit of 55 mph would never have passed without the oil crisis
-of 1973; it took Pearl Harbor to get the United States into WWII; the
-idea of women working in factories was unthinkable before WWI, but
-somebody had to build the bombs that the men were busy
-dropping.
+When things are good, we have a lot of inertia; when things are bad,
+we're willing to experiment. The Patriot Act would have been
+inconceivable on September 10th, 2001; a national speed limit of 55
+mph would never have passed without the oil crisis of 1973; it took
+Pearl Harbor to get the United States into WWII; the idea of women
+working in factories was unthinkable before WWI, but somebody had to
+build the bombs that the men were busy dropping.
 
 If you've been taking notes on how to effect change, the formula so
 far is:
@@ -561,11 +560,11 @@ Harbor, and then dropped it again in 1945. Absent a federal standard,
 a patchwork of DST adoption emerged across the country. By 1966
 everyone was thoroughly confused, so the Uniform Time Act mandated DST
 as the standard (the law does allow states to opt-out, but as of 2020
-only Arizona and Hawaii have done so [fn:20]).
+only Arizona and Hawaii have done so [fn:21]).
 
 Between 2002 and 2005, the average price of a regular unleaded gallon
 of gas in the US nearly tripled, soaring to almost
-$3.00 [fn:21]. Average Joe was unhappy, so Congress put on its
+$3.00 [fn:22]. Average Joe was unhappy, so Congress put on its
 collective concerned face and passed the Energy Policy Act of 2005.
 
 A politician would probably call this bill "comprehensive". A normal
@@ -586,7 +585,7 @@ things, it proposed to:
   employees
 
 And, oh yeah, it would also extend Daylight Savings Time by 1
-month [fn:22].
+month [fn:23].
 
 Unsurprisingly, a lot of people hated the idea, including the
 Conference of Catholic Bishops and the United Synagogue of
@@ -594,18 +593,18 @@ Conservative Judaism, who opposed the extension on the grounds that no
 one wants to go to church before the sun is up in the spring. The head
 of the National Parent Teacher Association warned that children
 walking to school were at increased risk of being mowed down by cars
-and kidnapped in the morning darkness.[fn:23]
+and kidnapped in the morning darkness.[fn:24]
 
 Stop me if you've heard this one: a priest, a rabbi, and a school
 teacher walk into the door of their congressman's office.
 
 That's it - that was the joke.
 
-They walk /into/ a closed door, because their representative is in his
-office drinking scotch with the lobbyist from the sporting goods
-industry who just delivered a check made out to his re-election
-campaign and oh-by-the-way just so happens to think seasonal time is
-great for America.
+They walk /into/ a closed door, because the lobbyist from the sporting
+goods industry is already inside with a bottle of scotch and a check
+made out to the re-election campaign and oh-by-the-way just so happens
+to think seasonal time is great for both America and sales of baseball
+gloves.
 
 Forget it, it was funny in my head.
 
@@ -623,7 +622,7 @@ energy - 17 Trillion Btu of it.
 
 But it's not; the US consumed 101,000 trillion Btu in 2007. In other
 words, Extended Daylight Saving Time resulted in total energy savings
-of 0.02%. [fn:24] Which admittedly isn't great, but it gets worse.
+of 0.02%. [fn:25] Which admittedly isn't great, but it gets worse.
 
 A 2008 study examined the effects of DST in Indiana, which until 2006
 was unique in that only certain counties in the state practiced
@@ -645,7 +644,7 @@ Air-conditioning, mostly. In Willett's day, residential energy
 consumption in the summer was driven by the demand for electric
 lighting. Now it's driven by air-conditioning, and people returning
 home from work an hour earlier means an extra hour of running the AC
-at full blast. [fn:25]
+at full blast. [fn:26]
 
 And if the most serious problem with DST were air-conditioner usage in
 Indiana, The Atlantic wouldn't be running articles with titles like,
@@ -682,29 +681,33 @@ of "the voices," I do not do that thing. However, in this case,
 Someone from Alpharetta, Georgia, has a point: DST does create
 chaos. Twice a year, every year, we reset our clocks and brace for:
 
-- Thousands of traffic fatalities [fn:26]
-- A 3-5% increased risk of heart attack every March [fn:27]
+- Thousands of traffic fatalities [fn:27]
+- A 3-5% increased risk of heart attack every March [fn:28]
 - Countless lifetimes of prison sentences issued by grumpy,
-  sleep-deprived judges [fn:28]
-- A 5.7% increase in workplace injuries each March [fn:29]
+  sleep-deprived judges [fn:29]
+- A 5.7% increase in workplace injuries each March [fn:30]
 - Nearly half of a billion dollars in lost productivity annually in
-  the United States alone [fn:30]
+  the United States alone [fn:31]
 
 Ironically, the one person who foresaw all of this was DST's biggest
-supporter: Willett. He warned everyone repeatedly that a 1-hour time
-change would be too great a shock for fragile meat-sacks like us to
-cope with, and he was right. Every March during the week following the
-time change, sleep deprivation makes us do dumb things like wrap our
-cars around telephone poles and eat enough Hardee's french fries to
-power an NFL stadium for 34 hours. (Gross but true, see [[*Appendix][Appendix]]).
+supporter: Willett. Remember that business about "the thin end of the
+wedge" and the need for 20-minute adjustments? He warned everyone
+repeatedly that a 1-hour time change would be too great a shock for
+fragile meat-sacks like us to cope with, and he was right.
 
-Defenders of DST argue that, sure, sleep-deprived motorists crash more
-often during one week in March, but on aggregate DST makes our
-highways safer by reducing the number of cars on the road after
-dark. But that argument has been pretty convincingly refuted; sleep
-deprivation has a much stronger effect on crash risk than ambient
-light, and even the small effect of ambient light merely shifts
-crashes from the sunnier evenings to the darker mornings. [fn:25]
+Every March during the week following the time change, sleep
+deprivation makes us do dumb things like wrap our cars around
+telephone poles and eat enough Hardee's french fries to power an NFL
+stadium for 34 hours. (Gross but true, see [[*Appendix][Appendix]]).
+
+DST's modern-day defenders argue that, sure, sleep-deprived motorists
+crash more often during one week in March, but on aggregate DST makes
+our highways safer by reducing the number of cars on the road after
+dark. But that argument has been pretty convincingly refuted; sleepy
+drivers are much more likely to crash than a well-rested person
+driving after dark, and even the small effect of ambient light merely
+shifts crashes from the brighter evenings to the darker
+mornings. [fn:26]
 
 It's increasingly clear that DST's days are numbered. The EU has
 already voted to permanently adopt summer time starting in 2021. The
@@ -745,14 +748,13 @@ fundamentally missing the value proposition of seasonal time.
 The Earth has a tilted axis and orbits the Sun in an ellipse; this is
 why we have seasons, and it's also why the days are longer in the
 summer. The chart below shows when the sun rises and sets in local,
-solar time [fn:31] at varying latitude throughout the year.
+solar time [fn:32] at varying latitude throughout the year.
 
 Notice that the length of the day depends on just two variables: the
 day of the year and the latitude. Time zones, which are demarcated by
 longitude, determine the hour of sunrise and sunset but have no effect
 on the length of the day. So go ahead, join the time zone to your
-east - just know that you're opting in to a pre-dawn commute to work
-in the winter.
+east - have fun with your pre-dawn commute to work.
 
 Let's choose a fixed location on that chart above - say, Seattle,
 Washington. Here's how the length of the day changes throughout the
@@ -777,14 +779,15 @@ these ugly discontinuities in March and November. These are the
 Sleep-Deprivation Death Zones in which the lucky people get sleepy and
 grouchy for a week or so and the unlucky people get dead, forever.
 
-So DST kills people, but no DST wastes daylight. Can we have it both
-ways? Technically, yeah - we could.
+So changing the clock kills people in car crashes, but not changing
+the clock wastes daylight and makes us less happy and healthy. Can we
+have it both ways? Technically, yeah - we could.
 
 In Willett's day, adjusting non-networked, mechanical clocks was a
-hassle; today we have iPhones. If they wanted to, Apple could push out
+hassle; today we have iPhones. If they chose to, Apple could push out
 an update tomorrow that "springs-forward" by a few seconds every
-day. The time would change, but it would happen so gradually that we
-wouldn't even notice. Here's how it would look:
+day. The clock would still change, but it would happen so gradually
+that we wouldn't even notice. Here's how it would look:
 
 #+BEGIN_EXPORT html
   <img src="../assets/willett-time/willet-time-daylight-hours.png"/>
@@ -816,7 +819,7 @@ before the Wellington Philosophical Society.
 #+END_EXPORT html
 
 So here's to the reformers: to Willett, and to whoever takes up his
-mantle and undoes what he did. May your outcomes be as good as your
+mantle and undoes what he did. May your results be as good as your
 intentions.
 
 #+BEGIN_QUOTE
@@ -835,7 +838,7 @@ wished in the thousands of playing-fields crowded with eager young
 people every fine evening throughout the summer and one of the finest
 epitaphs that any man could win: He gave more light to his countrymen.
 
--- Winston Churchill, A Silent Toast to William Willett [fn:32]
+-- Winston Churchill, A Silent Toast to William Willett [fn:33]
 #+END_QUOTE
 
 * Appendix
@@ -890,56 +893,58 @@ naval superiority (it's been a while since I've been to a keg
 party). So it's possible the martial metaphor may have been less
 jarring to his contemporaries - but still, a bit much.
 
-[fn:7] https://books.google.com/books/content?id=gm0_AQAAIAAJ&pg=PA458&img=1&zoom=3&hl=en&sig=ACfU3U04g2hBFZKEzVqGROXdOBWQZYkDow&ci=9,12,926,1495&edge=0
+[fn:7] This is corporate HR-speak for "criticism."
 
-[fn:8] https://books.google.com/books?id=tWNYAAAAYAAJ&dq=inauthor%3A%22Great%20Britain.%20Daylight%20Saving%20Bill%20Committee%22&pg=PR1#v=onepage&q&f=false
+[fn:8] https://books.google.com/books/content?id=gm0_AQAAIAAJ&pg=PA458&img=1&zoom=3&hl=en&sig=ACfU3U04g2hBFZKEzVqGROXdOBWQZYkDow&ci=9,12,926,1495&edge=0
 
-[fn:9] https://en.wikipedia.org/wiki/Arthur_Conan_Doyle
+[fn:9] https://books.google.com/books?id=tWNYAAAAYAAJ&dq=inauthor%3A%22Great%20Britain.%20Daylight%20Saving%20Bill%20Committee%22&pg=PR1#v=onepage&q&f=false
 
-[fn:10] https://books.google.com/books?id=gTEPAQAAIAAJ&lpg=PR722&ots=nVj0HXH5X1&pg=PR723#v=onepage&q&f=false
+[fn:10] https://en.wikipedia.org/wiki/Arthur_Conan_Doyle
 
-[fn:11] https://books.google.com/books?id=soY-AQAAMAAJ&pg=PR940#v=onepage&q&f=false
+[fn:11] https://books.google.com/books?id=gTEPAQAAIAAJ&lpg=PR722&ots=nVj0HXH5X1&pg=PR723#v=onepage&q&f=false
 
-[fn:12] http://hansard.millbanksystems.com/commons/1909/mar/05/daylight-saving-bill#column_1778
+[fn:12] https://books.google.com/books?id=soY-AQAAMAAJ&pg=PR940#v=onepage&q&f=false
 
-[fn:13] https://books.google.com/books?id=tWNYAAAAYAAJ&pg=RA1-PA92#v=onepage&q&f=false
+[fn:13] http://hansard.millbanksystems.com/commons/1909/mar/05/daylight-saving-bill#column_1778
 
-[fn:14] https://books.google.com/books?id=tWNYAAAAYAAJ&pg=RA1-PR14#v=onepage&q&f=false
+[fn:14] https://books.google.com/books?id=tWNYAAAAYAAJ&pg=RA1-PA92#v=onepage&q&f=false
 
-[fn:15] https://en.wikipedia.org/wiki/Daylight_saving_time#Politics
+[fn:15] https://books.google.com/books?id=tWNYAAAAYAAJ&pg=RA1-PR14#v=onepage&q&f=false
 
-[fn:16] https://en.wikipedia.org/wiki/Zeppelin#Bombing_campaign_against_Britain
+[fn:16] https://en.wikipedia.org/wiki/Daylight_saving_time#Politics
 
-[fn:17] [[https://en.wikipedia.org/wiki/Battle_of_the_Somme]]
+[fn:17] https://en.wikipedia.org/wiki/Zeppelin#Bombing_campaign_against_Britain
 
-[fn:18] https://en.wikipedia.org/wiki/Second_Boer_War
+[fn:18] [[https://en.wikipedia.org/wiki/Battle_of_the_Somme]]
 
-[fn:19] https://en.wikipedia.org/wiki/Iraq_War#Casualty_estimates
+[fn:19] https://en.wikipedia.org/wiki/Second_Boer_War
 
-[fn:20] https://en.wikipedia.org/wiki/Daylight_saving_time_in_the_United_States#1916%E2%80%931966:_Early,_inconsistent_use
+[fn:20] https://en.wikipedia.org/wiki/Iraq_War#Casualty_estimates
 
-[fn:21] [[https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=EMM_EPMR_PTE_NUS_DPG&f=M]]
+[fn:21] https://en.wikipedia.org/wiki/Daylight_saving_time_in_the_United_States#1916%E2%80%931966:_Early,_inconsistent_use
 
-[fn:22] [[https://www.gpo.gov/fdsys/pkg/BILLS-109hr6enr/pdf/BILLS-109hr6enr.pdf][https://www.gpo.gov/fdsys/pkg/BILLS-109hr6enr/pdf/BILLS-109hr6enr.pdf]]
+[fn:22] [[https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=EMM_EPMR_PTE_NUS_DPG&f=M]]
 
-[fn:23] https://newrepublic.com/article/79023/roll-back-the-bush-changes-daylight-saving-time
+[fn:23] [[https://www.gpo.gov/fdsys/pkg/BILLS-109hr6enr/pdf/BILLS-109hr6enr.pdf][https://www.gpo.gov/fdsys/pkg/BILLS-109hr6enr/pdf/BILLS-109hr6enr.pdf]]
 
-[fn:24] https://energy.gov/sites/prod/files/2015/05/f22/epact_sec_110_edst_report_to_congress_2008.pdf
+[fn:24] https://newrepublic.com/article/79023/roll-back-the-bush-changes-daylight-saving-time
 
-[fn:25] http://www.nber.org/papers/w14429.pdf
+[fn:25] https://energy.gov/sites/prod/files/2015/05/f22/epact_sec_110_edst_report_to_congress_2008.pdf
 
-[fn:26] https://www.aeaweb.org/articles?id=10.1257/app.20140100
+[fn:26] http://www.nber.org/papers/w14429.pdf
 
-[fn:27] http://www.nejm.org/doi/full/10.1056/NEJMc0807104
+[fn:27] https://www.aeaweb.org/articles?id=10.1257/app.20140100
 
-[fn:28] http://www.academia.edu/30442853/Sleepy_Punishers_Are_Harsh_Punishers_Daylight_Saving_Time_and_Legal_Sentences
+[fn:28] http://www.nejm.org/doi/full/10.1056/NEJMc0807104
 
-[fn:29] http://www.apa.org/pubs/journals/releases/apl9451317.pdf
+[fn:29] http://www.academia.edu/30442853/Sleepy_Punishers_Are_Harsh_Punishers_Daylight_Saving_Time_and_Legal_Sentences
 
-[fn:30] https://sleepbetter.org/Lost-Hour-Economic-Index/
+[fn:30] http://www.apa.org/pubs/journals/releases/apl9451317.pdf
 
-[fn:31] "Solar time" means we're ignoring the effect of time zones.
+[fn:31] https://sleepbetter.org/Lost-Hour-Economic-Index/
+
+[fn:32] "Solar time" means we're ignoring the effect of time zones.
 In reality, the further east you go within a time zone, the earlier
 the hour of sunrise.
 
-[fn:32] https://winstonchurchill.org/publications/finest-hour/finest-hour-114/a-silent-toast-to-william-willett-by-winston-s-churchill/
+[fn:33] https://winstonchurchill.org/publications/finest-hour/finest-hour-114/a-silent-toast-to-william-willett-by-winston-s-churchill/
